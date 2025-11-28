@@ -47,13 +47,18 @@
                     <span class="badge-count">{{ system_alert_count }}</span>
                     {% endif %}
                 </a>
-                <a href="#" class="nav-item"><i class="fas fa-user-circle"></i></a>
+                <a href="{{ url_for('logout') }}" class="nav-item" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
             </div>
         </aside>
         
         <main class="main-content">
             <header class="top-bar">
                 <div class="breadcrumb">
+                    <button id="sidebar-toggle" class="btn-icon-only mobile-only">
+                        <i class="fas fa-bars"></i>
+                    </button>
                     <i class="fas fa-database"></i>
                     <span>{% block title %}Dashboard{% endblock %}</span>
                 </div>
@@ -66,19 +71,33 @@
             </header>
             
             <div class="content-area">
-                {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <div class="flash-messages">
-                            {% for message in messages %}
-                                <div class="alert">{{ message }}</div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endwith %}
-                
                 {% block content %}{% endblock %}
             </div>
         </main>
     </div>
+
+    <div id="mobile-overlay" class="mobile-overlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            
+            if(toggleBtn) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+            }
+            
+            if(overlay) {
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

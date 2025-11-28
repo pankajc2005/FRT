@@ -4,80 +4,9 @@
 
 {% block header_actions %}
     <div class="search-container" style="position: relative; margin-right: 15px;">
-        <div class="search-toggle" onclick="toggleSearch()" style="cursor: pointer; font-size: 1.2rem; color: #666;"><i class="fas fa-search"></i></div>
-        <div id="searchDropdown" class="search-dropdown" style="display: none; position: absolute; right: 0; top: 40px; background: white; border: 1px solid #ddd; border-radius: 4px; width: 300px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 1000; padding: 10px;">
-            <input type="text" id="searchInput" placeholder="Search Name, Phone, Aadhaar..." style="width: 100%; padding: 8px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 10px;" onkeyup="performSearch()">
-            <div id="searchResults" style="max-height: 200px; overflow-y: auto;"></div>
-        </div>
+        <div class="search-toggle" style="cursor: pointer; font-size: 1.2rem; color: #666;"><i class="fas fa-search"></i></div>
     </div>
     <a href="{{ url_for('add_person') }}" class="btn-circle-add" style="margin-right: 15px;"><i class="fas fa-plus"></i></a>
-
-    <script>
-    function toggleSearch() {
-        var dropdown = document.getElementById('searchDropdown');
-        if (dropdown.style.display === 'none') {
-            dropdown.style.display = 'block';
-            document.getElementById('searchInput').focus();
-        } else {
-            dropdown.style.display = 'none';
-        }
-    }
-
-    function performSearch() {
-        var query = document.getElementById('searchInput').value;
-        if (query.length < 2) {
-            document.getElementById('searchResults').innerHTML = '';
-            return;
-        }
-
-        fetch('/api/search?q=' + encodeURIComponent(query))
-            .then(response => response.json())
-            .then(data => {
-                var resultsDiv = document.getElementById('searchResults');
-                resultsDiv.innerHTML = '';
-                if (data.length === 0) {
-                    resultsDiv.innerHTML = '<div style="padding: 5px; color: #999;">No results found</div>';
-                    return;
-                }
-                data.forEach(item => {
-                    var div = document.createElement('div');
-                    div.style.padding = '8px';
-                    div.style.borderBottom = '1px solid #f5f5f5';
-                    div.style.cursor = 'pointer';
-                    div.style.display = 'flex';
-                    div.style.alignItems = 'center';
-                    div.style.gap = '10px';
-                    div.onclick = function() {
-                        window.location.href = '/person/' + item.id;
-                    };
-                    
-                    var img = document.createElement('img');
-                    img.src = '/data/images/' + item.image;
-                    img.style.width = '30px';
-                    img.style.height = '30px';
-                    img.style.borderRadius = '50%';
-                    img.style.objectFit = 'cover';
-                    
-                    var span = document.createElement('span');
-                    span.textContent = item.name;
-                    span.style.fontSize = '0.9rem';
-                    
-                    div.appendChild(img);
-                    div.appendChild(span);
-                    resultsDiv.appendChild(div);
-                });
-            });
-    }
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        var container = document.querySelector('.search-container');
-        var toggle = document.querySelector('.search-toggle');
-        if (!container.contains(event.target) && !toggle.contains(event.target)) {
-            document.getElementById('searchDropdown').style.display = 'none';
-        }
-    });
-    </script>
 {% endblock %}
 
 {% block content %}
@@ -87,18 +16,18 @@
                 <thead>
                     <tr>
                         <th class="checkbox-col"><input type="checkbox"></th>
-                        <th>Suspect Name</th>
-                        <th>Suspect Aadhaar No</th>
-                        <th>Suspect Phone No</th>
-                        <th>Suspect Photo</th>
+                        <th>Name</th>
+                        <th>Aadhaar No</th>
+                        <th>Phone No</th>
+                        <th>Photo</th>
                         <th>Gender</th>
                         <th class="action-col"><i class="fas fa-plus"></i></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for person in persons %}
-                    <tr onclick='window.location="{{ url_for("view_person", person_id=person.id) }}";' style="cursor: pointer;">
-                        <td class="checkbox-col" onclick="event.stopPropagation()"><input type="checkbox"></td>
+                    <tr>
+                        <td class="checkbox-col"><input type="checkbox"></td>
                         <td class="primary-text">{{ person.name }}</td>
                         <td class="secondary-text">{{ person.aadhaar or '-' }}</td>
                         <td class="secondary-text">{{ person.phone or '-' }}</td>
@@ -109,7 +38,11 @@
                             </div>
                         </td>
                         <td>{{ person.submitted_gender }}</td>
-                        <td></td>
+                        <td>
+                             <form action="{{ url_for('delete_person', person_id=person.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                                <button type="submit" style="border:none; background:none; color:red; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -118,11 +51,12 @@
     {% else %}
         <div class="empty-state">
             <div class="empty-icon">
-                <i class="fas fa-database"></i>
+                <i class="fas fa-user-secret"></i>
             </div>
-            <h2>No Items</h2>
-            <p>There are no items in this collection yet.</p>
-            <a href="{{ url_for('add_person') }}" class="btn btn-primary">Create Item</a>
+            <h2>No Criminals</h2>
+            <p>There are no criminals in the database yet.</p>
+            <a href="{{ url_for('add_person') }}" class="btn btn-primary">Add Criminal</a>
         </div>
     {% endif %}
 {% endblock %}
+

@@ -6,15 +6,63 @@ import time
 import cv2
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import face_utils
 import numpy as np
 # from surveillance_system import VideoCamera # Deprecated
 from core.plugin_manager import PluginManager
 from core.surveillance_engine import SurveillanceEngine
 import yaml
+import random
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey_fallback_change_in_prod')
+
+# Login Manager Setup
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+# User Class
+class User(UserMixin):
+    def __init__(self, id, username, password_hash):
+        self.id = id
+        self.username = username
+        self.password_hash = password_hash
+
+USERS_FILE = 'data/users.json'
+
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        return {}
+    with open(USERS_FILE, 'r') as f:
+        return json.load(f)
+
+def save_users(users):
+    with open(USERS_FILE, 'w') as f:
+        json.dump(users, f, indent=2)
+
+@login_manager.user_loader
+def load_user(user_id):
+    users = load_users()
+    if user_id in users:
+        return User(user_id, users[user_id]['username'], users[user_id]['password_hash'])
+    return None
+
+# Initialize Admin User
+def init_db():
+    if not os.path.exists(USERS_FILE):
+        users = {}
+        # Default admin: admin / admin123
+        users['admin'] = {
+            'username': 'admin',
+            'password_hash': generate_password_hash('admin123')
+        }
+        save_users(users)
+        print("Initialized default admin user.")
+
+init_db()
 
 # Initialize Modular System
 pm = PluginManager()
@@ -105,11 +153,52 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+        
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        users = load_users()
+        user_data = users.get(username)
+        
+        if user_data and check_password_hash(user_data['password_hash'], password):
+            user = User(username, user_data['username'], user_data['password_hash'])
+            login_user(user)
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('index'))
+        else:
+            pass
+            
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
 @app.route('/')
+@login_required
 def index():
-    return render_template('index.html')
+    persons = []
+    if os.path.exists(app.config['PERSONS_FOLDER']):
+        for filename in os.listdir(app.config['PERSONS_FOLDER']):
+            if filename.endswith('.json'):
+                filepath = os.path.join(app.config['PERSONS_FOLDER'], filename)
+                try:
+                    with open(filepath, 'r') as f:
+                        person_data = json.load(f)
+                        persons.append(person_data)
+                except Exception as e:
+                    print(f"Error reading {filename}: {e}")
+    return render_template('index.html', persons=persons)
 
 @app.route('/criminal')
+@login_required
 def criminal_dashboard():
     persons = []
     if os.path.exists(app.config['PERSONS_FOLDER']):
@@ -125,6 +214,7 @@ def criminal_dashboard():
     return render_template('dashboard.html', persons=persons)
 
 @app.route('/missing')
+@login_required
 def missing_dashboard():
     persons = []
     if os.path.exists(app.config['MISSING_FOLDER']):
@@ -140,6 +230,7 @@ def missing_dashboard():
     return render_template('missing_dashboard.html', persons=persons)
 
 @app.route('/surveillance')
+@login_required
 def surveillance_dashboard():
     global surveillance_engine
     camera_active = surveillance_engine is not None
@@ -148,6 +239,7 @@ def surveillance_dashboard():
     return render_template('surveillance.html', camera_active=camera_active, camera_mode=camera_mode)
 
 @app.route('/surveillance/view/<db_type>')
+@login_required
 def surveillance_view(db_type):
     persons = []
     folder = app.config['PERSONS_FOLDER'] if db_type == 'criminal' else app.config['MISSING_FOLDER']
@@ -165,6 +257,7 @@ def surveillance_view(db_type):
     return render_template('surveillance_view.html', persons=persons, db_type=db_type)
 
 @app.route('/surveillance/add/<db_type>')
+@login_required
 def surveillance_add(db_type):
     persons = []
     folder = app.config['PERSONS_FOLDER'] if db_type == 'criminal' else app.config['MISSING_FOLDER']
@@ -183,6 +276,7 @@ def surveillance_add(db_type):
     return render_template('surveillance_select.html', persons=persons, db_type=db_type)
 
 @app.route('/surveillance/start/<db_type>/<person_id>', methods=['POST'])
+@login_required
 def surveillance_start(db_type, person_id):
     person_id = secure_filename(person_id)
     folder = app.config['PERSONS_FOLDER'] if db_type == 'criminal' else app.config['MISSING_FOLDER']
@@ -199,13 +293,13 @@ def surveillance_start(db_type, person_id):
                 json.dump(data, f, indent=2)
             
             update_surveillance_list()
-            flash('Surveillance started successfully!')
         except Exception as e:
-            flash(f'Error starting surveillance: {str(e)}')
+            pass
     
     return redirect(url_for('surveillance_view', db_type=db_type))
 
 @app.route('/surveillance/stop/<db_type>/<person_id>', methods=['POST'])
+@login_required
 def surveillance_stop(db_type, person_id):
     person_id = secure_filename(person_id)
     folder = app.config['PERSONS_FOLDER'] if db_type == 'criminal' else app.config['MISSING_FOLDER']
@@ -222,13 +316,13 @@ def surveillance_stop(db_type, person_id):
                 json.dump(data, f, indent=2)
             
             update_surveillance_list()
-            flash('Surveillance stopped successfully!')
         except Exception as e:
-            flash(f'Error stopping surveillance: {str(e)}')
+            pass
     
     return redirect(url_for('surveillance_view', db_type=db_type))
 
 @app.route('/delete_person/<person_id>', methods=['POST'])
+@login_required
 def delete_person(person_id):
     person_id = secure_filename(person_id)
     # Check criminal
@@ -253,11 +347,10 @@ def delete_person(person_id):
                     os.remove(image_path)
             
             os.remove(json_path)
-            flash('Person deleted successfully!')
         except Exception as e:
-            flash(f'Error deleting person: {str(e)}')
+            pass
     else:
-        flash('Person not found')
+        pass
     return redirect(redirect_url)
 
 def calculate_distance(emb1, emb2, metric='euclidean'):
@@ -315,6 +408,7 @@ def find_best_match(new_embeddings):
     return best_match, min_distance
 
 @app.route('/merge_person', methods=['POST'])
+@login_required
 def merge_person():
     try:
         new_data = json.loads(request.form.get('new_data'))
@@ -331,13 +425,12 @@ def merge_person():
             if os.path.exists(new_image_path):
                 os.remove(new_image_path)
                 
-            flash('Confirmed as duplicate. Showing existing record.')
             return redirect(url_for('view_person', person_id=existing_id))
     except Exception as e:
-        flash(f'Error merging: {str(e)}')
         return redirect(url_for('criminal_dashboard'))
 
 @app.route('/confirm_add_person', methods=['POST'])
+@login_required
 def confirm_add_person():
     try:
         person_data = json.loads(request.form.get('new_data'))
@@ -347,10 +440,8 @@ def confirm_add_person():
         with open(json_path, 'w') as f:
             json.dump(person_data, f, indent=2)
 
-        flash('Person added successfully!')
         return redirect(url_for('criminal_dashboard'))
     except Exception as e:
-        flash(f'Error adding person: {str(e)}')
         return redirect(url_for('criminal_dashboard'))
 
 def check_metadata_duplicate(aadhaar, phone, folder):
@@ -382,11 +473,11 @@ def check_metadata_duplicate(aadhaar, phone, folder):
     return None, None
 
 @app.route('/add', methods=['GET', 'POST'])
+@login_required
 def add_person():
     if request.method == 'POST':
         # Check if the post request has the file part
         if 'image' not in request.files:
-            flash('No file part')
             return redirect(request.url)
         
         file = request.files['image']
@@ -406,7 +497,6 @@ def add_person():
                                  new_phone=phone)
 
         if file.filename == '':
-            flash('No selected file')
             return redirect(request.url)
 
         if file and allowed_file(file.filename):
@@ -426,7 +516,6 @@ def add_person():
                 analysis_results = face_utils.get_embeddings(file_path)
                 
                 if analysis_results['dlib'] is None and analysis_results['arcface'] is None:
-                    flash('No face detected in the image. Please try another image.')
                     os.remove(file_path) # Clean up
                     return redirect(request.url)
 
@@ -461,16 +550,15 @@ def add_person():
                 with open(json_path, 'w') as f:
                     json.dump(person_data, f, indent=2)
 
-                flash('Person added successfully!')
                 return redirect(url_for('criminal_dashboard'))
 
             except Exception as e:
-                flash(f'Error processing image: {str(e)}')
                 return redirect(request.url)
 
     return render_template('add_person.html')
 
 @app.route('/person/<person_id>')
+@login_required
 def view_person(person_id):
     person_id = secure_filename(person_id)
     # Check criminal folder first
@@ -489,10 +577,10 @@ def view_person(person_id):
         person_data['db_type'] = 'missing'
         return render_template('view_person.html', person=person_data)
         
-    flash('Person not found')
     return redirect(url_for('criminal_dashboard'))
 
 @app.route('/update_person/<person_id>', methods=['POST'])
+@login_required
 def update_person(person_id):
     person_id = secure_filename(person_id)
     # Check criminal folder
@@ -526,16 +614,14 @@ def update_person(person_id):
             with open(json_path, 'w') as f:
                 json.dump(person_data, f, indent=2)
                 
-            flash('Person updated successfully!')
             return redirect(url_for('view_person', person_id=person_id))
         except Exception as e:
-            flash(f'Error updating person: {str(e)}')
             return redirect(url_for('view_person', person_id=person_id))
     else:
-        flash('Person not found')
         return redirect(url_for('criminal_dashboard'))
 
 @app.route('/api/search')
+@login_required
 def search_api():
     query = request.args.get('q', '').lower()
     results = []
@@ -565,10 +651,10 @@ def search_api():
     return jsonify(results)
 
 @app.route('/add_missing', methods=['GET', 'POST'])
+@login_required
 def add_missing_person():
     if request.method == 'POST':
         if 'image' not in request.files:
-            flash('No file part')
             return redirect(request.url)
         
         file = request.files['image']
@@ -578,7 +664,6 @@ def add_missing_person():
         missing_aadhaar = request.form.get('missing_aadhaar')
 
         if file.filename == '':
-            flash('No selected file')
             return redirect(request.url)
 
         if file and allowed_file(file.filename):
@@ -596,7 +681,6 @@ def add_missing_person():
                 analysis_results = face_utils.get_embeddings(file_path)
                 
                 if analysis_results['dlib'] is None and analysis_results['arcface'] is None:
-                    flash('No face detected in the image. Please try another image.')
                     os.remove(file_path)
                     return redirect(request.url)
 
@@ -619,30 +703,32 @@ def add_missing_person():
                 with open(json_path, 'w') as f:
                     json.dump(person_data, f, indent=2)
 
-                flash('Missing person added successfully!')
                 return redirect(url_for('missing_dashboard'))
 
             except Exception as e:
-                flash(f'Error processing image: {str(e)}')
                 return redirect(request.url)
 
     return render_template('add_missing.html')
 
 @app.route('/image/<filename>')
+@login_required
 def uploaded_file(filename):
     return redirect(url_for('static', filename=f'../data/images/{filename}'))
 
 # Helper to serve images from data folder since it's not in static
 from flask import send_from_directory
 @app.route('/data/images/<filename>')
+@login_required
 def serve_image(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/data/alerts/images/<filename>')
+@login_required
 def serve_alert_image(filename):
     return send_from_directory(os.path.join(app.config['ALERTS_FOLDER'], 'images'), filename)
 
 @app.route('/alerts')
+@login_required
 def alerts_dashboard():
     filter_type = request.args.get('type', 'all')
     alerts = []
@@ -668,6 +754,7 @@ def alerts_dashboard():
     return render_template('alerts.html', alerts=alerts, filter_type=filter_type)
 
 @app.route('/alerts/view/<person_id>')
+@login_required
 def view_alert(person_id):
     person_id = secure_filename(person_id)
     json_path = os.path.join(app.config['ALERTS_FOLDER'], f"{person_id}.json")
@@ -691,13 +778,13 @@ def view_alert(person_id):
             
         return render_template('alert_view.html', alert=alert_data)
     else:
-        flash('Alert not found')
         return redirect(url_for('alerts_dashboard'))
 
 # Surveillance Stream Logic
 surveillance_engine = None
 
 @app.route('/api/surveillance/check_targets/<mode>')
+@login_required
 def check_targets(mode):
     update_surveillance_list()
     
@@ -728,6 +815,7 @@ def check_targets(mode):
     })
 
 @app.route('/start_surveillance_background/<mode>')
+@login_required
 def start_surveillance_background(mode):
     global surveillance_engine
     update_surveillance_list()
@@ -742,10 +830,10 @@ def start_surveillance_background(mode):
         # Reload targets if needed
         surveillance_engine.load_targets()
         
-    flash(f'Surveillance started in background for {mode} targets.')
     return redirect(url_for('surveillance_dashboard'))
 
 @app.route('/start_surveillance_stream/<mode>')
+@login_required
 def start_surveillance_stream(mode):
     global surveillance_engine
     # Ensure surveillance list is up to date
@@ -763,6 +851,7 @@ def start_surveillance_stream(mode):
     return render_template('stream_view.html', mode=mode)
 
 @app.route('/stop_surveillance_stream')
+@login_required
 def stop_surveillance_stream():
     global surveillance_engine
     if surveillance_engine:
@@ -798,6 +887,7 @@ def gen(engine):
             time.sleep(0.5)
 
 @app.route('/video_feed')
+@login_required
 def video_feed():
     global surveillance_engine
     if surveillance_engine is None:
@@ -806,6 +896,7 @@ def video_feed():
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/system_alerts')
+@login_required
 def system_alerts():
     alerts = []
     if os.path.exists(app.config['SYSTEM_ALERTS_FILE']):
@@ -820,6 +911,7 @@ def system_alerts():
     return render_template('system_alerts.html', alerts=alerts)
 
 @app.route('/system_alerts/mark_read/<alert_id>')
+@login_required
 def mark_alert_read(alert_id):
     if os.path.exists(app.config['SYSTEM_ALERTS_FILE']):
         try:
@@ -837,6 +929,7 @@ def mark_alert_read(alert_id):
     return redirect(url_for('system_alerts'))
 
 @app.route('/system_alerts/mark_all_read')
+@login_required
 def mark_all_alerts_read():
     if os.path.exists(app.config['SYSTEM_ALERTS_FILE']):
         try:
@@ -851,5 +944,155 @@ def mark_all_alerts_read():
         except: pass
     return redirect(url_for('system_alerts'))
 
+# --- Dashboard API Routes ---
+
+@app.route('/api/stats')
+@login_required
+def api_stats():
+    criminal_count = 0
+    if os.path.exists(app.config['PERSONS_FOLDER']):
+        criminal_count = len([f for f in os.listdir(app.config['PERSONS_FOLDER']) if f.endswith('.json')])
+    
+    missing_count = 0
+    if os.path.exists(app.config['MISSING_FOLDER']):
+        missing_count = len([f for f in os.listdir(app.config['MISSING_FOLDER']) if f.endswith('.json')])
+        
+    alert_count = 0
+    if os.path.exists(app.config['SYSTEM_ALERTS_FILE']):
+        try:
+            with open(app.config['SYSTEM_ALERTS_FILE'], 'r') as f:
+                alerts = json.load(f)
+                alert_count = len([a for a in alerts if not a.get('read', False)])
+        except: pass
+
+    return jsonify({
+        'criminals': criminal_count,
+        'missing': missing_count,
+        'alerts': alert_count
+    })
+
+@app.route('/api/face_search', methods=['POST'])
+@login_required
+def api_face_search():
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image provided'}), 400
+        
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'error': 'No image selected'}), 400
+        
+    if file and allowed_file(file.filename):
+        # Save temp file
+        filename = secure_filename(file.filename)
+        temp_path = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_search_{uuid.uuid4()}.jpg")
+        file.save(temp_path)
+        
+        try:
+            # Get embeddings
+            analysis_results = face_utils.get_embeddings(temp_path)
+            
+            # Clean up temp file
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+                
+            if analysis_results['dlib'] is None and analysis_results['arcface'] is None:
+                return jsonify({'error': 'No face detected'}), 400
+                
+            # Find match
+            match, distance = find_best_match({
+                "dlib": analysis_results.get('dlib'),
+                "arcface": analysis_results.get('arcface')
+            })
+            
+            if match:
+                # Calculate confidence score (inverse of distance)
+                # Simple mapping for display purposes
+                confidence = max(0, min(100, (1 - distance) * 100)) if distance < 1 else 0
+                if distance < 0.4: confidence = 90 + (0.4 - distance) * 25
+                
+                return jsonify({
+                    'match': True,
+                    'person': match,
+                    'distance': distance,
+                    'confidence': round(confidence, 1)
+                })
+            else:
+                return jsonify({'match': False, 'message': 'No match found'})
+                
+        except Exception as e:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            return jsonify({'error': str(e)}), 500
+            
+    return jsonify({'error': 'Invalid file type'}), 400
+
+@app.route('/api/recent_activity')
+@login_required
+def api_recent_activity():
+    activities = []
+    
+    # 1. System Alerts
+    if os.path.exists(app.config['SYSTEM_ALERTS_FILE']):
+        try:
+            with open(app.config['SYSTEM_ALERTS_FILE'], 'r') as f:
+                alerts = json.load(f)
+                # Take last 5
+                for a in alerts[-5:]:
+                    activities.append({
+                        'time': datetime.fromisoformat(a['timestamp'].replace('Z', '+00:00')).strftime('%H:%M'),
+                        'user': 'System',
+                        'action': 'alert',
+                        'target': a['message'],
+                        'status_class': 'risk-high',
+                        'icon': 'fa-exclamation-triangle'
+                    })
+        except: pass
+        
+    # 2. Recent Criminals Added (check file modification times)
+    if os.path.exists(app.config['PERSONS_FOLDER']):
+        files = []
+        for f in os.listdir(app.config['PERSONS_FOLDER']):
+            if f.endswith('.json'):
+                path = os.path.join(app.config['PERSONS_FOLDER'], f)
+                files.append((path, os.path.getmtime(path)))
+        
+        # Sort by time desc
+        files.sort(key=lambda x: x[1], reverse=True)
+        
+        for path, mtime in files[:3]:
+            try:
+                with open(path, 'r') as f:
+                    p = json.load(f)
+                    activities.append({
+                        'time': datetime.fromtimestamp(mtime).strftime('%H:%M'),
+                        'user': 'Officer', # Could track creator
+                        'action': 'added',
+                        'target': p['name'],
+                        'status_class': 'risk-medium',
+                        'icon': 'fa-user-plus'
+                    })
+            except: pass
+
+    # Sort combined list by time (mocking time sort for now as formats differ slightly)
+    # In real app, use proper datetime objects
+    return jsonify(activities[:10])
+
+@app.route('/api/status')
+@login_required
+def api_status():
+    # Mock status
+    return jsonify({
+        'camera': 'active' if pm.active_camera else 'inactive',
+        'model': 'active',
+        'sync': 'ok'
+    })
+
+@app.route('/api/capture_webcam', methods=['POST'])
+@login_required
+def api_capture_webcam():
+    # Placeholder for webcam capture logic
+    return jsonify({'status': 'success', 'message': 'Frame captured'})
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Run on 0.0.0.0 to allow external access for mobile testing
+    app.run(debug=True, host='0.0.0.0', port=5000)

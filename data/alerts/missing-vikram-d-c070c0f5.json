@@ -5,9 +5,34 @@
   "image": "missing-vikram-d-c070c0f5.jpg",
   "detections": [
     {
+      "timestamp": "2025-11-28T18:47:52.462835Z",
+      "match_percentage": 77.2,
+      "capture_frame": "missing-vikram-d-c070c0f5_1764355672.jpg"
+    },
+    {
       "timestamp": "2025-11-28T14:24:28.062400Z",
       "match_percentage": 76.8,
       "capture_frame": "missing-vikram-d-c070c0f5_1764339868.jpg"
+    },
+    {
+      "timestamp": "2025-11-28T18:47:37.297529Z",
+      "match_percentage": 75.93,
+      "capture_frame": "missing-vikram-d-c070c0f5_1764355657.jpg"
+    },
+    {
+      "timestamp": "2025-11-28T18:47:30.069397Z",
+      "match_percentage": 75.8,
+      "capture_frame": "missing-vikram-d-c070c0f5_1764355650.jpg"
+    },
+    {
+      "timestamp": "2025-11-28T18:47:44.610733Z",
+      "match_percentage": 75.71,
+      "capture_frame": "missing-vikram-d-c070c0f5_1764355664.jpg"
+    },
+    {
+      "timestamp": "2025-11-28T18:47:45.197718Z",
+      "match_percentage": 74.31,
+      "capture_frame": "missing-vikram-d-c070c0f5_1764355665.jpg"
     },
     {
       "timestamp": "2025-11-28T14:24:20.848205Z",
@@ -18,6 +43,11 @@
       "timestamp": "2025-11-28T14:23:39.757600Z",
       "match_percentage": 74.05,
       "capture_frame": "missing-vikram-d-c070c0f5_1764339819.jpg"
+    },
+    {
+      "timestamp": "2025-11-28T18:47:22.959855Z",
+      "match_percentage": 74.0,
+      "capture_frame": "missing-vikram-d-c070c0f5_1764355642.jpg"
     },
     {
       "timestamp": "2025-11-28T14:24:01.232220Z",
@@ -43,6 +73,11 @@
       "timestamp": "2025-11-28T14:24:31.409853Z",
       "match_percentage": 70.05,
       "capture_frame": "missing-vikram-d-c070c0f5_1764339871.jpg"
+    },
+    {
+      "timestamp": "2025-11-28T18:29:01.219257Z",
+      "match_percentage": 69.51,
+      "capture_frame": "missing-vikram-d-c070c0f5_1764354541.jpg"
     },
     {
       "timestamp": "2025-11-28T14:24:08.347084Z",

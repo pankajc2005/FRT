@@ -1,0 +1,415 @@
+/* Dashboard Layout */
+:root {
+    --primary-color: #1e40af; /* Kerala Police Blue */
+    --success-color: #059669;
+    --warning-color: #d97706;
+    --danger-color: #dc2626;
+    --dark-color: #1f2937;
+    --light-color: #f9fafb;
+    --border-color: #e5e7eb;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Fill the content area */
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #f3f4f6;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* 1. Info Header */
+.dashboard-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: var(--card-shadow);
+    border-left: 5px solid var(--primary-color);
+}
+
+.station-info h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin: 0;
+}
+
+.system-status {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #4b5563;
+    background: #f3f4f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #9ca3af;
+}
+
+.status-dot.active { background-color: var(--success-color); box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2); }
+.status-dot.warning { background-color: var(--warning-color); }
+.status-dot.danger { background-color: var(--danger-color); }
+
+.blink { animation: blinker 1.5s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
+
+/* 2. Split Layout */
+.dashboard-grid {
+    display: flex;
+    gap: 1.5rem;
+    flex: 1;
+    overflow: hidden; /* Prevent full page scroll */
+}
+
+/* Left Panel - Query */
+.query-panel {
+    width: 35%;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+}
+
+.panel-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    margin: 0;
+}
+
+.query-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.face-preview-container {
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 1;
+    background: #f3f4f6;
+    border: 2px dashed #cbd5e1;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.face-preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.face-placeholder {
+    text-align: center;
+    color: #64748b;
+}
+
+.face-placeholder i {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.query-details {
+    width: 100%;
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.detail-label { color: #64748b; }
+.detail-value { font-weight: 600; color: var(--dark-color); }
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+    margin-top: auto;
+}
+
+.btn-dashboard {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-primary { background: var(--primary-color); color: white; }
+.btn-primary:hover { background: #1e3a8a; }
+
+.btn-outline { background: white; border: 1px solid #d1d5db; color: #374151; }
+.btn-outline:hover { background: #f3f4f6; }
+
+/* Right Panel - Results */
+.results-panel {
+    width: 65%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.results-card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: var(--card-shadow);
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.activity-card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: var(--card-shadow);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    max-height: 300px;
+}
+
+.table-container {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dashboard-table th {
+    background: #f8fafc;
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.dashboard-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.dashboard-table tr:hover {
+    background-color: #f8fafc;
+}
+
+.match-score {
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+.match-score.medium { color: var(--warning-color); }
+.match-score.low { color: var(--danger-color); }
+
+.risk-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.risk-high { background: #fee2e2; color: #991b1b; }
+.risk-medium { background: #fef3c7; color: #92400e; }
+.risk-low { background: #d1fae5; color: #065f46; }
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+}
+
+.activity-item {
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+}
+
+.activity-time {
+    color: #9ca3af;
+    font-size: 0.8rem;
+    min-width: 60px;
+}
+
+.activity-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e0e7ff;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+/* Modals */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-backdrop.active { display: flex; }
+
+.modal-content {
+    background: white;
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .query-panel, .results-panel {
+        width: 100%;
+    }
+    .dashboard-container {
+        height: auto;
+        min-height: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .system-status {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 0.5rem;
+    }
+    
+    .status-badge {
+        justify-content: center;
+        width: 100%;
+        font-size: 0.75rem;
+    }
+    
+    .action-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Increase touch targets for mobile */
+    .btn-dashboard, .nav-item, .status-badge {
+        min-height: 44px; 
+    }
+    
+    .dashboard-table th, .dashboard-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Hide less important columns on small screens */
+    .dashboard-table th:nth-child(4), 
+    .dashboard-table td:nth-child(4),
+    .dashboard-table th:nth-child(5), 
+    .dashboard-table td:nth-child(5) {
+        display: none;
+    }
+    
+    .face-preview-container {
+        max-width: 100%;
+        height: 250px;
+    }
+    
+    .query-panel, .results-panel {
+        border-radius: 0;
+        box-shadow: none;
+    }
+    
+    .dashboard-container {
+        padding: 0;
+        gap: 0;
+        background: white;
+    }
+    
+    .panel-header {
+        background: #f8fafc;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+}
