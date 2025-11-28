@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {% if db_type == 'criminal' %}Criminal Surveillance{% else %}Missing Person Surveillance{% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+    .text-criminal { color: #D32F2F !important; }
+    .text-missing { color: #1976D2 !important; }
+    .bg-criminal { background-color: #D32F2F !important; }
+    .bg-missing { background-color: #1976D2 !important; }
+    .btn-stop-criminal { background-color: #ffebee !important; color: #c62828 !important; border: 1px solid #ffcdd2 !important; }
+    .btn-stop-missing { background-color: #e3f2fd !important; color: #1565c0 !important; border: 1px solid #bbdefb !important; }
+</style>
+<div class="surveillance-container">
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-top: 20px;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <a href="{{ url_for('surveillance_dashboard') }}" class="back-btn" style="color: #666; font-size: 1.2rem;"><i class="fas fa-arrow-left"></i></a>
+            <h3 class="{% if db_type == 'criminal' %}text-criminal{% else %}text-missing{% endif %}" style="margin: 0;">
+                <i class="fas {% if db_type == 'criminal' %}fa-user-secret{% else %}fa-user-clock{% endif %}"></i> 
+                {% if db_type == 'criminal' %}Criminal Surveillance{% else %}Missing Person Surveillance{% endif %}
+            </h3>
+        </div>
+        <a href="{{ url_for('surveillance_add', db_type=db_type) }}" class="btn btn-primary {% if db_type == 'criminal' %}bg-criminal{% else %}bg-missing{% endif %}" style="font-size: 0.9rem;">
+            <i class="fas fa-plus"></i> Start Surveillance
+        </a>
+    </div>
+
+    {% if persons %}
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>{% if db_type == 'criminal' %}Suspect Aadhaar{% else %}Guardian Phone{% endif %}</th>
+                        <th>Photo</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for person in persons %}
+                    <tr>
+                        <td class="primary-text">{{ person.name }}</td>
+                        <td class="secondary-text">
+                            {% if db_type == 'criminal' %}
+                                {{ person.aadhaar or '-' }}
+                            {% else %}
+                                {{ person.guardian_phone or '-' }}
+                            {% endif %}
+                        </td>
+                        <td class="photo-cell">
+                            <div class="table-thumb">
+                                <img src="{{ url_for('serve_image', filename=person.image_filename) }}" alt="{{ person.name }}">
+                            </div>
+                        </td>
+                        <td><span style="color: green; font-weight: bold;">● Active</span></td>
+                        <td>
+                            <form action="{{ url_for('surveillance_stop', db_type=db_type, person_id=person.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-secondary {% if db_type == 'criminal' %}btn-stop-criminal{% else %}btn-stop-missing{% endif %}" style="padding: 5px 10px; font-size: 0.8rem;">Stop</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state" style="height: 200px; background: #fafafa; border-radius: 8px;">
+            <p>No {% if db_type == 'criminal' %}criminals{% else %}missing persons{% endif %} under surveillance.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

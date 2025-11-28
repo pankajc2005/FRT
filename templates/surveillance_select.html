@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}Select for Surveillance{% endblock %}
+
+{% block content %}
+<div class="create-item-container">
+    <div class="create-header">
+        <div class="header-left">
+            <a href="{{ url_for('surveillance_view', db_type=db_type) }}" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+            <div class="header-title">
+                <span class="breadcrumb-small">Surveillance</span>
+                <h2>Select Person to Start Surveillance</h2>
+            </div>
+        </div>
+    </div>
+
+    {% if persons %}
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>ID / Phone</th>
+                        <th>Photo</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for person in persons %}
+                    <tr>
+                        <td class="primary-text">{{ person.name }}</td>
+                        <td class="secondary-text">
+                            {% if db_type == 'criminal' %}
+                                {{ person.aadhaar or person.phone or '-' }}
+                            {% else %}
+                                {{ person.guardian_phone or '-' }}
+                            {% endif %}
+                        </td>
+                        <td class="photo-cell">
+                            <div class="table-thumb">
+                                <img src="{{ url_for('serve_image', filename=person.image_filename) }}" alt="{{ person.name }}">
+                            </div>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('surveillance_start', db_type=db_type, person_id=person.id) }}" method="POST">
+                                <button type="submit" class="btn btn-primary" style="padding: 5px 15px; font-size: 0.8rem;">
+                                    Start
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>No available persons to add.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

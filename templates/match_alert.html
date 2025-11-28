@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="create-item-container">
+    <div class="create-header">
+        <div class="header-left">
+            <a href="{{ url_for('add_person') }}" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+            <div class="header-title">
+                <span class="breadcrumb-small">Alert</span>
+                <h2>Possible Duplicate Detected</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert" style="background-color: #fff3cd; color: #856404; border-color: #ffeeba; margin-bottom: 20px;">
+        <i class="fas fa-exclamation-triangle"></i> Warning: The person you are trying to add has facial features similar to an existing record.
+    </div>
+
+    <div style="display: flex; gap: 20px; margin-bottom: 30px;">
+        <!-- New Person -->
+        <div style="flex: 1; border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: white;">
+            <h3 style="margin-bottom: 15px; color: #D32F2F;">New Entry</h3>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img src="{{ url_for('serve_image', filename=new_person.image_filename) }}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
+            </div>
+            <p><strong>Name:</strong> {{ new_person.name }}</p>
+            <p><strong>Aadhaar:</strong> {{ new_person.aadhaar }}</p>
+            <p><strong>Phone:</strong> {{ new_person.phone }}</p>
+            <p><strong>Gender:</strong> {{ new_person.submitted_gender }}</p>
+        </div>
+
+        <!-- Existing Person -->
+        <div style="flex: 1; border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: white;">
+            <h3 style="margin-bottom: 15px; color: #1976D2;">Existing Record</h3>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img src="{{ url_for('serve_image', filename=existing_person.image_filename) }}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
+            </div>
+            <p><strong>Name:</strong> {{ existing_person.name }}</p>
+            <p><strong>Aadhaar:</strong> {{ existing_person.aadhaar }}</p>
+            <p><strong>Phone:</strong> {{ existing_person.phone }}</p>
+            <p><strong>Gender:</strong> {{ existing_person.submitted_gender }}</p>
+            <div style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                Match Confidence: {{ (1 - distance) * 100 | round(1) }}%
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 15px; justify-content: center;">
+        <!-- Merge: Update existing with new info -->
+        <form action="{{ url_for('merge_person') }}" method="post">
+            <input type="hidden" name="new_data" value='{{ new_person_json }}'>
+            <input type="hidden" name="existing_id" value="{{ existing_person.id }}">
+            <button type="submit" class="btn btn-primary" style="background-color: #1976D2;">
+                <i class="fas fa-sync"></i> Merge (Keep Existing)
+            </button>
+        </form>
+
+        <!-- Reject: Cancel operation -->
+        <a href="{{ url_for('criminal_dashboard') }}" class="btn btn-secondary" style="background-color: #D32F2F; color: white;">
+            <i class="fas fa-times"></i> Reject (Cancel)
+        </a>
+
+        <!-- Ignore: Create new anyway -->
+        <form action="{{ url_for('confirm_add_person') }}" method="post">
+            <input type="hidden" name="new_data" value='{{ new_person_json }}'>
+            <button type="submit" class="btn btn-secondary">
+                <i class="fas fa-plus"></i> Not a Match (Create New)
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

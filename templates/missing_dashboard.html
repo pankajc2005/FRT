@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block title %}Missing DB{% endblock %}
+
+{% block header_actions %}
+    <div class="search-container" style="position: relative; margin-right: 15px;">
+        <div class="search-toggle" style="cursor: pointer; font-size: 1.2rem; color: #666;"><i class="fas fa-search"></i></div>
+    </div>
+    <a href="{{ url_for('add_missing_person') }}" class="btn-circle-add" style="margin-right: 15px;"><i class="fas fa-plus"></i></a>
+{% endblock %}
+
+{% block content %}
+    {% if persons %}
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="checkbox-col"><input type="checkbox"></th>
+                        <th>Missing Person Name</th>
+                        <th>Missing Aadhar No</th>
+                        <th>Guardian Phone No</th>
+                        <th>Missing Photo</th>
+                        <th>Predicted Gender</th>
+                        <th class="action-col"><i class="fas fa-plus"></i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for person in persons %}
+                    <tr>
+                        <td class="checkbox-col"><input type="checkbox"></td>
+                        <td class="primary-text">{{ person.name }}</td>
+                        <td class="secondary-text">{{ person.missing_aadhaar or '-' }}</td>
+                        <td class="secondary-text">{{ person.guardian_phone or '-' }}</td>
+                        <td class="photo-cell">
+                            <div class="table-thumb">
+                                <img src="{{ url_for('serve_image', filename=person.image_filename) }}" alt="{{ person.name }}">
+                                <span>{{ person.image_filename[:15] }}...</span>
+                            </div>
+                        </td>
+                        <td>{{ person.predicted_gender }}</td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-database"></i>
+            </div>
+            <h2>No Items</h2>
+            <p>There are no items in this collection yet.</p>
+            <a href="{{ url_for('add_missing_person') }}" class="btn btn-primary">Create Item</a>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,21 @@
+{
+  "id": "jay-kumar-6dabbd4c",
+  "name": "Jay Kumar",
+  "db_type": "criminal",
+  "image_filename": "jay-kumar-6dabbd4c.jpg",
+  "phone": "9022442854",
+  "aadhaar": "1234567795",
+  "guardian_phone": null,
+  "missing_aadhaar": null,
+  "submitted_gender": "Male",
+  "predicted_gender": "Male",
+  "predicted_age": 60,
+  "detections": [
+    {
+      "timestamp": "2025-11-28T11:20:17.799147Z",
+      "match_percentage": 44.84,
+      "capture_frame": "jay-kumar-6dabbd4c_1764328817.jpg"
+    }
+  ],
+  "best_match_percentage": 44.84
+}

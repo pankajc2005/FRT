@@ -1,0 +1,24 @@
+{
+  "id": "missing-vikram-d-c070c0f5",
+  "name": "Vikram D",
+  "db_type": "missing",
+  "image": "missing-vikram-d-c070c0f5.jpg",
+  "detections": [
+    {
+      "timestamp": "2025-11-28T11:11:01.933504Z",
+      "match_percentage": 67.47,
+      "capture_frame": "missing-vikram-d-c070c0f5_1764328261.jpg"
+    },
+    {
+      "timestamp": "2025-11-28T11:10:40.516095Z",
+      "match_percentage": 63.58,
+      "capture_frame": "missing-vikram-d-c070c0f5_1764328240.jpg"
+    },
+    {
+      "timestamp": "2025-11-28T11:10:34.984125Z",
+      "match_percentage": 51.08,
+      "capture_frame": "missing-vikram-d-c070c0f5_1764328234.jpg"
+    }
+  ],
+  "best_match_percentage": 67.47
+}

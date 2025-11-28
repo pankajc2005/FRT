@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Police Department - Criminal DB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/1200px-Emblem_of_India.svg.png" alt="Logo" class="logo">
+                <span>Indian Police Department</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('criminal_dashboard') }}" class="nav-item {% if request.endpoint == 'criminal_dashboard' or request.endpoint == 'add_person' %}active{% endif %}">
+                    <i class="fas fa-database"></i>
+                    <span>Criminal DB</span>
+                </a>
+                <a href="{{ url_for('missing_dashboard') }}" class="nav-item {% if request.endpoint == 'missing_dashboard' or request.endpoint == 'add_missing_person' %}active{% endif %}">
+                    <i class="fas fa-database"></i>
+                    <span>Missing DB</span>
+                </a>
+                <a href="{{ url_for('surveillance_dashboard') }}" class="nav-item {% if 'surveillance' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-video"></i>
+                    <span>Surveillance</span>
+                </a>
+                <a href="{{ url_for('alerts_dashboard') }}" class="nav-item {% if 'alerts' in request.endpoint %}active{% endif %}">
+                    <i class="fas fa-bell"></i>
+                    <span>Alert DB</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-database"></i>
+                    <span>Aadhaar DB</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('system_alerts') }}" class="nav-item" style="position: relative;">
+                    <i class="fas fa-bell"></i>
+                    {% if system_alert_count and system_alert_count > 0 %}
+                    <span class="badge-count">{{ system_alert_count }}</span>
+                    {% endif %}
+                </a>
+                <a href="#" class="nav-item"><i class="fas fa-user-circle"></i></a>
+            </div>
+        </aside>
+        
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="breadcrumb">
+                    <i class="fas fa-database"></i>
+                    <span>{% block title %}Dashboard{% endblock %}</span>
+                </div>
+                <div class="top-actions">
+                    {% block header_actions %}{% endblock %}
+                    <div class="user-profile">
+                        <i class="fas fa-user-circle" style="font-size: 1.5rem; color: #666;"></i>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for message in messages %}
+                                <div class="alert">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>

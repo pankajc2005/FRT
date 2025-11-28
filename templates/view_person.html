@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="create-item-container">
+    <form action="{{ url_for('update_person', person_id=person.id) }}" method="POST" id="updateForm">
+        <div class="create-header">
+            <div class="header-left">
+                <a href="{{ url_for('missing_dashboard') if person.db_type == 'missing' else url_for('criminal_dashboard') }}" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+                <div class="header-title">
+                    <span class="breadcrumb-small">{{ 'Missing DB' if person.db_type == 'missing' else 'Criminal DB' }}</span>
+                    <h2>View / Edit Item</h2>
+                </div>
+            </div>
+            <div class="header-right">
+                <button type="button" class="btn-circle-menu" onclick="confirmDelete()" style="background-color: #ffebee; color: #c62828; margin-right: 10px;"><i class="fas fa-trash"></i></button>
+                <button type="submit" class="btn-circle-check"><i class="fas fa-check"></i></button>
+            </div>
+        </div>
+
+        <div class="form-content">
+            <div class="form-section">
+                <label class="section-label">{{ 'Missing Person Photo' if person.db_type == 'missing' else 'Suspect Photo' }}</label>
+                <div class="file-upload-area" data-bg="{{ url_for('serve_image', filename=person.image_filename) }}" style="background-size: contain; background-repeat: no-repeat; background-position: center;">
+                    <!-- Image is shown via background -->
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">{{ 'Name' if person.db_type == 'missing' else 'Suspect Name' }}</label>
+                <input type="text" name="name" class="form-input" value="{{ person.name }}">
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">{{ 'Missing Person Aadhaar' if person.db_type == 'missing' else 'Suspect Aadhaar No' }}</label>
+                <div class="select-wrapper">
+                    <input type="text" name="aadhaar" class="form-input" value="{{ person.aadhaar or person.missing_aadhaar or '' }}">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">{{ 'Guardian Phone No' if person.db_type == 'missing' else 'Suspect Phone No' }}</label>
+                <input type="text" name="phone" class="form-input" value="{{ person.phone or person.guardian_phone or '' }}">
+            </div>
+            
+            <div class="form-section">
+                <label class="section-label">Gender</label>
+                <div class="select-wrapper">
+                    {% set current_gender = person.submitted_gender or person.predicted_gender %}
+                    <select name="gender" class="form-input">
+                        <option value="Male" {% if current_gender == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if current_gender == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if current_gender == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Embedding Dlib 128D</label>
+                <div class="embeddings-box" style="display: block; overflow: auto; max-height: 150px; font-family: monospace; white-space: pre-wrap; color: #333; font-size: 0.8rem;">
+                    {{ person.embeddings.dlib }}
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Embedding ArcFace 512D</label>
+                <div class="embeddings-box" style="display: block; overflow: auto; max-height: 150px; font-family: monospace; white-space: pre-wrap; color: #333; font-size: 0.8rem;">
+                    {{ person.embeddings.arcface }}
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<form id="deleteForm" action="{{ url_for('delete_person', person_id=person.id) }}" method="POST" style="display: none;"></form>
+
+<script>
+function confirmDelete() {
+    if (confirm('Are you sure you want to delete this person? This action cannot be undone.')) {
+        document.getElementById('deleteForm').submit();
+    }
+}
+
+// Set background images
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-bg]').forEach(el => {
+        el.style.backgroundImage = "url('" + el.dataset.bg + "')";
+    });
+});
+</script>
+{% endblock %}

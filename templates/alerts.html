@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+
+{% block title %}Alerts{% endblock %}
+
+{% block header_actions %}
+    <div style="display: flex; gap: 10px;">
+        <a href="{{ url_for('alerts_dashboard', type='all') }}" class="btn {% if filter_type == 'all' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 8px 16px; text-decoration: none; border-radius: 4px; {% if filter_type != 'all' %}background-color: #eee; color: #333;{% endif %}">All</a>
+        <a href="{{ url_for('alerts_dashboard', type='criminal') }}" class="btn {% if filter_type == 'criminal' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 8px 16px; text-decoration: none; border-radius: 4px; {% if filter_type != 'criminal' %}background-color: #eee; color: #333;{% endif %}">Criminals</a>
+        <a href="{{ url_for('alerts_dashboard', type='missing') }}" class="btn {% if filter_type == 'missing' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 8px 16px; text-decoration: none; border-radius: 4px; {% if filter_type != 'missing' %}background-color: #eee; color: #333;{% endif %}">Missing</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% if alerts %}
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Best Match %</th>
+                        <th>Latest Detection</th>
+                        <th>Capture Frame</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for alert in alerts %}
+                    <tr onclick='window.location="{{ url_for("view_alert", person_id=alert.id) }}";' style="cursor: pointer;">
+                        <td class="primary-text">{{ alert.name }}</td>
+                        <td>
+                            {% if alert.db_type == 'criminal' %}
+                                <span style="color: #d32f2f; font-weight: bold; background: #ffebee; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">CRIMINAL</span>
+                            {% else %}
+                                <span style="color: #f57c00; font-weight: bold; background: #fff3e0; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">MISSING</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-weight: bold; color: #2e7d32;">{{ alert.best_match_percentage }}%</td>
+                        <td>
+                            {% if alert.detections %}
+                                {{ alert.detections[-1].timestamp.split('T')[0] }} {{ alert.detections[-1].timestamp.split('T')[1][:8] }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="photo-cell">
+                            <div class="table-thumb">
+                                {% if alert.detections %}
+                                    <img src="{{ url_for('serve_alert_image', filename=alert.detections[-1].capture_frame) }}" alt="Capture">
+                                {% else %}
+                                    <span>No Image</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td><i class="fas fa-chevron-right" style="color: #999;"></i></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-bell-slash"></i>
+            </div>
+            <h2>No Alerts</h2>
+            <p>No alerts have been generated yet.</p>
+        </div>
+    {% endif %}
+{% endblock %}

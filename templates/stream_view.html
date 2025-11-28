@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}Live Surveillance Stream{% endblock %}
+
+{% block content %}
+<div class="dashboard-welcome">
+    <h1>Live Surveillance Stream</h1>
+    <p>Monitoring active targets: <strong>{{ mode|upper }}</strong></p>
+    
+    <div style="margin-top: 20px; text-align: center;">
+        <div style="display: inline-block; border: 5px solid #333; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <img src="{{ url_for('video_feed') }}" width="800" height="600" style="display: block;">
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <a href="{{ url_for('stop_surveillance_stream') }}" class="btn btn-primary" style="background-color: #D32F2F; padding: 15px 30px; font-size: 1.2rem;">
+                <i class="fas fa-stop-circle"></i> Stop Surveillance
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "title": "System Maintenance",
+    "message": "Scheduled maintenance on Sunday at 2:00 AM.",
+    "timestamp": "2023-10-27T10:00:00Z",
+    "read": true,
+    "type": "info"
+  },
+  {
+    "id": "2",
+    "title": "New Feature Added",
+    "message": "You can now check for duplicate Aadhaar numbers.",
+    "timestamp": "2023-10-28T14:30:00Z",
+    "read": true,
+    "type": "success"
+  },
+  {
+    "id": "3",
+    "title": "High Traffic Warning",
+    "message": "Server load is high. Performance may be degraded.",
+    "timestamp": "2023-10-29T09:15:00Z",
+    "read": true,
+    "type": "warning"
+  }
+]

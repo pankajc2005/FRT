@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block title %}System Alerts{% endblock %}
+
+{% block header_actions %}
+<a href="{{ url_for('mark_all_alerts_read') }}" class="btn btn-secondary">
+    <i class="fas fa-check-double"></i> Mark All Read
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="list-header">
+    <div class="list-title">
+        <i class="fas fa-bell" style="color: #D32F2F;"></i>
+        <span>System Notifications</span>
+    </div>
+</div>
+
+<div class="alerts-container">
+    {% if alerts %}
+        {% for alert in alerts %}
+        <div class="system-alert-card {% if not alert.read %}unread{% endif %}" style="
+            background: white;
+            border: 1px solid #eee;
+            border-left: 4px solid {% if alert.type == 'error' %}#D32F2F{% elif alert.type == 'warning' %}#FBC02D{% elif alert.type == 'success' %}#388E3C{% else %}#1976D2{% endif %};
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        ">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h3 style="margin-bottom: 5px; color: #333; font-size: 1.1rem;">
+                        {% if not alert.read %}<span style="color: #D32F2F; font-size: 0.6rem; vertical-align: middle; margin-right: 5px;">●</span>{% endif %}
+                        {{ alert.title }}
+                    </h3>
+                    <p style="color: #666; margin-bottom: 10px;">{{ alert.message }}</p>
+                    <span style="font-size: 0.8rem; color: #999;">
+                        <i class="far fa-clock"></i> {{ alert.timestamp }}
+                    </span>
+                </div>
+                {% if not alert.read %}
+                <a href="{{ url_for('mark_alert_read', alert_id=alert.id) }}" title="Mark as Read" style="color: #999; hover: color: #333;">
+                    <i class="far fa-check-circle"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="far fa-bell-slash"></i>
+            </div>
+            <h2>No Notifications</h2>
+            <p>You're all caught up!</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .system-alert-card.unread {
+        background-color: #fffbfb !important;
+    }
+</style>
+{% endblock %}

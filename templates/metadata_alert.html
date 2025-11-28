@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="create-item-container">
+    <div class="create-header">
+        <div class="header-left">
+            <a href="{{ url_for('add_person') }}" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+            <div class="header-title">
+                <span class="breadcrumb-small">Alert</span>
+                <h2>Duplicate Data Detected</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert" style="background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; margin-bottom: 20px;">
+        <i class="fas fa-exclamation-circle"></i> <strong>Stop!</strong> A person with this <strong>{{ match_field }}</strong> already exists in the database.
+    </div>
+
+    <div style="display: flex; gap: 20px; margin-bottom: 30px;">
+        <!-- New Input -->
+        <div style="flex: 1; border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: white; opacity: 0.7;">
+            <h3 style="margin-bottom: 15px; color: #666;">Input Data</h3>
+            <p><strong>Name:</strong> {{ new_name }}</p>
+            <p><strong>Aadhaar:</strong> {{ new_aadhaar }}</p>
+            <p><strong>Phone:</strong> {{ new_phone }}</p>
+        </div>
+
+        <!-- Existing Person -->
+        <div style="flex: 1; border: 2px solid #D32F2F; padding: 20px; border-radius: 8px; background: white;">
+            <h3 style="margin-bottom: 15px; color: #D32F2F;">Existing Record Found</h3>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img src="{{ url_for('serve_image', filename=existing_person.image_filename) }}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
+            </div>
+            <p><strong>Name:</strong> {{ existing_person.name }}</p>
+            <p><strong>Aadhaar:</strong> {{ existing_person.aadhaar }}</p>
+            <p><strong>Phone:</strong> {{ existing_person.phone }}</p>
+            <p><strong>Gender:</strong> {{ existing_person.submitted_gender }}</p>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 15px; justify-content: center;">
+        <!-- View Existing -->
+        <a href="{{ url_for('view_person', person_id=existing_person.id) }}" class="btn btn-primary" style="background-color: #D32F2F;">
+            <i class="fas fa-user"></i> View Existing Profile
+        </a>
+
+        <!-- Cancel -->
+        <a href="{{ url_for('add_person') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Go Back
+        </a>
+    </div>
+</div>
+{% endblock %}
