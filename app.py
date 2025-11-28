@@ -11,7 +11,7 @@ import numpy as np
 from surveillance_system import VideoCamera
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'  # Change this in production
+app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey_fallback_change_in_prod')
 
 # Configuration
 UPLOAD_FOLDER = 'data/images'
@@ -165,6 +165,7 @@ def surveillance_add(db_type):
 
 @app.route('/surveillance/start/<db_type>/<person_id>', methods=['POST'])
 def surveillance_start(db_type, person_id):
+    person_id = secure_filename(person_id)
     folder = app.config['PERSONS_FOLDER'] if db_type == 'criminal' else app.config['MISSING_FOLDER']
     json_path = os.path.join(folder, f"{person_id}.json")
     
@@ -187,6 +188,7 @@ def surveillance_start(db_type, person_id):
 
 @app.route('/surveillance/stop/<db_type>/<person_id>', methods=['POST'])
 def surveillance_stop(db_type, person_id):
+    person_id = secure_filename(person_id)
     folder = app.config['PERSONS_FOLDER'] if db_type == 'criminal' else app.config['MISSING_FOLDER']
     json_path = os.path.join(folder, f"{person_id}.json")
     
@@ -209,6 +211,7 @@ def surveillance_stop(db_type, person_id):
 
 @app.route('/delete_person/<person_id>', methods=['POST'])
 def delete_person(person_id):
+    person_id = secure_filename(person_id)
     # Check criminal
     json_path = os.path.join(app.config['PERSONS_FOLDER'], f"{person_id}.json")
     redirect_url = url_for('criminal_dashboard')
@@ -450,6 +453,7 @@ def add_person():
 
 @app.route('/person/<person_id>')
 def view_person(person_id):
+    person_id = secure_filename(person_id)
     # Check criminal folder first
     json_path = os.path.join(app.config['PERSONS_FOLDER'], f"{person_id}.json")
     if os.path.exists(json_path):
@@ -471,6 +475,7 @@ def view_person(person_id):
 
 @app.route('/update_person/<person_id>', methods=['POST'])
 def update_person(person_id):
+    person_id = secure_filename(person_id)
     # Check criminal folder
     json_path = os.path.join(app.config['PERSONS_FOLDER'], f"{person_id}.json")
     db_type = 'criminal'
@@ -645,6 +650,7 @@ def alerts_dashboard():
 
 @app.route('/alerts/view/<person_id>')
 def view_alert(person_id):
+    person_id = secure_filename(person_id)
     json_path = os.path.join(app.config['ALERTS_FOLDER'], f"{person_id}.json")
     if os.path.exists(json_path):
         with open(json_path, 'r') as f:
