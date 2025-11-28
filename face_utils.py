@@ -1,7 +1,11 @@
 import cv2
 import dlib
 import numpy as np
-from insightface.app import FaceAnalysis
+try:
+    from insightface.app import FaceAnalysis
+except ImportError:
+    FaceAnalysis = None
+    print("Warning: insightface not installed. ArcFace features will be disabled.")
 import os
 
 # ----------------------------
@@ -18,12 +22,15 @@ def load_models():
     
     if dlib_detector is None:
         dlib_detector = dlib.get_frontal_face_detector()
-        dlib_shape_predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-        dlib_face_rec_model = dlib.face_recognition_model_v1("dlib_face_recognition_resnet_model_v1.dat")
+        dlib_shape_predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")
+        dlib_face_rec_model = dlib.face_recognition_model_v1("models/dlib_face_recognition_resnet_model_v1.dat")
 
-    if arcface_app is None:
-        arcface_app = FaceAnalysis(providers=['CPUExecutionProvider'])
-        arcface_app.prepare(ctx_id=0, det_size=(640, 640))
+    if arcface_app is None and FaceAnalysis is not None:
+        try:
+            arcface_app = FaceAnalysis(providers=['CPUExecutionProvider'])
+            arcface_app.prepare(ctx_id=0, det_size=(640, 640))
+        except Exception as e:
+            print(f"Failed to initialize ArcFace: {e}")
 
 def read_image(image_path):
     """Reads image, converts to RGB and grayscale, ensures contiguous memory"""
@@ -63,12 +70,17 @@ def get_embeddings(image_path):
     # ----------------------------
     # ArcFace Embedding
     # ----------------------------
-    arcface_results = arcface_app.get(img_rgb)
-    if len(arcface_results) > 0:
-        face = arcface_results[0]
-        results['arcface'] = face.embedding.tolist()
-        results['age'] = int(face.age)
-        results['gender'] = "Male" if face.gender == 1 else "Female"
+    if arcface_app is not None:
+        arcface_results = arcface_app.get(img_rgb)
+        if len(arcface_results) > 0:
+            face = arcface_results[0]
+            results['arcface'] = face.embedding.tolist()
+            results['age'] = int(face.age)
+            results['gender'] = "Male" if face.gender == 1 else "Female"
+        else:
+            results['arcface'] = None
+            results['age'] = None
+            results['gender'] = None
     else:
         results['arcface'] = None
         results['age'] = None

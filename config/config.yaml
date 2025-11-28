@@ -1,0 +1,32 @@
+system:
+  version: "2.0"
+  environment: "production"
+
+active_components:
+  face_model: "arcface_standard"
+  camera: "local_webcam"
+
+models:
+  dlib_standard:
+    module: "plugins.models.dlib_plugin"
+    class: "DlibFaceModel"
+    params:
+      shape_predictor_path: "models/shape_predictor_68_face_landmarks.dat"
+      recognition_model_path: "models/dlib_face_recognition_resnet_model_v1.dat"
+      threshold: 0.45
+
+  arcface_standard:
+    module: "plugins.models.arcface_plugin"
+    class: "ArcFaceModel"
+    params:
+      det_size: [640, 640]
+      providers: ["CPUExecutionProvider"]
+
+cameras:
+  local_webcam:
+    module: "plugins.cameras.webcam_plugin"
+    class: "WebcamSource"
+    params:
+      device_id: 0
+      width: 640
+      height: 480

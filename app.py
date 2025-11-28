@@ -8,10 +8,28 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 import face_utils
 import numpy as np
-from surveillance_system import VideoCamera
+# from surveillance_system import VideoCamera # Deprecated
+from core.plugin_manager import PluginManager
+from core.surveillance_engine import SurveillanceEngine
+import yaml
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey_fallback_change_in_prod')
+
+# Initialize Modular System
+pm = PluginManager()
+config_path = os.path.join("config", "config.yaml")
+if os.path.exists(config_path):
+    with open(config_path, 'r') as f:
+        sys_config = yaml.safe_load(f)
+        try:
+            # Only initialize model at startup (takes time to load)
+            # Camera will be initialized on demand to keep light off
+            pm.initialize_model(sys_config)
+        except Exception as e:
+            print(f"Modular Init Error: {e}")
+else:
+    print("Config file missing!")
 
 # Configuration
 UPLOAD_FOLDER = 'data/images'
@@ -123,9 +141,10 @@ def missing_dashboard():
 
 @app.route('/surveillance')
 def surveillance_dashboard():
-    global camera_instance
-    camera_active = camera_instance is not None
-    camera_mode = camera_instance.mode if camera_active else None
+    global surveillance_engine
+    camera_active = surveillance_engine is not None
+    # We don't strictly track mode in the engine, so we'll assume 'active' if running
+    camera_mode = 'active' if camera_active else None
     return render_template('surveillance.html', camera_active=camera_active, camera_mode=camera_mode)
 
 @app.route('/surveillance/view/<db_type>')
@@ -676,7 +695,7 @@ def view_alert(person_id):
         return redirect(url_for('alerts_dashboard'))
 
 # Surveillance Stream Logic
-camera_instance = None
+surveillance_engine = None
 
 @app.route('/api/surveillance/check_targets/<mode>')
 def check_targets(mode):
@@ -710,38 +729,51 @@ def check_targets(mode):
 
 @app.route('/start_surveillance_background/<mode>')
 def start_surveillance_background(mode):
-    global camera_instance
+    global surveillance_engine
     update_surveillance_list()
     
-    if camera_instance is None:
-        camera_instance = VideoCamera(mode=mode)
+    # Initialize camera if not active
+    if pm.active_camera is None:
+        pm.initialize_camera(sys_config)
+    
+    if surveillance_engine is None:
+        surveillance_engine = SurveillanceEngine(pm, sys_config)
     else:
-        # Reuse existing instance, just update mode
-        camera_instance.set_mode(mode)
+        # Reload targets if needed
+        surveillance_engine.load_targets()
         
     flash(f'Surveillance started in background for {mode} targets.')
     return redirect(url_for('surveillance_dashboard'))
 
 @app.route('/start_surveillance_stream/<mode>')
 def start_surveillance_stream(mode):
-    global camera_instance
+    global surveillance_engine
     # Ensure surveillance list is up to date
     update_surveillance_list()
     
-    if camera_instance is None:
-        camera_instance = VideoCamera(mode=mode)
+    # Initialize camera if not active
+    if pm.active_camera is None:
+        pm.initialize_camera(sys_config)
+    
+    if surveillance_engine is None:
+        surveillance_engine = SurveillanceEngine(pm, sys_config)
     else:
-        # Reuse existing instance, just update mode
-        camera_instance.set_mode(mode)
+        surveillance_engine.load_targets()
         
     return render_template('stream_view.html', mode=mode)
 
 @app.route('/stop_surveillance_stream')
 def stop_surveillance_stream():
-    global camera_instance
-    if camera_instance:
-        camera_instance.stop() # Explicitly stop the thread/camera
-        camera_instance = None
+    global surveillance_engine
+    if surveillance_engine:
+        surveillance_engine.stop()
+        surveillance_engine = None
+        
+    # Release camera resource to turn off light
+    if pm.active_camera:
+        pm.active_camera.shutdown()
+        pm.active_camera = None
+        
     return redirect(url_for('surveillance_dashboard'))
 
 def get_placeholder_frame():
@@ -750,12 +782,12 @@ def get_placeholder_frame():
     ret, jpeg = cv2.imencode('.jpg', img)
     return jpeg.tobytes()
 
-def gen(camera):
+def gen(engine):
     while True:
-        if camera.stopped:
+        if engine.stopped:
             break
             
-        frame = camera.get_frame()
+        frame = engine.get_frame()
         if frame:
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
@@ -767,12 +799,10 @@ def gen(camera):
 
 @app.route('/video_feed')
 def video_feed():
-    global camera_instance
-    if camera_instance is None:
-        # Try to start with default 'both' if accessed directly, or show error
-        # For safety, let's just return error image or text
+    global surveillance_engine
+    if surveillance_engine is None:
         return "Surveillance not started", 404
-    return Response(gen(camera_instance),
+    return Response(gen(surveillance_engine),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/system_alerts')
