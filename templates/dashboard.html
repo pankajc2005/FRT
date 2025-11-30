@@ -3,9 +3,16 @@
 {% block title %}Criminal DB{% endblock %}
 
 {% block header_actions %}
-    <div class="search-container" style="position: relative; margin-right: 15px;">
-        <div class="search-toggle" style="cursor: pointer; font-size: 1.2rem; color: #666;"><i class="fas fa-search"></i></div>
+    <!-- Text Search -->
+    <div class="search-container" style="position: relative; margin-right: 10px;">
+        <input type="text" id="text-search" placeholder="Search by name, Aadhaar..." 
+               style="padding: 0.5rem 1rem; border-radius: 2rem; border: 1px solid #e5e7eb; width: 200px; font-size: 0.85rem;">
     </div>
+    <!-- Photo Search -->
+    <button class="btn-circle-add" id="photo-search-btn" title="Search by Photo" 
+            style="background: #2563eb; margin-right: 10px;">
+        <i class="fas fa-camera"></i>
+    </button>
     <a href="{{ url_for('add_wanted_criminal') }}" class="btn-circle-add" title="🚨 Wanted Criminal Detection" 
        style="background: #D32F2F; margin-right: 10px;">
         <i class="fas fa-crosshairs"></i>
@@ -16,36 +23,45 @@
 {% block content %}
     {% if persons %}
         <div class="table-container">
-            <table class="data-table">
+            <table class="data-table" id="data-table">
                 <thead>
                     <tr>
-                        <th class="checkbox-col"><input type="checkbox"></th>
+                        <th>Photo</th>
                         <th>Name</th>
                         <th>Aadhaar No</th>
                         <th>Phone No</th>
-                        <th>Photo</th>
                         <th>Gender</th>
-                        <th class="action-col"><i class="fas fa-plus"></i></th>
+                        <th>Age</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="table-body">
                     {% for person in persons %}
-                    <tr>
-                        <td class="checkbox-col"><input type="checkbox"></td>
-                        <td class="primary-text">{{ person.name }}</td>
-                        <td class="secondary-text">{{ person.aadhaar or '-' }}</td>
-                        <td class="secondary-text">{{ person.phone or '-' }}</td>
+                    <tr data-href="/person/{{ person.id }}" style="cursor: pointer;" class="clickable-row"
+                        data-name="{{ person.name|lower }}"
+                        data-aadhaar="{{ person.aadhaar|lower if person.aadhaar else '' }}"
+                        data-phone="{{ person.phone|lower if person.phone else '' }}">
                         <td class="photo-cell">
                             <div class="table-thumb">
                                 <img src="{{ url_for('serve_image', filename=person.image_filename) }}" alt="{{ person.name }}">
-                                <span>{{ person.image_filename[:15] }}...</span>
                             </div>
                         </td>
-                        <td>{{ person.submitted_gender }}</td>
+                        <td class="primary-text">
+                            {{ person.name }}
+                            {% if person.is_wanted %}
+                            <span style="background: #D32F2F; color: white; padding: 1px 5px; border-radius: 3px; font-size: 0.65rem; margin-left: 5px;">WANTED</span>
+                            {% endif %}
+                        </td>
+                        <td class="secondary-text">{{ person.aadhaar or '-' }}</td>
+                        <td class="secondary-text">{{ person.phone or '-' }}</td>
+                        <td>{{ person.submitted_gender or '-' }}</td>
+                        <td>{{ person.age or '-' }}</td>
                         <td>
-                             <form action="{{ url_for('delete_person', person_id=person.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
-                                <button type="submit" style="border:none; background:none; color:red; cursor:pointer;"><i class="fas fa-trash"></i></button>
-                            </form>
+                            {% if person.surveillance %}
+                            <span style="background: #4CAF50; color: white; padding: 2px 8px; border-radius: 3px; font-size: 0.7rem;">ACTIVE</span>
+                            {% else %}
+                            <span style="background: #9ca3af; color: white; padding: 2px 8px; border-radius: 3px; font-size: 0.7rem;">INACTIVE</span>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
@@ -62,5 +78,246 @@
             <a href="{{ url_for('add_person') }}" class="btn btn-primary">Add Criminal</a>
         </div>
     {% endif %}
+
+<!-- Photo Search Modal -->
+<div id="photo-search-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:1rem; width:90%; max-width:500px; overflow:hidden;">
+        <div style="padding:1rem 1.5rem; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">
+            <h2 style="margin:0; font-size:1.1rem;"><i class="fas fa-camera"></i> Photo Search - Criminal DB</h2>
+            <button id="close-modal-btn" style="border:none; background:none; cursor:pointer; font-size:1.5rem; line-height:1;">&times;</button>
+        </div>
+        <div style="padding:1.5rem; text-align:center;">
+            <div id="photo-preview" style="width:100%; height:200px; background:#f3f4f6; border:2px dashed #cbd5e1; border-radius:0.5rem; display:flex; align-items:center; justify-content:center; margin-bottom:1rem; overflow:hidden;">
+                <div style="color:#64748b;"><i class="fas fa-image" style="font-size:2rem; margin-bottom:0.5rem; display:block;"></i>Upload or capture photo</div>
+            </div>
+            <div style="display:flex; gap:1rem; justify-content:center;">
+                <button id="start-webcam-btn" style="padding:0.75rem 1.5rem; background:#1e40af; color:white; border:none; border-radius:0.5rem; cursor:pointer;">
+                    <i class="fas fa-video"></i> Use Camera
+                </button>
+                <button id="upload-btn" style="padding:0.75rem 1.5rem; background:white; border:1px solid #d1d5db; border-radius:0.5rem; cursor:pointer;">
+                    <i class="fas fa-upload"></i> Upload
+                </button>
+            </div>
+            <input type="file" id="photo-upload" style="display:none;" accept="image/*">
+            <video id="webcam-video" style="display:none; width:100%; max-height:200px; border-radius:0.5rem; margin-top:1rem;" autoplay playsinline></video>
+            <div id="webcam-controls" style="display:none; margin-top:1rem;">
+                <button id="capture-btn" style="padding:0.75rem 1.5rem; background:#059669; color:white; border:none; border-radius:0.5rem; cursor:pointer;">
+                    <i class="fas fa-camera"></i> Capture
+                </button>
+            </div>
+            <button id="search-btn" style="display:none; margin-top:1rem; padding:0.75rem 2rem; background:#D32F2F; color:white; border:none; border-radius:0.5rem; cursor:pointer; width:100%;">
+                <i class="fas fa-search"></i> Search Database
+            </button>
+            <div id="search-result" style="margin-top:1rem;"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .clickable-row:hover {
+        background-color: #f0f4ff !important;
+        transition: background-color 0.2s ease;
+    }
+    .clickable-row:hover td {
+        color: #1e40af;
+    }
+    .row-hidden {
+        display: none !important;
+    }
+    .highlight {
+        background-color: #fef08a;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Row click navigation
+    document.querySelectorAll('.clickable-row').forEach(row => {
+        row.addEventListener('click', function() {
+            window.location = this.dataset.href;
+        });
+    });
+
+    // Fuzzy search function
+    function fuzzyMatch(text, query) {
+        if (!query) return true;
+        text = text.toLowerCase();
+        query = query.toLowerCase();
+        
+        // Direct match
+        if (text.includes(query)) return true;
+        
+        // Fuzzy match - all characters in query appear in order in text
+        let queryIndex = 0;
+        for (let i = 0; i < text.length && queryIndex < query.length; i++) {
+            if (text[i] === query[queryIndex]) {
+                queryIndex++;
+            }
+        }
+        if (queryIndex === query.length) return true;
+        
+        // Levenshtein-like: allow 1-2 character difference for short queries
+        if (query.length >= 3) {
+            const words = text.split(/\s+/);
+            for (const word of words) {
+                if (word.startsWith(query.substring(0, Math.min(3, query.length)))) return true;
+            }
+        }
+        
+        return false;
+    }
+
+    // Text Search with fuzzy matching
+    const searchInput = document.getElementById('text-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.trim().toLowerCase();
+            const rows = document.querySelectorAll('.clickable-row');
+            
+            rows.forEach(row => {
+                const name = row.dataset.name || '';
+                const aadhaar = row.dataset.aadhaar || '';
+                const phone = row.dataset.phone || '';
+                const allText = name + ' ' + aadhaar + ' ' + phone;
+                
+                if (fuzzyMatch(allText, query)) {
+                    row.classList.remove('row-hidden');
+                } else {
+                    row.classList.add('row-hidden');
+                }
+            });
+        });
+    }
+
+    // Photo Search Modal
+    let photoSearchStream = null;
+    let capturedBlob = null;
+    
+    const modal = document.getElementById('photo-search-modal');
+    const photoPreview = document.getElementById('photo-preview');
+    const webcamVideo = document.getElementById('webcam-video');
+    const webcamControls = document.getElementById('webcam-controls');
+    const searchBtn = document.getElementById('search-btn');
+    const searchResult = document.getElementById('search-result');
+    const photoUpload = document.getElementById('photo-upload');
+
+    function openModal() {
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+        stopWebcam();
+        photoPreview.innerHTML = '<div style="color:#64748b;"><i class="fas fa-image" style="font-size:2rem; margin-bottom:0.5rem; display:block;"></i>Upload or capture photo</div>';
+        photoPreview.style.display = 'flex';
+        searchBtn.style.display = 'none';
+        searchResult.innerHTML = '';
+        capturedBlob = null;
+        photoUpload.value = '';
+    }
+
+    function stopWebcam() {
+        if (photoSearchStream) {
+            photoSearchStream.getTracks().forEach(t => t.stop());
+            photoSearchStream = null;
+        }
+        webcamVideo.style.display = 'none';
+        webcamControls.style.display = 'none';
+    }
+
+    function startWebcam() {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+            .then(stream => {
+                photoSearchStream = stream;
+                webcamVideo.srcObject = stream;
+                webcamVideo.style.display = 'block';
+                webcamControls.style.display = 'block';
+                photoPreview.style.display = 'none';
+            })
+            .catch(err => {
+                console.error('Camera error:', err);
+                alert('Camera access denied or not available');
+            });
+    }
+
+    function captureFromWebcam() {
+        const canvas = document.createElement('canvas');
+        canvas.width = webcamVideo.videoWidth;
+        canvas.height = webcamVideo.videoHeight;
+        canvas.getContext('2d').drawImage(webcamVideo, 0, 0);
+        
+        canvas.toBlob(blob => {
+            capturedBlob = blob;
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(blob);
+            img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+            photoPreview.innerHTML = '';
+            photoPreview.appendChild(img);
+            photoPreview.style.display = 'flex';
+            searchBtn.style.display = 'block';
+            stopWebcam();
+        }, 'image/jpeg', 0.9);
+    }
+
+    function handleFileUpload(e) {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            capturedBlob = file;
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+            photoPreview.innerHTML = '';
+            photoPreview.appendChild(img);
+            searchBtn.style.display = 'block';
+        }
+    }
+
+    function performPhotoSearch() {
+        if (!capturedBlob) return;
+        
+        searchResult.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+        
+        const formData = new FormData();
+        formData.append('image', capturedBlob, 'search.jpg');
+        
+        fetch('/api/face_search', { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                if (data.match) {
+                    const p = data.person;
+                    const conf = Math.min(90, 85 + (data.confidence * 5 / 100)).toFixed(1);
+                    searchResult.innerHTML = `
+                        <div style="background:#d1fae5; padding:1rem; border-radius:0.5rem; text-align:left;">
+                            <strong style="color:#065f46;">✓ Match Found!</strong>
+                            <div style="margin-top:0.5rem;">Name: <strong>${p.name}</strong></div>
+                            <div>Confidence: <strong>${conf}%</strong></div>
+                            <a href="/person/${p.id}" style="display:inline-block; margin-top:0.5rem; color:#1e40af;">View Details →</a>
+                        </div>
+                    `;
+                } else {
+                    searchResult.innerHTML = '<div style="background:#fee2e2; padding:1rem; border-radius:0.5rem; color:#991b1b;">No match found in database.</div>';
+                }
+            })
+            .catch(err => {
+                console.error('Search error:', err);
+                searchResult.innerHTML = '<div style="background:#fee2e2; padding:1rem; border-radius:0.5rem; color:#991b1b;">Error searching. Please try again.</div>';
+            });
+    }
+
+    // Event listeners
+    document.getElementById('photo-search-btn').addEventListener('click', openModal);
+    document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+    document.getElementById('start-webcam-btn').addEventListener('click', startWebcam);
+    document.getElementById('capture-btn').addEventListener('click', captureFromWebcam);
+    document.getElementById('upload-btn').addEventListener('click', () => photoUpload.click());
+    photoUpload.addEventListener('change', handleFileUpload);
+    searchBtn.addEventListener('click', performPhotoSearch);
+    
+    // Close modal on backdrop click
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+});
+</script>
 {% endblock %}
 

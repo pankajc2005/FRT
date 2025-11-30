@@ -215,7 +215,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -230,7 +230,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -245,7 +245,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -260,7 +260,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -275,7 +275,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -290,7 +290,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -305,7 +305,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -320,7 +320,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -335,7 +335,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -350,7 +350,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -365,7 +365,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -380,7 +380,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -395,7 +395,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -410,7 +410,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -425,7 +425,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -440,7 +440,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -455,7 +455,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -470,7 +470,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -485,7 +485,7 @@
       "lat": 19.0953,
       "lng": 72.8109
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -500,7 +500,7 @@
       "lat": 19.1075,
       "lng": 72.8372
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -516,7 +516,7 @@
       "lng": 72.8372,
       "name": "DJ Sanghvi College"
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -532,7 +532,7 @@
       "lng": 72.8372,
       "name": "DJ Sanghvi College"
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -548,7 +548,7 @@
       "lng": 72.8372,
       "name": "DJ Sanghvi College"
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -564,7 +564,7 @@
       "lng": 72.8372,
       "name": "DJ Sanghvi College"
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -580,7 +580,7 @@
       "lng": 72.8372,
       "name": "DJ Sanghvi College"
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -596,7 +596,7 @@
       "lng": 72.8372,
       "name": "DJ Sanghvi College"
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -606,7 +606,7 @@
     "title": "\ud83d\udea8 WANTED CRIMINAL ADDED",
     "message": "Wanted criminal 'Pankaj Chavan' added to database with highest priority surveillance.",
     "person_id": "wanted-pankaj-chavan-0b659bbb",
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -618,7 +618,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 55.97,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -630,7 +630,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 58.88,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -642,7 +642,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 51.02,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -654,7 +654,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 62.89,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -666,7 +666,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 42.73,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -678,7 +678,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 50.52,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -690,7 +690,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 60.54,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -702,7 +702,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 64.88,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -714,7 +714,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 64.84,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -726,7 +726,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 62.36,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -738,7 +738,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 59.12,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -750,7 +750,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 65.25,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -762,7 +762,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 62.73,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -774,7 +774,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 66.88,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -786,7 +786,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 77.44,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -798,7 +798,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 75.44,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -810,7 +810,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 68.41,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -822,7 +822,7 @@
     "person_id": "wanted-pankaj-chavan-0b659bbb",
     "priority": 1,
     "confidence": 67.82,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -838,7 +838,7 @@
       "lng": 72.8372,
       "name": "DJ Sanghvi College"
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -854,7 +854,7 @@
       "lng": 72.8372,
       "name": "DJ Sanghvi College"
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -863,6 +863,76 @@
     "priority": 3,
     "message": "Match detected: Pankaj (100.0% confidence)",
     "person_id": "amit-rajegoankar-3bf84ae7",
+    "read": true
+  },
+  {
+    "id": "1764497122733",
+    "timestamp": "2025-11-30T10:05:22.734011Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 57.8% confidence.",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "priority": 1,
+    "confidence": 57.83,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764497129162",
+    "timestamp": "2025-11-30T10:05:29.162371Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 60.4% confidence.",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "priority": 1,
+    "confidence": 60.4,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764497136160",
+    "timestamp": "2025-11-30T10:05:36.160741Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 62.3% confidence.",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "priority": 1,
+    "confidence": 62.34,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "09cb7036-d343-4c12-84e2-c70458c351c0",
+    "timestamp": "2025-11-30T10:12:23.588970Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Vile Parle Police Station.",
+    "location": "DJ Sanghvi College",
+    "destination": "Vile Parle Police Station",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372,
+      "name": "DJ Sanghvi College"
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "b7213e4d-fb4c-430c-8103-1b7effe1e894",
+    "timestamp": "2025-11-30T11:15:56.329850Z",
+    "type": "wanted_added",
+    "title": "\ud83d\udea8 WANTED CRIMINAL ADDED",
+    "message": "Wanted criminal 'Pankaj Chavan' added to database with highest priority surveillance.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "timestamp": "2025-11-30T11:23:19.938841Z",
+    "type": "match",
+    "priority": 1,
+    "message": "Match detected: Pankaj Chavan (100.0% confidence)",
+    "person_id": "pankaj-chavan-16b6f1a3",
     "read": false
   }
 ]

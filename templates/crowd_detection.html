@@ -1,0 +1,500 @@
+{% extends "layout.html" %}
+
+{% block title %}Crowd Detection{% endblock %}
+
+{% block header_actions %}
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <span style="background: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; animation: pulse 2s infinite;">
+            <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 5px;"></i> LIVE MONITORING
+        </span>
+        <button class="btn-circle-add" onclick="toggleCrowdDetection()" id="toggle-btn" title="Stop Monitoring" style="background: #ef4444;">
+            <i class="fas fa-stop"></i>
+        </button>
+    </div>
+{% endblock %}
+
+{% block content %}
+<style>
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+    }
+    
+    .crowd-container {
+        padding: 1rem;
+        height: calc(100vh - 120px);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        background: #f3f4f6;
+    }
+    
+    .crowd-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .crowd-stats {
+        display: flex;
+        gap: 2rem;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+        color: #6b7280;
+        text-transform: uppercase;
+    }
+    
+    .crowd-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1rem;
+        flex: 1;
+        overflow: hidden;
+    }
+    
+    .camera-feeds {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .feeds-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .feeds-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        padding: 0.5rem;
+        flex: 1;
+        overflow-y: auto;
+    }
+    
+    .feed-card {
+        position: relative;
+        background: #1f2937;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        aspect-ratio: 16/9;
+    }
+    
+    .feed-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .feed-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        padding: 0.75rem;
+        color: white;
+    }
+    
+    .feed-location {
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .feed-count {
+        font-size: 0.7rem;
+        opacity: 0.8;
+    }
+    
+    .density-badge {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+    
+    .density-low { background: #22c55e; color: white; }
+    .density-medium { background: #f59e0b; color: white; }
+    .density-high { background: #ef4444; color: white; }
+    .density-critical { background: #7c3aed; color: white; animation: pulse 1s infinite; }
+    
+    .alerts-panel {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    .alerts-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .alerts-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+    
+    .alert-item {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #f3f4f6;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .alert-item:hover {
+        background: #f9fafb;
+    }
+    
+    .alert-item.critical {
+        background: #fef2f2;
+        border-left: 3px solid #ef4444;
+    }
+    
+    .alert-time {
+        font-size: 0.7rem;
+        color: #9ca3af;
+    }
+    
+    .alert-title {
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0.25rem 0;
+        font-size: 0.9rem;
+    }
+    
+    .alert-location {
+        font-size: 0.8rem;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .alert-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.5rem;
+    }
+    
+    .crowd-count-badge {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .view-btn {
+        font-size: 0.75rem;
+        color: #1e40af;
+        text-decoration: none;
+    }
+    
+    .map-container {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .crowd-grid {
+            grid-template-columns: 1fr;
+        }
+        .feeds-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="crowd-container">
+    <!-- Stats Header -->
+    <div class="crowd-header">
+        <div>
+            <h2 style="margin: 0; font-size: 1.2rem; color: #1f2937;">
+                <i class="fas fa-users" style="color: #7c3aed;"></i> Crowd Detection Dashboard
+            </h2>
+            <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #6b7280;">
+                Real-time crowd monitoring across all camera feeds
+            </p>
+        </div>
+        <div class="crowd-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="total-cameras">4</div>
+                <div class="stat-label">Active Cameras</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="total-people" style="color: #7c3aed;">247</div>
+                <div class="stat-label">People Detected</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="alerts-count" style="color: #ef4444;">3</div>
+                <div class="stat-label">Active Alerts</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="avg-density">62%</div>
+                <div class="stat-label">Avg Density</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Grid -->
+    <div class="crowd-grid">
+        <!-- Camera Feeds -->
+        <div class="camera-feeds">
+            <div class="feeds-header">
+                <h3 style="margin: 0; font-size: 1rem;"><i class="fas fa-video"></i> Live Camera Feeds</h3>
+                <select style="padding: 0.25rem 0.5rem; border-radius: 0.25rem; border: 1px solid #d1d5db; font-size: 0.8rem;">
+                    <option>All Cameras</option>
+                    <option>High Density Only</option>
+                    <option>Alerts Only</option>
+                </select>
+            </div>
+            <div class="feeds-grid">
+                <!-- Camera 1 - Main Gate -->
+                <div class="feed-card">
+                    <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=225&fit=crop" alt="Crowd at main gate">
+                    <span class="density-badge density-high">HIGH</span>
+                    <div class="feed-overlay">
+                        <div class="feed-location">📍 Main Gate - Entry Point</div>
+                        <div class="feed-count">~85 people detected</div>
+                    </div>
+                </div>
+                
+                <!-- Camera 2 - Market Area -->
+                <div class="feed-card">
+                    <img src="https://images.unsplash.com/photo-1567942712661-82b9b407abbf?w=400&h=225&fit=crop" alt="Market crowd">
+                    <span class="density-badge density-critical">CRITICAL</span>
+                    <div class="feed-overlay">
+                        <div class="feed-location">📍 Vile Parle Market</div>
+                        <div class="feed-count">~120 people detected</div>
+                    </div>
+                </div>
+                
+                <!-- Camera 3 - Station -->
+                <div class="feed-card">
+                    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=225&fit=crop" alt="Station crowd">
+                    <span class="density-badge density-medium">MEDIUM</span>
+                    <div class="feed-overlay">
+                        <div class="feed-location">📍 Vile Parle Station West</div>
+                        <div class="feed-count">~32 people detected</div>
+                    </div>
+                </div>
+                
+                <!-- Camera 4 - Junction -->
+                <div class="feed-card">
+                    <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=225&fit=crop" alt="Junction">
+                    <span class="density-badge density-low">LOW</span>
+                    <div class="feed-overlay">
+                        <div class="feed-location">📍 SV Road Junction</div>
+                        <div class="feed-count">~10 people detected</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alerts Panel -->
+        <div class="alerts-panel">
+            <div class="alerts-header">
+                <h3 style="margin: 0; font-size: 1rem;"><i class="fas fa-bell"></i> Crowd Alerts</h3>
+                <span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">3 NEW</span>
+            </div>
+            <ul class="alerts-list">
+                <li class="alert-item critical">
+                    <div class="alert-time">2 min ago</div>
+                    <div class="alert-title">🚨 Critical Crowd Density</div>
+                    <div class="alert-location">
+                        <i class="fas fa-map-marker-alt"></i> Vile Parle Market
+                    </div>
+                    <div class="alert-meta">
+                        <span class="crowd-count-badge">~120 people</span>
+                        <a href="#" class="view-btn" onclick="viewAlertDetails(1)">View Details →</a>
+                    </div>
+                </li>
+                
+                <li class="alert-item critical">
+                    <div class="alert-time">8 min ago</div>
+                    <div class="alert-title">⚠️ High Crowd Buildup</div>
+                    <div class="alert-location">
+                        <i class="fas fa-map-marker-alt"></i> Main Gate - Entry Point
+                    </div>
+                    <div class="alert-meta">
+                        <span class="crowd-count-badge">~85 people</span>
+                        <a href="#" class="view-btn" onclick="viewAlertDetails(2)">View Details →</a>
+                    </div>
+                </li>
+                
+                <li class="alert-item">
+                    <div class="alert-time">15 min ago</div>
+                    <div class="alert-title">📊 Crowd Surge Detected</div>
+                    <div class="alert-location">
+                        <i class="fas fa-map-marker-alt"></i> Vile Parle Station West
+                    </div>
+                    <div class="alert-meta">
+                        <span class="crowd-count-badge" style="background: #fef3c7; color: #92400e;">~45 people</span>
+                        <a href="#" class="view-btn" onclick="viewAlertDetails(3)">View Details →</a>
+                    </div>
+                </li>
+                
+                <li class="alert-item">
+                    <div class="alert-time">32 min ago</div>
+                    <div class="alert-title">✓ Crowd Dispersed</div>
+                    <div class="alert-location">
+                        <i class="fas fa-map-marker-alt"></i> Irla Bridge
+                    </div>
+                    <div class="alert-meta">
+                        <span style="color: #059669; font-size: 0.75rem;">Resolved</span>
+                        <a href="#" class="view-btn" onclick="viewAlertDetails(4)">View Details →</a>
+                    </div>
+                </li>
+                
+                <li class="alert-item">
+                    <div class="alert-time">1 hour ago</div>
+                    <div class="alert-title">📍 Gathering Detected</div>
+                    <div class="alert-location">
+                        <i class="fas fa-map-marker-alt"></i> Near NMIMS College
+                    </div>
+                    <div class="alert-meta">
+                        <span style="color: #059669; font-size: 0.75rem;">Resolved</span>
+                        <a href="#" class="view-btn" onclick="viewAlertDetails(5)">View Details →</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Alert Detail Modal -->
+<div id="alert-detail-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:1rem; width:90%; max-width:700px; max-height:90vh; overflow:hidden;">
+        <div style="padding:1rem 1.5rem; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; background:#7c3aed; color:white;">
+            <h2 style="margin:0; font-size:1.1rem;"><i class="fas fa-exclamation-triangle"></i> Crowd Alert Details</h2>
+            <button onclick="closeAlertModal()" style="border:none; background:none; cursor:pointer; font-size:1.5rem; color:white;">&times;</button>
+        </div>
+        <div style="padding:1.5rem; overflow-y:auto; max-height:calc(90vh - 60px);">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div>
+                    <h4 style="margin:0 0 0.5rem; color:#6b7280; font-size:0.8rem;">CAPTURE FRAME</h4>
+                    <img id="alert-capture" src="https://images.unsplash.com/photo-1567942712661-82b9b407abbf?w=600&h=400&fit=crop" 
+                         style="width:100%; border-radius:0.5rem; border:2px solid #e5e7eb;">
+                </div>
+                <div>
+                    <h4 style="margin:0 0 0.5rem; color:#6b7280; font-size:0.8rem;">LOCATION MAP</h4>
+                    <div style="width:100%; height:200px; background:#e5e7eb; border-radius:0.5rem; display:flex; align-items:center; justify-content:center; position:relative;">
+                        <img src="https://maps.googleapis.com/maps/api/staticmap?center=19.1075,72.8365&zoom=16&size=400x200&markers=color:red%7C19.1075,72.8365&key=placeholder" 
+                             style="width:100%; height:100%; object-fit:cover; border-radius:0.5rem;"
+                             onerror="this.style.display='none'">
+                        <div style="position:absolute; text-align:center; color:#6b7280;">
+                            <i class="fas fa-map-marker-alt" style="font-size:2rem; color:#ef4444;"></i>
+                            <p style="margin:0.5rem 0 0; font-size:0.85rem;">Vile Parle Market<br>19.1075° N, 72.8365° E</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem; margin-bottom:1.5rem;">
+                <div style="background:#f3f4f6; padding:1rem; border-radius:0.5rem; text-align:center;">
+                    <div style="font-size:1.5rem; font-weight:700; color:#7c3aed;">~120</div>
+                    <div style="font-size:0.75rem; color:#6b7280;">People Detected</div>
+                </div>
+                <div style="background:#fef2f2; padding:1rem; border-radius:0.5rem; text-align:center;">
+                    <div style="font-size:1.5rem; font-weight:700; color:#ef4444;">92%</div>
+                    <div style="font-size:0.75rem; color:#6b7280;">Density Level</div>
+                </div>
+                <div style="background:#f3f4f6; padding:1rem; border-radius:0.5rem; text-align:center;">
+                    <div style="font-size:1.5rem; font-weight:700; color:#1f2937;">16:42</div>
+                    <div style="font-size:0.75rem; color:#6b7280;">Detection Time</div>
+                </div>
+                <div style="background:#f3f4f6; padding:1rem; border-radius:0.5rem; text-align:center;">
+                    <div style="font-size:1.5rem; font-weight:700; color:#f59e0b;">+35</div>
+                    <div style="font-size:0.75rem; color:#6b7280;">Last 10 Min</div>
+                </div>
+            </div>
+            
+            <div style="background:#fef2f2; border:1px solid #ef4444; border-radius:0.5rem; padding:1rem; margin-bottom:1rem;">
+                <h4 style="margin:0 0 0.5rem; color:#991b1b;"><i class="fas fa-exclamation-circle"></i> Risk Assessment</h4>
+                <p style="margin:0; font-size:0.9rem; color:#7f1d1d;">
+                    Critical crowd density detected. Risk of stampede or crowd crush. Immediate crowd management recommended.
+                </p>
+            </div>
+            
+            <div style="display:flex; gap:1rem;">
+                <button style="flex:1; padding:0.75rem; background:#ef4444; color:white; border:none; border-radius:0.5rem; cursor:pointer; font-weight:600;">
+                    <i class="fas fa-bullhorn"></i> Dispatch Alert
+                </button>
+                <button style="flex:1; padding:0.75rem; background:#1e40af; color:white; border:none; border-radius:0.5rem; cursor:pointer; font-weight:600;">
+                    <i class="fas fa-phone"></i> Call Control Room
+                </button>
+                <button onclick="closeAlertModal()" style="flex:1; padding:0.75rem; background:#e5e7eb; color:#374151; border:none; border-radius:0.5rem; cursor:pointer; font-weight:600;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Simulate live updates
+setInterval(() => {
+    const people = 200 + Math.floor(Math.random() * 100);
+    document.getElementById('total-people').textContent = people;
+    document.getElementById('avg-density').textContent = (50 + Math.floor(Math.random() * 30)) + '%';
+}, 3000);
+
+function toggleCrowdDetection() {
+    if (confirm('Stop crowd detection monitoring?')) {
+        window.location.href = '/';
+    }
+}
+
+function viewAlertDetails(alertId) {
+    document.getElementById('alert-detail-modal').style.display = 'flex';
+}
+
+function closeAlertModal() {
+    document.getElementById('alert-detail-modal').style.display = 'none';
+}
+
+// Close modal on backdrop click
+document.getElementById('alert-detail-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeAlertModal();
+});
+</script>
+{% endblock %}

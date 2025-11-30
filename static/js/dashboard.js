@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initClock();
     initActivityPoll();
     initStatusPoll();
-    setupSearch();
+    initSurveillanceResults();
     setupModals();
     setupFileUpload();
 });
@@ -93,23 +93,92 @@ function initStatusPoll() {
     setInterval(checkStatus, 10000);
 }
 
-// 4. Search Functionality
-function setupSearch() {
-    const searchInput = document.getElementById('dashboard-search');
-    if (!searchInput) return;
+// 4. Surveillance Results (Recognition Results Table)
+function initSurveillanceResults() {
+    fetchSurveillanceResults();
+    // Poll every 10 seconds
+    setInterval(fetchSurveillanceResults, 10000);
+}
 
-    let debounceTimer;
-    searchInput.addEventListener('input', (e) => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            const query = e.target.value;
-            if (query.length > 2) {
-                // Perform search
-                console.log('Searching for:', query);
-                // In a real app, this would filter the table or show a dropdown
+function fetchSurveillanceResults() {
+    const resultsTable = document.getElementById('results-table-body');
+    if (!resultsTable) return;
+    
+    fetch('/api/surveillance_results')
+        .then(res => res.json())
+        .then(data => {
+            if (data.length === 0) {
+                resultsTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: #9ca3af;">
+                            <i class="fas fa-video" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                            No surveillance detections yet. Start surveillance to monitor.
+                        </td>
+                    </tr>
+                `;
+                return;
             }
-        }, 300);
-    });
+            
+            resultsTable.innerHTML = '';
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                // Determine source badge color
+                let sourceClass = item.source === 'Surveillance' ? 'risk-medium' : 'risk-low';
+                if (item.db_type === 'criminal') sourceClass = 'risk-high';
+                
+                // Priority indicator
+                let priorityBadge = '';
+                if (item.priority === 1) {
+                    priorityBadge = '<span style="color:#D32F2F; font-size:0.7rem; margin-left:3px;" title="Priority 1 - Critical">🔴</span>';
+                }
+                
+                tr.innerHTML = `
+                    <td>
+                        <img src="/data/images/${item.image}" 
+                             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;"
+                             onerror="this.src='/static/default-avatar.png'">
+                    </td>
+                    <td>
+                        <div style="font-weight: 600;">${item.name}${priorityBadge}</div>
+                        <div style="font-size: 0.7rem; color: #6b7280;">${item.db_type.toUpperCase()}</div>
+                    </td>
+                    <td>
+                        <span class="match-score">${item.confidence}%</span>
+                    </td>
+                    <td>
+                        <span class="risk-badge ${sourceClass}" style="font-size: 0.7rem;">${item.source}</span>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.85rem;">${item.time}</div>
+                        <div style="font-size: 0.7rem; color: #9ca3af;">${item.date}</div>
+                    </td>
+                    <td>
+                        <a href="/alert/${item.id}" class="btn-dashboard btn-outline" style="padding: 0.25rem 0.5rem; text-decoration:none; font-size: 0.8rem;">
+                            View
+                        </a>
+                    </td>
+                `;
+                resultsTable.appendChild(tr);
+            });
+        })
+        .catch(err => {
+            console.error('Surveillance results fetch failed', err);
+            resultsTable.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #9ca3af;">
+                        <i class="fas fa-video" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                        No surveillance detections. Use camera to search manually.
+                    </td>
+                </tr>
+            `;
+        });
+}
+
+function refreshSurveillanceResults() {
+    const resultsTable = document.getElementById('results-table-body');
+    resultsTable.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;"><i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; color: #3b82f6;"></i><div style="margin-top: 0.5rem;">Refreshing...</div></td></tr>';
+    fetchSurveillanceResults();
 }
 
 // 5. Modals
@@ -252,53 +321,60 @@ function performFaceSearch(formData) {
             const rawConf = data.confidence || 0;
             const scaledConf = Math.min(90, 85 + (rawConf * 5 / 100)).toFixed(1);
             
-            // Determine risk based on person type
-            let riskClass = 'risk-medium';
-            let riskLabel = 'MEDIUM';
+            // Determine source badge
+            let sourceClass = 'risk-low';
+            let sourceLabel = 'Manual';
             if (person.is_wanted || person.db_type === 'criminal') {
-                riskClass = 'risk-high';
-                riskLabel = 'HIGH';
+                sourceClass = 'risk-high';
             } else if (person.db_type === 'missing') {
-                riskClass = 'risk-medium';
-                riskLabel = 'MISSING';
+                sourceClass = 'risk-medium';
+            }
+            
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
+            
+            // Priority indicator
+            let priorityBadge = '';
+            if (person.priority === 1 || person.is_wanted) {
+                priorityBadge = '<span style="color:#D32F2F; font-size:0.7rem; margin-left:3px;" title="Priority 1 - Critical">🔴</span>';
             }
             
             resultsTable.innerHTML = `
-                <tr>
+                <tr style="background: #fef3c7;">
                     <td>
                         <img src="/data/images/${person.image_filename}" 
                              style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;"
                              onerror="this.src='/static/default-avatar.png'">
                     </td>
                     <td>
-                        <div style="font-weight: 600;">${person.name}</div>
-                        <div style="font-size: 0.75rem; color: #6b7280;">ID: ${person.id.substring(0,8)}</div>
+                        <div style="font-weight: 600;">${person.name}${priorityBadge}</div>
+                        <div style="font-size: 0.7rem; color: #6b7280;">${(person.db_type || 'CRIMINAL').toUpperCase()}</div>
                     </td>
                     <td>
                         <span class="match-score">${scaledConf}%</span>
                     </td>
                     <td>
-                        <span class="risk-badge ${riskClass}">${riskLabel}</span>
+                        <span class="risk-badge ${sourceClass}" style="font-size: 0.7rem;">${sourceLabel}</span>
                     </td>
                     <td>
-                        <div style="font-size: 0.85rem;">${person.submitted_gender || '-'} / ${person.age || '-'}y</div>
+                        <div style="font-size: 0.85rem;">${timeStr}</div>
+                        <div style="font-size: 0.7rem; color: #9ca3af;">${dateStr}</div>
                     </td>
                     <td>
-                        <a href="/person/${person.id}" class="btn-dashboard btn-outline" style="padding: 0.25rem 0.5rem; text-decoration:none;">
+                        <a href="/person/${person.id}" class="btn-dashboard btn-outline" style="padding: 0.25rem 0.5rem; text-decoration:none; font-size: 0.8rem;">
                             View
                         </a>
                     </td>
                 </tr>
             `;
             
-            // Update query time
-            document.getElementById('query-time').textContent = new Date().toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit'
-            });
+            // Refresh surveillance results after 2 seconds to show combined view
+            setTimeout(fetchSurveillanceResults, 2000);
         } else {
             resultsTable.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color: #9ca3af;"><i class="fas fa-user-slash" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>${data.message || 'No match found in database.'}</td></tr>`;
+            // Refresh to show any surveillance results
+            setTimeout(fetchSurveillanceResults, 2000);
         }
     })
     .catch(err => {

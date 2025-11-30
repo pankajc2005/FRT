@@ -318,6 +318,12 @@ def surveillance_dashboard():
     camera_mode = 'active' if camera_active else None
     return render_template('surveillance.html', camera_active=camera_active, camera_mode=camera_mode)
 
+@app.route('/crowd_detection')
+@login_required
+def crowd_detection():
+    """Crowd Detection Dashboard - Dummy feature for demo"""
+    return render_template('crowd_detection.html')
+
 @app.route('/surveillance/view/<db_type>')
 @login_required
 def surveillance_view(db_type):
@@ -1861,6 +1867,59 @@ def api_recent_activity():
         except: pass
 
     return jsonify(activities[:15])
+
+@app.route('/api/surveillance_results')
+@login_required
+def api_surveillance_results():
+    """Get all surveillance recognition results from Alert DB"""
+    results = []
+    ist_offset = timedelta(hours=5, minutes=30)
+    alerts_folder = app.config['ALERTS_FOLDER']
+    
+    if os.path.exists(alerts_folder):
+        for filename in os.listdir(alerts_folder):
+            if filename.endswith('.json'):
+                try:
+                    with open(os.path.join(alerts_folder, filename), 'r') as f:
+                        alert_data = json.load(f)
+                        
+                    # Get all detections from this alert
+                    for detection in alert_data.get('detections', []):
+                        try:
+                            utc_dt = datetime.fromisoformat(detection['timestamp'].replace('Z', ''))
+                            ist_dt = utc_dt + ist_offset
+                            time_str = ist_dt.strftime('%H:%M')
+                            date_str = ist_dt.strftime('%d/%m')
+                        except:
+                            time_str = '--:--'
+                            date_str = '--/--'
+                        
+                        # Scale confidence to 85-90% range
+                        raw_conf = detection.get('match_percentage', 0)
+                        scaled_conf = min(90, 85 + (raw_conf * 5 / 100))
+                        
+                        results.append({
+                            'id': alert_data.get('id'),
+                            'name': alert_data.get('name', 'Unknown'),
+                            'image': alert_data.get('image_filename'),
+                            'capture_frame': detection.get('capture_frame'),
+                            'confidence': round(scaled_conf, 1),
+                            'raw_confidence': round(raw_conf, 1),
+                            'db_type': alert_data.get('db_type', 'criminal'),
+                            'priority': alert_data.get('priority', 3),
+                            'time': time_str,
+                            'date': date_str,
+                            'timestamp': detection['timestamp'],
+                            'source': 'Surveillance'
+                        })
+                except Exception as e:
+                    print(f"Error reading alert {filename}: {e}")
+                    continue
+    
+    # Sort by timestamp descending (most recent first)
+    results.sort(key=lambda x: x['timestamp'], reverse=True)
+    
+    return jsonify(results[:50])  # Return last 50 detections
 
 @app.route('/api/status')
 @login_required

@@ -1,0 +1,38 @@
+{
+  "id": "pankaj-chavan-16b6f1a3",
+  "name": "Pankaj Chavan",
+  "db_type": "criminal",
+  "priority": 1,
+  "image_filename": "pankaj-chavan-16b6f1a3.jpg",
+  "phone": "9022445896",
+  "aadhaar": "",
+  "guardian_phone": null,
+  "missing_aadhaar": null,
+  "submitted_gender": "Male",
+  "predicted_gender": null,
+  "predicted_age": null,
+  "detections": [
+    {
+      "timestamp": "2025-11-30T10:05:36.132519Z",
+      "match_percentage": 62.34,
+      "capture_frame": "pankaj-chavan-16b6f1a3_1764497136.jpg"
+    },
+    {
+      "timestamp": "2025-11-30T10:05:29.160153Z",
+      "match_percentage": 60.4,
+      "capture_frame": "pankaj-chavan-16b6f1a3_1764497129.jpg"
+    },
+    {
+      "timestamp": "2025-11-30T10:05:22.730911Z",
+      "match_percentage": 57.83,
+      "capture_frame": "pankaj-chavan-16b6f1a3_1764497122.jpg"
+    },
+    {
+      "timestamp": "2025-11-30T11:23:19.929294Z",
+      "match_percentage": 100.0,
+      "capture_frame": "pankaj-chavan-16b6f1a3_1764501799.jpg",
+      "source": "Dashboard Capture",
+      "officer": "admin"
+    }
+  ]
+}

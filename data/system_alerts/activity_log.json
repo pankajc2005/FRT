@@ -150,5 +150,80 @@
     "status": "success",
     "prev_hash": "c56da5cfa5f28d9e5da9c752772f89bcaa16794206016430cc59d3799675a858",
     "hash": "86cf889c0cea0320fd64aa6e3c2798ccb1a032c47b3ab28bb9c880d58289ed8f"
+  },
+  {
+    "id": "83b839e5-d782-4470-ae33-d0dedb9b5c89",
+    "timestamp": "2025-11-30T10:02:41.003592Z",
+    "timestamp_ist": "2025-11-30 15:32:41",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success"
+    },
+    "status": "success",
+    "prev_hash": "86cf889c0cea0320fd64aa6e3c2798ccb1a032c47b3ab28bb9c880d58289ed8f",
+    "hash": "a89014b9abc115af6a22b13edcc120cc1aadcb019e32e33c32f75931951e7fd3"
+  },
+  {
+    "id": "66ae85e5-f04c-4015-8d81-a06d74617637",
+    "timestamp": "2025-11-30T10:04:01.750304Z",
+    "timestamp_ist": "2025-11-30 15:34:01",
+    "action": "PERSON_ADD",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "db_type": "criminal",
+      "priority": 1
+    },
+    "status": "success",
+    "prev_hash": "a89014b9abc115af6a22b13edcc120cc1aadcb019e32e33c32f75931951e7fd3",
+    "hash": "8d8534d3e51ffac7e43ebb58f04d92b0f02991c50bdfbf3b639ac08d7b772a7c"
+  },
+  {
+    "id": "733ff1dc-9d6e-47fa-82ae-6681aeb31b99",
+    "timestamp": "2025-11-30T10:12:47.934798Z",
+    "timestamp_ist": "2025-11-30 15:42:47",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success"
+    },
+    "status": "success",
+    "prev_hash": "8d8534d3e51ffac7e43ebb58f04d92b0f02991c50bdfbf3b639ac08d7b772a7c",
+    "hash": "a0e6f1cc708307cacb69caf53bf5795b53f58f067e7a716ce43e630b66c7a4ae"
+  },
+  {
+    "id": "f639db6f-20bd-45bd-9cfb-bf7c7b246450",
+    "timestamp": "2025-11-30T11:23:19.932804Z",
+    "timestamp_ist": "2025-11-30 16:53:19",
+    "action": "FACE_MATCH",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "confidence": 100.0,
+      "db_type": "criminal",
+      "capture_file": "pankaj-chavan-16b6f1a3_1764501799.jpg"
+    },
+    "status": "success",
+    "prev_hash": "a0e6f1cc708307cacb69caf53bf5795b53f58f067e7a716ce43e630b66c7a4ae",
+    "hash": "37973a7c0b4e95c33aad4a28401e8b6bc8f083bf5b65910582a2fb09b8860a36"
+  },
+  {
+    "id": "d8c190e2-94fe-4e56-bd0d-3c1718c5faf3",
+    "timestamp": "2025-11-30T11:40:00.445399Z",
+    "timestamp_ist": "2025-11-30 17:10:00",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success"
+    },
+    "status": "success",
+    "prev_hash": "37973a7c0b4e95c33aad4a28401e8b6bc8f083bf5b65910582a2fb09b8860a36",
+    "hash": "ba05e316d4488e1309002cb105d3c33ae6635a4950340539467b6d05bdec23cd"
   }
 ]
