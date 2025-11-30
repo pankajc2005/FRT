@@ -2,19 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indian Police Department - Criminal DB</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}Dashboard{% endblock %} - Tri-Netra</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Role badge styles */
+        .role-badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .role-badge.admin { background: #fef2f2; color: #b91c1c; }
+        .role-badge.officer { background: #eff6ff; color: #1e40af; }
+        .role-badge.women { background: #fdf2f8; color: #be185d; }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+        .user-info .username {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        @media (max-width: 768px) {
+            .user-info .username { display: none; }
+            .user-info { padding: 6px 8px; margin-right: 5px; }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <aside class="sidebar">
             <div class="sidebar-header">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/1200px-Emblem_of_India.svg.png" alt="Logo" class="logo">
-                <span>Indian Police Department</span>
+                <span>Indian Police<br>Department</span>
             </div>
             <nav class="sidebar-nav">
+                {% set user_role = current_user.role if current_user.is_authenticated and current_user.role is defined else 'admin' %}
+                
+                {% if user_role == 'officer' %}
+                <!-- Officer Portal Navigation - Limited Access -->
+                <a href="{{ url_for('officer_dashboard') }}" class="nav-item {% if request.endpoint == 'officer_dashboard' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('officer_dashboard') }}#search" class="nav-item" onclick="showSection('search')">
+                    <i class="fas fa-camera"></i>
+                    <span>Photo Search</span>
+                </a>
+                <a href="{{ url_for('officer_dashboard') }}#alerts" class="nav-item" onclick="showSection('alerts')">
+                    <i class="fas fa-bell"></i>
+                    <span>View Alerts</span>
+                </a>
+                {% elif user_role == 'women' %}
+                <!-- Women Portal Navigation -->
+                <a href="{{ url_for('women_dashboard') }}" class="nav-item {% if request.endpoint == 'women_dashboard' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>SOS Alert</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-route"></i>
+                    <span>Safe Routes</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-phone"></i>
+                    <span>Emergency Contacts</span>
+                </a>
+                {% else %}
+                <!-- Admin Portal Navigation - Full Access -->
                 <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
@@ -35,18 +104,25 @@
                     <i class="fas fa-bell"></i>
                     <span>Alert DB</span>
                 </a>
+                <a href="{{ url_for('admin_activity_view') }}" class="nav-item {% if request.endpoint == 'admin_activity_view' %}active{% endif %}">
+                    <i class="fas fa-list-alt"></i>
+                    <span>Activity Log</span>
+                </a>
                 <a href="#" class="nav-item">
                     <i class="fas fa-database"></i>
                     <span>Aadhaar DB</span>
                 </a>
+                {% endif %}
             </nav>
             <div class="sidebar-footer">
+                {% if user_role == 'admin' %}
                 <a href="{{ url_for('system_alerts') }}" class="nav-item" style="position: relative;">
                     <i class="fas fa-bell"></i>
                     {% if system_alert_count and system_alert_count > 0 %}
                     <span class="badge-count">{{ system_alert_count }}</span>
                     {% endif %}
                 </a>
+                {% endif %}
                 <a href="{{ url_for('logout') }}" class="nav-item" title="Logout">
                     <i class="fas fa-sign-out-alt"></i>
                 </a>
@@ -59,18 +135,33 @@
                     <button id="sidebar-toggle" class="btn-icon-only mobile-only">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <i class="fas fa-database"></i>
-                    <span>{% block title %}Dashboard{% endblock %}</span>
+                    <i class="fas fa-{% if user_role == 'women' %}female{% else %}database{% endif %}"></i>
+                    <span>{% block page_title %}Dashboard{% endblock %}</span>
                 </div>
                 <div class="top-actions">
                     {% block header_actions %}{% endblock %}
-                    <div class="user-profile">
-                        <i class="fas fa-user-circle" style="font-size: 1.5rem; color: #666;"></i>
+                    <div class="user-info">
+                        <i class="fas fa-user-circle" style="font-size: 1.3rem; color: #666;"></i>
+                        <span class="username">{{ current_user.username }}</span>
+                        <span class="role-badge {{ user_role }}">{{ user_role }}</span>
                     </div>
                 </div>
             </header>
             
             <div class="content-area">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div style="padding: 12px 16px; margin-bottom: 15px; border-radius: 8px; 
+                                    background: {% if category == 'error' %}#fef2f2{% else %}#f0fdf4{% endif %}; 
+                                    color: {% if category == 'error' %}#991b1b{% else %}#166534{% endif %}; 
+                                    border: 1px solid {% if category == 'error' %}#fecaca{% else %}#bbf7d0{% endif %};">
+                            <i class="fas fa-{% if category == 'error' %}exclamation-circle{% else %}check-circle{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
                 {% block content %}{% endblock %}
             </div>
         </main>

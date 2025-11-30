@@ -1,0 +1,20 @@
+{
+  "id": "sos-96793a39",
+  "timestamp": "2025-11-30T19:31:51.956619Z",
+  "timestamp_ist": "2025-12-01 01:01:51 IST",
+  "type": "SOS_EMERGENCY",
+  "name": "WOMAN IN DISTRESS - SOS",
+  "description": "Emergency SOS Alert! A woman has triggered distress signal. Location: Location being determined...",
+  "location": "Location being determined...",
+  "coordinates": {
+    "lat": null,
+    "lng": null
+  },
+  "map_link": null,
+  "priority": 1,
+  "severity": "CRITICAL",
+  "db_type": "sos_alert",
+  "image": "/static/sos_icon.png",
+  "status": "ACTIVE",
+  "requires_immediate_response": true
+}

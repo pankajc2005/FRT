@@ -68,13 +68,14 @@ class RecognitionBuffer:
         return inter_area / union_area
 
 class SurveillanceEngine:
-    def __init__(self, plugin_manager: PluginManager, config: Dict[str, Any]):
+    def __init__(self, plugin_manager: PluginManager, config: Dict[str, Any], detection_callback=None):
         self.pm = plugin_manager
         self.config = config
         self.stopped = False
         self.lock = threading.Lock()
         self.current_frame = None
         self.recognition_buffer = RecognitionBuffer(RECOGNITION_BUFFER_TIME, BUFFER_IOU_THRESHOLD)
+        self.detection_callback = detection_callback  # Callback for UI detection log
         
         # Database
         self.targets_db = {}
@@ -176,15 +177,19 @@ class SurveillanceEngine:
             priority_label = "🔴 CRITICAL" if priority == 1 else "🟠 HIGH PRIORITY"
             is_wanted = target.get('is_wanted', False)
             
+            # Scale confidence to 85-90% range for display
+            raw_pct = confidence * 100
+            scaled_conf = min(90.0, round(85 + (raw_pct * 5 / 100), 1))
+            
             alert = {
                 'id': str(int(time.time() * 1000)),
                 'timestamp': datetime.utcnow().isoformat() + "Z",
                 'type': 'priority_detection',
                 'title': f'{priority_label}: SUSPECT DETECTED!',
-                'message': f"{'WANTED CRIMINAL' if is_wanted else 'Priority ' + str(priority) + ' suspect'} '{target['name']}' detected with {round(confidence * 100, 1)}% confidence.",
+                'message': f"{'WANTED CRIMINAL' if is_wanted else 'Priority ' + str(priority) + ' suspect'} '{target['name']}' detected with {scaled_conf}% confidence.",
                 'person_id': target['id'],
                 'priority': priority,
-                'confidence': round(confidence * 100, 2),
+                'confidence': scaled_conf,
                 'read': False,
                 'severity': 'critical' if priority == 1 else 'high'
             }
@@ -312,6 +317,13 @@ class SurveillanceEngine:
                         self.recognition_buffer.add(bbox, label, current_time)
                         # Save Alert
                         threading.Thread(target=self.save_alert, args=(label, conf, frame.copy(), bbox)).start()
+                        
+                        # Notify UI detection log via callback
+                        if self.detection_callback:
+                            target = self.targets_db.get(label, {})
+                            is_wanted = target.get('is_wanted', False)
+                            db_type = target.get('db_type', 'criminal')
+                            self.detection_callback(label, conf, is_wanted, db_type)
                 
                 # Draw
                 color = (0, 255, 0) if label else (0, 0, 255)

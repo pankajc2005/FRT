@@ -1,0 +1,26 @@
+{
+  "id": "wanted-pankaj-chavan-ef116f44",
+  "name": "Pankaj Chavan",
+  "db_type": "criminal",
+  "priority": 1,
+  "image_filename": "wanted-pankaj-chavan-ef116f44.jpg",
+  "phone": "9022442848",
+  "aadhaar": "1234567799",
+  "guardian_phone": null,
+  "missing_aadhaar": null,
+  "submitted_gender": "Male",
+  "predicted_gender": null,
+  "predicted_age": null,
+  "detections": [
+    {
+      "timestamp": "2025-11-30T19:32:50.300377Z",
+      "match_percentage": 56.64,
+      "capture_frame": "wanted-pankaj-chavan-ef116f44_1764531170.jpg"
+    },
+    {
+      "timestamp": "2025-11-30T19:46:10.178774Z",
+      "match_percentage": 56.11,
+      "capture_frame": "wanted-pankaj-chavan-ef116f44_1764531970.jpg"
+    }
+  ]
+}

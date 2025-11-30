@@ -46,6 +46,8 @@ function initActivityPoll() {
                     li.className = 'activity-item';
                     // Show hash for tamper-proof verification
                     const hashBadge = item.hash ? `<span style="font-size:0.65rem; color:#9ca3af; margin-left:5px; font-family:monospace;" title="Verification Hash">#${item.hash}</span>` : '';
+                    // Show confidence if available (for face matches)
+                    const confBadge = item.confidence ? `<span style="font-size:0.7rem; background:#10B981; color:white; padding:1px 6px; border-radius:10px; margin-left:5px;">${item.confidence}%</span>` : '';
                     li.innerHTML = `
                         <span class="activity-time">${item.time}</span>
                         <div class="activity-icon">
@@ -54,7 +56,7 @@ function initActivityPoll() {
                         <div class="activity-details">
                             <strong>${item.user}</strong> ${item.action} 
                             <span class="${item.status_class}">${item.target}</span>
-                            ${hashBadge}
+                            ${confBadge}${hashBadge}
                         </div>
                     `;
                     activityList.appendChild(li);

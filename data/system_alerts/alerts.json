@@ -1,5 +1,177 @@
 [
   {
+    "id": "397d2e02",
+    "timestamp": "2025-11-30T19:38:27.367816Z",
+    "timestamp_ist": "2025-12-01 01:08:27 IST",
+    "type": "SOS_EMERGENCY",
+    "title": "\ud83d\udea8 SOS EMERGENCY - WOMAN IN DISTRESS",
+    "message": "Emergency SOS triggered. Immediate response required!",
+    "location": "Khopoli, Khalapur Taluka, Raigad, Maharashtra, 410203, India",
+    "coordinates": {
+      "lat": 18.7796163,
+      "lng": 73.3434982
+    },
+    "map_link": "https://www.google.com/maps?q=18.7796163,73.3434982",
+    "read": false,
+    "severity": "critical",
+    "priority": 1,
+    "source": "women_portal",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "96793a39",
+    "timestamp": "2025-11-30T19:31:51.956619Z",
+    "timestamp_ist": "2025-12-01 01:01:51 IST",
+    "type": "SOS_EMERGENCY",
+    "title": "\ud83d\udea8 SOS EMERGENCY - WOMAN IN DISTRESS",
+    "message": "Emergency SOS triggered. Immediate response required!",
+    "location": "Location being determined...",
+    "coordinates": {
+      "lat": null,
+      "lng": null
+    },
+    "map_link": null,
+    "read": false,
+    "severity": "critical",
+    "priority": 1,
+    "source": "women_portal",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "63085352",
+    "timestamp": "2025-11-30T19:12:28.415208Z",
+    "timestamp_ist": "2025-12-01 00:42:28 IST",
+    "type": "INCIDENT_REPORT",
+    "incident_type": "Harassment",
+    "title": "\ud83d\udce2 Incident Report: Harassment",
+    "message": "",
+    "location": "Getting location...",
+    "coordinates": {},
+    "datetime": "2025-12-01T00:42",
+    "severity": 3,
+    "priority": 2,
+    "anonymous": false,
+    "read": false,
+    "source": "women_portal",
+    "status": "PENDING_REVIEW"
+  },
+  {
+    "id": "75614de9",
+    "timestamp": "2025-11-30T19:05:22.035724Z",
+    "timestamp_ist": "2025-12-01 00:35:22 IST",
+    "type": "SOS_EMERGENCY",
+    "title": "\ud83d\udea8 SOS EMERGENCY - WOMAN IN DISTRESS",
+    "message": "Emergency SOS triggered. Immediate response required!",
+    "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+    "coordinates": {
+      "lat": 18.7956564,
+      "lng": 73.284771
+    },
+    "map_link": "https://www.google.com/maps?q=18.7956564,73.284771",
+    "read": false,
+    "severity": "critical",
+    "priority": 1,
+    "source": "women_portal",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "e9fe9561-4ddc-46fb-849f-8f037223d625",
+    "type": "OFFICER_FIELD_REPORT",
+    "report_subtype": "ALERT_SIGHTING",
+    "timestamp": "2025-11-30T18:00:44.597680Z",
+    "timestamp_ist": "2025-11-30 23:30:44",
+    "officer": {
+      "username": "officer",
+      "role": "officer",
+      "phone": "9876543210",
+      "badge_number": "OFR-101",
+      "full_name": "Officer Patrol"
+    },
+    "subject": {
+      "person_id": "missing-harshwardhan-wayse-a9ef0f0c",
+      "name": "Harshwardhan Wayse",
+      "database_image": "missing-harshwardhan-wayse-a9ef0f0c.jpg",
+      "captured_image": null,
+      "db_type": "missing",
+      "confidence": "Visual ID",
+      "is_wanted": false,
+      "priority": 2
+    },
+    "match_details": {
+      "search_timestamp": "2025-11-30T18:00:36.991Z",
+      "confidence_score": "Visual ID",
+      "identification_type": "Visual Sighting"
+    },
+    "report": {
+      "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+      "details": "Visual sighting of person from alert.",
+      "urgency": "medium"
+    },
+    "status": "pending",
+    "read": false
+  },
+  {
+    "id": "f17ed7aa-cac6-445c-b2da-b2076c9be32d",
+    "type": "OFFICER_FIELD_REPORT",
+    "timestamp": "2025-11-30T17:48:26.130911Z",
+    "timestamp_ist": "2025-11-30 23:18:26",
+    "officer": {
+      "username": "officer",
+      "role": "officer",
+      "phone": "9876543210",
+      "badge_number": "OFR-101",
+      "full_name": "Officer Patrol"
+    },
+    "subject": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "name": "Pankaj Chavan",
+      "database_image": "pankaj-chavan-16b6f1a3.jpg",
+      "captured_image": null,
+      "db_type": "criminal",
+      "confidence": 91.3,
+      "is_wanted": false,
+      "priority": 3
+    },
+    "match_details": {
+      "search_timestamp": null,
+      "confidence_score": 91.3
+    },
+    "report": {
+      "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+      "details": "",
+      "urgency": "medium"
+    },
+    "status": "pending",
+    "read": true
+  },
+  {
+    "id": "52f2f363-cc72-4eb2-adb6-c4c7d60eacce",
+    "type": "OFFICER_FIELD_REPORT",
+    "timestamp": "2025-11-30T17:44:28.369752Z",
+    "timestamp_ist": "2025-11-30 23:14:28",
+    "officer": {
+      "username": "officer",
+      "role": "officer",
+      "phone": "9876543210",
+      "badge_number": "OFR-101",
+      "full_name": "Officer Patrol"
+    },
+    "subject": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "name": "Pankaj Chavan",
+      "image": "pankaj-chavan-16b6f1a3.jpg",
+      "db_type": "criminal",
+      "confidence": 91.7
+    },
+    "report": {
+      "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+      "details": "",
+      "urgency": "medium"
+    },
+    "status": "pending",
+    "read": true
+  },
+  {
     "id": "1",
     "title": "System Maintenance",
     "message": "Scheduled maintenance on Sunday at 2:00 AM.",
@@ -874,7 +1046,7 @@
     "person_id": "pankaj-chavan-16b6f1a3",
     "priority": 1,
     "confidence": 57.83,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -886,7 +1058,7 @@
     "person_id": "pankaj-chavan-16b6f1a3",
     "priority": 1,
     "confidence": 60.4,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -898,7 +1070,7 @@
     "person_id": "pankaj-chavan-16b6f1a3",
     "priority": 1,
     "confidence": 62.34,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -914,7 +1086,7 @@
       "lng": 72.8372,
       "name": "DJ Sanghvi College"
     },
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -924,7 +1096,7 @@
     "title": "\ud83d\udea8 WANTED CRIMINAL ADDED",
     "message": "Wanted criminal 'Pankaj Chavan' added to database with highest priority surveillance.",
     "person_id": "wanted-pankaj-chavan-ef116f44",
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -933,6 +1105,237 @@
     "priority": 1,
     "message": "Match detected: Pankaj Chavan (100.0% confidence)",
     "person_id": "pankaj-chavan-16b6f1a3",
-    "read": false
+    "read": true
+  },
+  {
+    "id": "1764514662979",
+    "timestamp": "2025-11-30T14:57:42.979023Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 55.5% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 55.49,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764514672400",
+    "timestamp": "2025-11-30T14:57:52.400011Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 60.0% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 60.04,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764514679487",
+    "timestamp": "2025-11-30T14:57:59.487686Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 55.9% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 55.88,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764514686703",
+    "timestamp": "2025-11-30T14:58:06.703918Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 58.3% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 58.34,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764514694362",
+    "timestamp": "2025-11-30T14:58:14.362181Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 56.0% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 56.0,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764515640923",
+    "timestamp": "2025-11-30T15:14:00.923789Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 59.6% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 59.64,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764515645877",
+    "timestamp": "2025-11-30T15:14:05.877208Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 56.6% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 56.56,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764515653361",
+    "timestamp": "2025-11-30T15:14:13.361609Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 57.7% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 57.66,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764515660459",
+    "timestamp": "2025-11-30T15:14:20.459877Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 58.2% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 58.15,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764516304811",
+    "timestamp": "2025-11-30T15:25:04.811980Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 57.8% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 57.81,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764516661653",
+    "timestamp": "2025-11-30T15:31:01.653786Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 65.6% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 65.61,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764517201439",
+    "timestamp": "2025-11-30T15:40:01.439441Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.0% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 88.0,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764519313022",
+    "timestamp": "2025-11-30T16:15:13.025929Z",
+    "type": "match",
+    "title": "\ud83d\udd0d Face Match Detected: Pankaj Chavan",
+    "priority": 1,
+    "message": "Match detected: Pankaj Chavan (100.0% confidence) via dashboard face search",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "confidence": 100.0,
+    "severity": "critical",
+    "read": true
+  },
+  {
+    "id": "1764519345131",
+    "timestamp": "2025-11-30T16:15:45.131024Z",
+    "type": "match",
+    "title": "\ud83d\udd0d Face Match Detected: Pankaj Chavan",
+    "priority": 1,
+    "message": "Match detected: Pankaj Chavan (100.0% confidence) via dashboard face search",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "confidence": 100.0,
+    "severity": "critical",
+    "read": true
+  },
+  {
+    "id": "1764519508229",
+    "timestamp": "2025-11-30T16:18:28.229481Z",
+    "type": "match",
+    "title": "\ud83d\udd0d Face Match Detected: Harshwardhan Wayse",
+    "priority": 3,
+    "message": "Match detected: Harshwardhan Wayse (100.0% confidence) via dashboard face search",
+    "person_id": "harshwardhan-wayse-cfbd2a6b",
+    "confidence": 100.0,
+    "severity": "normal",
+    "read": true
+  },
+  {
+    "id": "1764519841057",
+    "timestamp": "2025-11-30T16:24:01.059836Z",
+    "type": "match",
+    "title": "\ud83d\udd0d Face Match Detected: Harshwardhan Wayse",
+    "priority": 2,
+    "message": "Match detected: Harshwardhan Wayse (100.0% confidence) via dashboard face search",
+    "person_id": "missing-harshwardhan-wayse-a9ef0f0c",
+    "confidence": 100.0,
+    "severity": "high",
+    "read": true
+  },
+  {
+    "id": "24f2b5cc-64d9-4bd9-b750-0b7d76430807",
+    "timestamp": "2025-11-30T18:42:16.474466Z",
+    "type": "sos_emergency",
+    "title": "\ud83d\udea8 SOS EMERGENCY ALERT",
+    "message": "Emergency SOS triggered. Location: Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+    "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+    "coordinates": {
+      "lat": 18.7956544,
+      "lng": 73.2847715
+    },
+    "read": false,
+    "severity": "critical",
+    "source": "women_portal"
+  },
+  {
+    "id": "1764531170300",
+    "timestamp": "2025-11-30T19:32:50.300377Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 87.8% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 87.8,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764531970192",
+    "timestamp": "2025-11-30T19:46:10.192286Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 87.8% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 87.8,
+    "read": false,
+    "severity": "critical"
   }
 ]

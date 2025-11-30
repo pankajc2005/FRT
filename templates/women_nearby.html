@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nearby Help - Raksha</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #e91e63;
+            --primary-dark: #c2185b;
+            --primary-light: #fce4ec;
+            --secondary: #9c27b0;
+            --text-dark: #37474f;
+            --text-light: #78909c;
+        }
+        
+        body {
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        
+        .header-title h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .header-title p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        /* Map */
+        #map {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+        
+        /* Category Filters */
+        .filters {
+            position: fixed;
+            top: 80px;
+            left: 10px;
+            right: 10px;
+            z-index: 500;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 5px;
+        }
+        
+        .filter-btn {
+            padding: 10px 16px;
+            background: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            white-space: nowrap;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .filter-btn i {
+            font-size: 1rem;
+        }
+        
+        /* Bottom Panel */
+        .bottom-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 25px 25px 0 0;
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.15);
+            z-index: 500;
+            max-height: 45vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        
+        .panel-handle {
+            width: 40px;
+            height: 5px;
+            background: #ddd;
+            border-radius: 3px;
+            margin: 12px auto;
+        }
+        
+        .panel-content {
+            padding: 0 20px 20px;
+        }
+        
+        .panel-title {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Place Card */
+        .place-card {
+            background: #f8f9fa;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .place-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        
+        .place-icon.police { background: #e3f2fd; color: #1976d2; }
+        .place-icon.hospital { background: #ffebee; color: #d32f2f; }
+        .place-icon.pharmacy { background: #e8f5e9; color: #388e3c; }
+        .place-icon.shelter { background: #fff3e0; color: #f57c00; }
+        .place-icon.public { background: #f3e5f5; color: #7b1fa2; }
+        
+        .place-info {
+            flex: 1;
+        }
+        
+        .place-info h4 {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+        
+        .place-info p {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+        
+        .place-distance {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .place-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .action-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .action-btn.navigate {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .action-btn.call {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+        
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Custom Markers */
+        .custom-marker {
+            background: white;
+            border-radius: 50%;
+            padding: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .custom-marker.police { color: #1976d2; }
+        .custom-marker.hospital { color: #d32f2f; }
+        .custom-marker.pharmacy { color: #388e3c; }
+        .custom-marker.shelter { color: #f57c00; }
+        .custom-marker.public { color: #7b1fa2; }
+        
+        /* My Location Button */
+        .my-location-btn {
+            position: fixed;
+            bottom: 50vh;
+            right: 15px;
+            width: 45px;
+            height: 45px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <a href="/women/dashboard" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h1><i class="fas fa-hands-helping"></i> Nearby Help</h1>
+            <p>Safe places around you</p>
+        </div>
+    </div>
+    
+    <!-- Category Filters -->
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterPlaces('all', this)">
+            <i class="fas fa-th"></i> All
+        </button>
+        <button class="filter-btn" onclick="filterPlaces('police', this)">
+            <i class="fas fa-shield-alt"></i> Police
+        </button>
+        <button class="filter-btn" onclick="filterPlaces('hospital', this)">
+            <i class="fas fa-hospital"></i> Hospital
+        </button>
+        <button class="filter-btn" onclick="filterPlaces('pharmacy', this)">
+            <i class="fas fa-pills"></i> Pharmacy
+        </button>
+        <button class="filter-btn" onclick="filterPlaces('shelter', this)">
+            <i class="fas fa-home"></i> Shelter
+        </button>
+        <button class="filter-btn" onclick="filterPlaces('public', this)">
+            <i class="fas fa-users"></i> Public
+        </button>
+    </div>
+    
+    <!-- Map -->
+    <div id="map"></div>
+    
+    <!-- My Location Button -->
+    <button class="my-location-btn" onclick="centerOnMe()">
+        <i class="fas fa-crosshairs"></i>
+    </button>
+    
+    <!-- Bottom Panel -->
+    <div class="bottom-panel">
+        <div class="panel-handle"></div>
+        <div class="panel-content">
+            <div class="panel-title">
+                <i class="fas fa-list"></i> Nearby Places
+            </div>
+            <div id="placesList">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Finding safe places near you...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map;
+        let userMarker;
+        let placeMarkers = [];
+        let userLocation = null;
+        
+        // Sample places data (in production, fetch from API)
+        const nearbyPlaces = [
+            { id: 1, name: 'City Police Station', type: 'police', lat: 18.5204, lng: 73.8567, phone: '100', address: 'MG Road, Near Clock Tower' },
+            { id: 2, name: 'Sassoon Hospital', type: 'hospital', lat: 18.5224, lng: 73.8517, phone: '020-26127000', address: 'Sassoon Road' },
+            { id: 3, name: 'Apollo Pharmacy', type: 'pharmacy', lat: 18.5184, lng: 73.8547, phone: '1860-500-0101', address: 'FC Road' },
+            { id: 4, name: "Women's Shelter Home", type: 'shelter', lat: 18.5244, lng: 73.8607, phone: '181', address: 'Koregaon Park' },
+            { id: 5, name: 'Metro Mall', type: 'public', lat: 18.5164, lng: 73.8597, phone: '', address: 'Bund Garden Road' },
+            { id: 6, name: 'Deccan Police Chowky', type: 'police', lat: 18.5144, lng: 73.8407, phone: '100', address: 'Deccan Gymkhana' },
+            { id: 7, name: 'Ruby Hall Clinic', type: 'hospital', lat: 18.5284, lng: 73.8757, phone: '020-26163391', address: 'Boat Club Road' },
+            { id: 8, name: 'Wellness Forever Pharmacy', type: 'pharmacy', lat: 18.5124, lng: 73.8477, phone: '020-41234567', address: 'JM Road' },
+        ];
+        
+        // Initialize map
+        function initMap() {
+            map = L.map('map').setView([18.5204, 73.8567], 14);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+            
+            // Get user location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        userLocation = {
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude
+                        };
+                        
+                        // Add user marker
+                        userMarker = L.marker([userLocation.lat, userLocation.lng], {
+                            icon: L.divIcon({
+                                className: 'user-marker',
+                                html: '<div style="width:20px;height:20px;background:#e91e63;border:3px solid white;border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,0.3);"></div>',
+                                iconSize: [20, 20],
+                                iconAnchor: [10, 10]
+                            })
+                        }).addTo(map);
+                        
+                        map.setView([userLocation.lat, userLocation.lng], 15);
+                        
+                        // Calculate distances
+                        nearbyPlaces.forEach(place => {
+                            place.distance = calculateDistance(userLocation.lat, userLocation.lng, place.lat, place.lng);
+                        });
+                        
+                        // Sort by distance
+                        nearbyPlaces.sort((a, b) => a.distance - b.distance);
+                        
+                        addMarkers('all');
+                        renderPlacesList('all');
+                    },
+                    () => {
+                        addMarkers('all');
+                        renderPlacesList('all');
+                    }
+                );
+            } else {
+                addMarkers('all');
+                renderPlacesList('all');
+            }
+        }
+        
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+        
+        function getMarkerIcon(type) {
+            const icons = {
+                police: 'fa-shield-alt',
+                hospital: 'fa-hospital',
+                pharmacy: 'fa-pills',
+                shelter: 'fa-home',
+                public: 'fa-users'
+            };
+            return icons[type] || 'fa-map-marker-alt';
+        }
+        
+        function addMarkers(filter) {
+            // Clear existing markers
+            placeMarkers.forEach(m => map.removeLayer(m));
+            placeMarkers = [];
+            
+            nearbyPlaces.forEach(place => {
+                if (filter !== 'all' && place.type !== filter) return;
+                
+                const marker = L.marker([place.lat, place.lng], {
+                    icon: L.divIcon({
+                        className: `custom-marker ${place.type}`,
+                        html: `<div class="custom-marker ${place.type}"><i class="fas ${getMarkerIcon(place.type)}"></i></div>`,
+                        iconSize: [35, 35],
+                        iconAnchor: [17, 17]
+                    })
+                }).addTo(map);
+                
+                marker.bindPopup(`<b>${place.name}</b><br>${place.address}`);
+                placeMarkers.push(marker);
+            });
+        }
+        
+        function renderPlacesList(filter) {
+            const list = document.getElementById('placesList');
+            const filtered = filter === 'all' ? nearbyPlaces : nearbyPlaces.filter(p => p.type === filter);
+            
+            if (filtered.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No places found</p>';
+                return;
+            }
+            
+            list.innerHTML = filtered.map(place => `
+                <div class="place-card" onclick="focusPlace(${place.lat}, ${place.lng})">
+                    <div class="place-icon ${place.type}">
+                        <i class="fas ${getMarkerIcon(place.type)}"></i>
+                    </div>
+                    <div class="place-info">
+                        <h4>${place.name}</h4>
+                        <p>${place.address}</p>
+                        ${place.distance ? `<span class="place-distance">${place.distance.toFixed(1)} km away</span>` : ''}
+                    </div>
+                    <div class="place-actions">
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=${place.lat},${place.lng}" target="_blank" class="action-btn navigate">
+                            <i class="fas fa-directions"></i>
+                        </a>
+                        ${place.phone ? `<a href="tel:${place.phone}" class="action-btn call"><i class="fas fa-phone"></i></a>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function filterPlaces(filter, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            addMarkers(filter);
+            renderPlacesList(filter);
+        }
+        
+        function focusPlace(lat, lng) {
+            map.setView([lat, lng], 17);
+        }
+        
+        function centerOnMe() {
+            if (userLocation) {
+                map.setView([userLocation.lat, userLocation.lng], 16);
+            } else {
+                alert('Unable to get your location');
+            }
+        }
+        
+        // Initialize
+        initMap();
+    </script>
+</body>
+</html>

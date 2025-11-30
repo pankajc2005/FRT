@@ -1,0 +1,16 @@
+{
+  "id": "incident-63085352",
+  "timestamp": "2025-11-30T19:12:28.415208Z",
+  "timestamp_ist": "2025-12-01 00:42:28 IST",
+  "type": "INCIDENT_REPORT",
+  "name": "INCIDENT: HARASSMENT",
+  "description": "",
+  "location": "Getting location...",
+  "coordinates": {},
+  "priority": 2,
+  "severity": "MEDIUM",
+  "db_type": "incident_report",
+  "image": "/static/incident_icon.png",
+  "status": "PENDING",
+  "reported_at": "2025-12-01T00:42"
+}

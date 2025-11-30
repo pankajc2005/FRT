@@ -19,10 +19,155 @@
 <div class="alerts-container">
     {% if alerts %}
         {% for alert in alerts %}
+        
+        {% if alert.type == 'OFFICER_FIELD_REPORT' %}
+        <!-- Officer Field Report Card -->
         <div class="system-alert-card {% if not alert.read %}unread{% endif %}" style="
             background: white;
             border: 1px solid #eee;
-            border-left: 4px solid {% if alert.type == 'error' %}#D32F2F{% elif alert.type == 'warning' %}#FBC02D{% elif alert.type == 'success' %}#388E3C{% else %}#1976D2{% endif %};
+            border-left: 4px solid {% if alert.report.urgency == 'high' %}#D32F2F{% elif alert.report.urgency == 'medium' %}#F59E0B{% else %}#10B981{% endif %};
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        ">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <!-- Header -->
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+                        <span style="background: linear-gradient(135deg, #1e40af, #1e3a8a); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                            <i class="fas fa-broadcast-tower"></i> 
+                            {% if alert.report_subtype == 'ALERT_SIGHTING' %}
+                            ALERT SIGHTING REPORT
+                            {% else %}
+                            PHOTO MATCH REPORT
+                            {% endif %}
+                        </span>
+                        {% if not alert.read %}
+                        <span style="background: #fef2f2; color: #dc2626; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                            ● NEW
+                        </span>
+                        {% endif %}
+                        {% if alert.match_details and alert.match_details.identification_type %}
+                        <span style="background: #eff6ff; color: #1e40af; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                            {{ alert.match_details.identification_type }}
+                        </span>
+                        {% endif %}
+                        <span style="
+                            background: {% if alert.report.urgency == 'high' %}#fef2f2{% elif alert.report.urgency == 'medium' %}#fffbeb{% else %}#f0fdf4{% endif %};
+                            color: {% if alert.report.urgency == 'high' %}#dc2626{% elif alert.report.urgency == 'medium' %}#d97706{% else %}#16a34a{% endif %};
+                            padding: 4px 10px;
+                            border-radius: 12px;
+                            font-size: 0.75rem;
+                            font-weight: 600;
+                        ">
+                            {% if alert.report.urgency == 'high' %}🔴 HIGH URGENCY{% elif alert.report.urgency == 'medium' %}🟡 MEDIUM{% else %}🟢 LOW{% endif %}
+                        </span>
+                    </div>
+                    
+                    <!-- Subject Person Info with Comparison -->
+                    <div style="display: flex; gap: 15px; padding: 15px; background: #f8fafc; border-radius: 10px; margin-bottom: 15px;">
+                        <!-- Captured Image -->
+                        {% if alert.subject.captured_image %}
+                        <div style="text-align: center;">
+                            <img src="/data/images/{{ alert.subject.captured_image }}" alt="Captured" style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover; border: 3px solid #f97316;" onerror="this.src='https://via.placeholder.com/80?text=Captured'">
+                            <p style="margin: 5px 0 0; font-size: 0.7rem; color: #6b7280;">📷 Field Capture</p>
+                        </div>
+                        <div style="display: flex; align-items: center; padding: 0 5px;">
+                            <i class="fas fa-check-double" style="color: #16a34a; font-size: 1.2rem;"></i>
+                        </div>
+                        {% endif %}
+                        <!-- Database Image -->
+                        <div style="text-align: center;">
+                            <img src="/data/images/{{ alert.subject.database_image|default(alert.subject.image) }}" alt="{{ alert.subject.name }}" style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover; border: 3px solid {% if alert.subject.db_type == 'criminal' %}#dc2626{% else %}#1e40af{% endif %};" onerror="this.src='https://via.placeholder.com/80?text=Database'">
+                            <p style="margin: 5px 0 0; font-size: 0.7rem; color: #6b7280;">🗄️ Database</p>
+                        </div>
+                        <div style="flex: 1; padding-left: 10px;">
+                            <h3 style="margin: 0 0 5px 0; font-size: 1.2rem;">{{ alert.subject.name }}</h3>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                                <span style="background: {% if alert.subject.db_type == 'criminal' %}#fef2f2{% else %}#eff6ff{% endif %}; color: {% if alert.subject.db_type == 'criminal' %}#dc2626{% else %}#1e40af{% endif %}; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
+                                    {{ alert.subject.db_type|upper }}
+                                </span>
+                                {% if alert.subject.is_wanted %}
+                                <span style="background: #dc2626; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
+                                    ⚠️ WANTED
+                                </span>
+                                {% endif %}
+                                <span style="background: #f0fdf4; color: #16a34a; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
+                                    {{ alert.subject.confidence }}% Match
+                                </span>
+                                {% if alert.subject.priority %}
+                                <span style="background: #fef3c7; color: #92400e; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
+                                    Priority {{ alert.subject.priority }}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <p style="margin: 0; font-size: 0.8rem; color: #6b7280;">ID: {{ alert.subject.person_id }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Location & Details -->
+                    <div style="background: #fff7ed; border: 1px solid #fed7aa; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                        <div style="margin-bottom: 8px;">
+                            <i class="fas fa-map-marker-alt" style="color: #ea580c; width: 20px;"></i>
+                            <strong>Location:</strong> {{ alert.report.location }}
+                        </div>
+                        {% if alert.report.details %}
+                        <div>
+                            <i class="fas fa-comment-alt" style="color: #ea580c; width: 20px;"></i>
+                            <strong>Details:</strong> {{ alert.report.details }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Officer Info -->
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                        <div style="font-weight: 600; color: #1e40af; margin-bottom: 8px;">
+                            <i class="fas fa-user-shield"></i> Reporting Officer
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 0.9rem;">
+                            <div><i class="fas fa-user" style="width: 18px; color: #3b82f6;"></i> {{ alert.officer.full_name|default(alert.officer.username) }}</div>
+                            <div><i class="fas fa-id-badge" style="width: 18px; color: #3b82f6;"></i> Badge: {{ alert.officer.badge_number|default('N/A') }}</div>
+                            <div><i class="fas fa-phone" style="width: 18px; color: #3b82f6;"></i> {{ alert.officer.phone|default('N/A') }}</div>
+                            <div><i class="fas fa-clock" style="width: 18px; color: #3b82f6;"></i> {{ alert.timestamp_ist }}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        {% if alert.subject.person_id %}
+                        <a href="{{ url_for('view_person', person_id=alert.subject.person_id) }}" 
+                           style="display: inline-flex; align-items: center; gap: 5px; background: #1e40af; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                            <i class="fas fa-user"></i> View Person
+                        </a>
+                        {% endif %}
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ alert.report.location|urlencode }}" target="_blank"
+                           style="display: inline-flex; align-items: center; gap: 5px; background: #16a34a; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                            <i class="fas fa-map-marked-alt"></i> View on Map
+                        </a>
+                        {% if alert.officer.phone and alert.officer.phone != 'N/A' %}
+                        <a href="tel:{{ alert.officer.phone }}"
+                           style="display: inline-flex; align-items: center; gap: 5px; background: #dc2626; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                            <i class="fas fa-phone"></i> Call Officer
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if not alert.read %}
+                <a href="{{ url_for('mark_alert_read', alert_id=alert.id) }}" title="Mark as Read" style="color: #999; font-size: 1.2rem;">
+                    <i class="far fa-check-circle"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% else %}
+        <!-- Regular Alert Card -->
+        <div class="system-alert-card {% if not alert.read %}unread{% endif %}" style="
+            background: white;
+            border: 1px solid #eee;
+            border-left: 4px solid {% if alert.severity == 'critical' %}#D32F2F{% elif alert.severity == 'high' %}#F59E0B{% elif alert.type == 'success' %}#388E3C{% else %}#1976D2{% endif %};
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 4px;
@@ -30,12 +175,42 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         ">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <h3 style="margin-bottom: 5px; color: #333; font-size: 1.1rem;">
-                        {% if not alert.read %}<span style="color: #D32F2F; font-size: 0.6rem; vertical-align: middle; margin-right: 5px;">●</span>{% endif %}
-                        {{ alert.title }}
-                    </h3>
+                <div style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <h3 style="margin: 0; color: #333; font-size: 1.1rem;">
+                            {% if not alert.read %}<span style="color: #D32F2F; font-size: 0.6rem; vertical-align: middle; margin-right: 5px;">●</span>{% endif %}
+                            {{ alert.title }}
+                        </h3>
+                        {% if alert.confidence %}
+                        <span style="
+                            background: {% if alert.confidence >= 90 %}#D32F2F{% elif alert.confidence >= 80 %}#F59E0B{% else %}#10B981{% endif %};
+                            color: white;
+                            padding: 4px 10px;
+                            border-radius: 20px;
+                            font-size: 0.85rem;
+                            font-weight: 700;
+                        ">
+                            {{ alert.confidence }}% Match
+                        </span>
+                        {% endif %}
+                    </div>
                     <p style="color: #666; margin-bottom: 10px;">{{ alert.message }}</p>
+                    
+                    {% if alert.type == 'priority_detection' and alert.priority %}
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <span style="
+                            background: {% if alert.priority == 1 %}#fef2f2{% else %}#fffbeb{% endif %};
+                            color: {% if alert.priority == 1 %}#991b1b{% else %}#92400e{% endif %};
+                            padding: 4px 10px;
+                            border-radius: 4px;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            border: 1px solid {% if alert.priority == 1 %}#fecaca{% else %}#fde68a{% endif %};
+                        ">
+                            <i class="fas fa-exclamation-triangle"></i> Priority {{ alert.priority }}
+                        </span>
+                    </div>
+                    {% endif %}
                     
                     {% if alert.type == 'urgent_help' %}
                     <div style="background: #fff5f5; border: 1px solid #feb2b2; padding: 10px; border-radius: 4px; margin-bottom: 10px; font-size: 0.9rem;">
@@ -81,6 +256,8 @@
                 {% endif %}
             </div>
         </div>
+        {% endif %}
+        
         {% endfor %}
     {% else %}
         <div class="empty-state">

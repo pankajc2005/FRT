@@ -33,7 +33,7 @@
                 </thead>
                 <tbody id="table-body">
                     {% for person in persons %}
-                    <tr data-href="/missing/view/{{ person.id }}" style="cursor: pointer;" class="clickable-row"
+                    <tr data-href="/person/{{ person.id }}" style="cursor: pointer;" class="clickable-row"
                         data-name="{{ person.name|lower }}"
                         data-aadhaar="{{ person.missing_aadhaar|lower if person.missing_aadhaar else '' }}"
                         data-phone="{{ person.guardian_phone|lower if person.guardian_phone else '' }}">
@@ -266,10 +266,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function performPhotoSearch() {
         if (!capturedBlob) return;
         
-        searchResult.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+        searchResult.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching Missing Persons DB...';
         
         const formData = new FormData();
         formData.append('image', capturedBlob, 'search.jpg');
+        formData.append('db_type', 'missing');
         
         fetch('/api/face_search', { method: 'POST', body: formData })
             .then(res => res.json())
@@ -277,18 +278,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.match) {
                     const p = data.person;
                     const conf = Math.min(90, 85 + (data.confidence * 5 / 100)).toFixed(1);
-                    const viewUrl = p.db_type === 'missing' ? `/missing/view/${p.id}` : `/person/${p.id}`;
                     searchResult.innerHTML = `
                         <div style="background:#d1fae5; padding:1rem; border-radius:0.5rem; text-align:left;">
                             <strong style="color:#065f46;">✓ Match Found!</strong>
                             <div style="margin-top:0.5rem;">Name: <strong>${p.name}</strong></div>
                             <div>Confidence: <strong>${conf}%</strong></div>
-                            <div>Type: <strong>${(p.db_type || 'criminal').toUpperCase()}</strong></div>
-                            <a href="${viewUrl}" style="display:inline-block; margin-top:0.5rem; color:#1e40af;">View Details →</a>
+                            <div>Type: <strong>MISSING PERSON</strong></div>
+                            <a href="/person/${p.id}" style="display:inline-block; margin-top:0.5rem; color:#1e40af;">View Details →</a>
                         </div>
                     `;
                 } else {
-                    searchResult.innerHTML = '<div style="background:#fee2e2; padding:1rem; border-radius:0.5rem; color:#991b1b;">No match found in database.</div>';
+                    searchResult.innerHTML = '<div style="background:#fee2e2; padding:1rem; border-radius:0.5rem; color:#991b1b;">No match found in Missing Persons database.</div>';
                 }
             })
             .catch(err => {

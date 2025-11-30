@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trusted Contacts - Raksha</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #e91e63;
+            --primary-dark: #c2185b;
+            --primary-light: #fce4ec;
+            --secondary: #9c27b0;
+            --text-dark: #37474f;
+            --text-light: #78909c;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #f3e5f5 100%);
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        
+        .header-title h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .header-title p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        /* Content */
+        .content {
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        /* Info Card */
+        .info-card {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .info-card i {
+            color: #388e3c;
+            font-size: 1.2rem;
+        }
+        
+        .info-card p {
+            font-size: 0.85rem;
+            color: #2e7d32;
+            line-height: 1.5;
+        }
+        
+        /* Contact Card */
+        .contact-card {
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .contact-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .contact-info {
+            flex: 1;
+        }
+        
+        .contact-info h3 {
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+        
+        .contact-info p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        .contact-info span {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .contact-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .action-btn.call {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .action-btn.message {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .action-btn.delete {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+        
+        .empty-state h3 {
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        
+        .empty-state p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        /* Add Button */
+        .add-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(233, 30, 99, 0.4);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 25px 25px 0 0;
+            padding: 25px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+        }
+        
+        .close-btn {
+            width: 35px;
+            height: 35px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .relation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .relation-option {
+            padding: 12px;
+            background: #f8f9fa;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            transition: all 0.2s;
+        }
+        
+        .relation-option.selected {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-save {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        /* Avatar Colors */
+        .avatar-1 { background: linear-gradient(135deg, #e91e63, #c2185b); }
+        .avatar-2 { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
+        .avatar-3 { background: linear-gradient(135deg, #3f51b5, #303f9f); }
+        .avatar-4 { background: linear-gradient(135deg, #00bcd4, #0097a7); }
+        .avatar-5 { background: linear-gradient(135deg, #4caf50, #388e3c); }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <a href="/women/dashboard" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h1><i class="fas fa-user-friends"></i> Trusted Contacts</h1>
+            <p>People who can help in emergencies</p>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+        <div class="info-card">
+            <i class="fas fa-info-circle"></i>
+            <p>These contacts will receive your SOS alerts with your live location when you trigger an emergency.</p>
+        </div>
+        
+        <div id="contactsList"></div>
+    </div>
+    
+    <!-- Add Button -->
+    <button class="add-btn" onclick="showAddModal()">
+        <i class="fas fa-plus"></i>
+    </button>
+    
+    <!-- Add Modal -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> Add Contact</h2>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" class="form-control" id="contactName" placeholder="Enter name">
+            </div>
+            
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" class="form-control" id="contactPhone" placeholder="+91 XXXXXXXXXX">
+            </div>
+            
+            <label style="display:block; margin-bottom:10px; font-weight:500; color: var(--text-dark);">Relationship</label>
+            <div class="relation-grid">
+                <div class="relation-option selected" onclick="selectRelation(this, 'Family')">Family</div>
+                <div class="relation-option" onclick="selectRelation(this, 'Friend')">Friend</div>
+                <div class="relation-option" onclick="selectRelation(this, 'Spouse')">Spouse</div>
+                <div class="relation-option" onclick="selectRelation(this, 'Colleague')">Colleague</div>
+                <div class="relation-option" onclick="selectRelation(this, 'Neighbor')">Neighbor</div>
+                <div class="relation-option" onclick="selectRelation(this, 'Other')">Other</div>
+            </div>
+            
+            <button class="btn-save" onclick="saveContact()">
+                <i class="fas fa-check"></i> Save Contact
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        let contacts = JSON.parse(localStorage.getItem('trustedContacts') || '[]');
+        let selectedRelation = 'Family';
+        const avatarColors = ['avatar-1', 'avatar-2', 'avatar-3', 'avatar-4', 'avatar-5'];
+        
+        function renderContacts() {
+            const list = document.getElementById('contactsList');
+            
+            if (contacts.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-user-friends"></i>
+                        <h3>No Contacts Yet</h3>
+                        <p>Add trusted contacts who will be notified during emergencies</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = contacts.map((contact, index) => `
+                <div class="contact-card">
+                    <div class="contact-avatar ${avatarColors[index % 5]}">
+                        ${contact.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="contact-info">
+                        <h3>${contact.name}</h3>
+                        <p>${contact.phone}</p>
+                        <span>${contact.relation}</span>
+                    </div>
+                    <div class="contact-actions">
+                        <a href="tel:${contact.phone}" class="action-btn call">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                        <a href="sms:${contact.phone}" class="action-btn message">
+                            <i class="fas fa-comment"></i>
+                        </a>
+                        <button class="action-btn delete" onclick="deleteContact(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showAddModal() {
+            document.getElementById('addModal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('addModal').classList.remove('show');
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactPhone').value = '';
+        }
+        
+        function selectRelation(el, relation) {
+            document.querySelectorAll('.relation-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedRelation = relation;
+        }
+        
+        function saveContact() {
+            const name = document.getElementById('contactName').value.trim();
+            const phone = document.getElementById('contactPhone').value.trim();
+            
+            if (!name || !phone) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            contacts.push({
+                name: name,
+                phone: phone,
+                relation: selectedRelation
+            });
+            
+            localStorage.setItem('trustedContacts', JSON.stringify(contacts));
+            closeModal();
+            renderContacts();
+        }
+        
+        function deleteContact(index) {
+            if (confirm('Remove this contact?')) {
+                contacts.splice(index, 1);
+                localStorage.setItem('trustedContacts', JSON.stringify(contacts));
+                renderContacts();
+            }
+        }
+        
+        // Initial render
+        renderContacts();
+    </script>
+</body>
+</html>

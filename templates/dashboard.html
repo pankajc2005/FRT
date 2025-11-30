@@ -275,10 +275,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function performPhotoSearch() {
         if (!capturedBlob) return;
         
-        searchResult.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+        searchResult.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching Criminal DB...';
         
         const formData = new FormData();
         formData.append('image', capturedBlob, 'search.jpg');
+        formData.append('db_type', 'criminal');
         
         fetch('/api/face_search', { method: 'POST', body: formData })
             .then(res => res.json())
@@ -295,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                 } else {
-                    searchResult.innerHTML = '<div style="background:#fee2e2; padding:1rem; border-radius:0.5rem; color:#991b1b;">No match found in database.</div>';
+                    searchResult.innerHTML = '<div style="background:#fee2e2; padding:1rem; border-radius:0.5rem; color:#991b1b;">No match found in Criminal database.</div>';
                 }
             })
             .catch(err => {

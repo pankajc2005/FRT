@@ -2,379 +2,818 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SafeRoute - Trinetra</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>रक्षा - Raksha Safety</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
     <style>
-        /* SafeRoute Theme Overrides */
-        :root {
-            --safe-blue: #007bff;
-            --safe-bg: #f8f9fa;
-            --card-bg: #ffffff;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
-        body { background-color: var(--safe-bg); }
+        :root {
+            --primary: #e91e63;
+            --primary-dark: #c2185b;
+            --primary-light: #fce4ec;
+            --secondary: #9c27b0;
+            --accent: #ff4081;
+            --safe: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --text: #212121;
+            --text-secondary: #757575;
+            --bg: #fafafa;
+            --card: #ffffff;
+        }
         
-        .dashboard-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
+        body {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #f3e5f5 100%);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 25px 30px;
+            position: relative;
             overflow: hidden;
         }
-
-        /* Suggestions & Toggle CSS */
-        .suggestions-box {
-            position: absolute;
-            background: white;
-            width: 100%; /* Relative to parent */
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 0 0 8px 8px;
-            z-index: 1000;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .suggestion-item {
-            padding: 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .suggestion-item:hover { background-color: #f8f9fa; }
-        .suggestion-item i { color: #aaa; }
         
-        .urgent-toggle-container {
-            background: #fee2e2;
-            border: 1px solid #fca5a5;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+        .header::before {
+            content: 'रक्षा';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 8rem;
+            font-weight: 700;
+            opacity: 0.08;
+            letter-spacing: 10px;
+            white-space: nowrap;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .brand {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 15px;
         }
-        .urgent-label {
-            color: #b91c1c;
-            font-weight: 700;
+        
+        .brand-icon {
+            width: 55px;
+            height: 55px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 14px;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .brand h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .brand p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .header-btn {
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        
+        .header-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+        
+        /* Welcome Section */
+        .welcome {
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .welcome h2 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+        
+        .welcome h2 span {
+            font-weight: 700;
+        }
+        
+        .status-pill {
+            display: inline-flex;
             align-items: center;
             gap: 8px;
+            background: rgba(76, 175, 80, 0.25);
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
         
-        /* Toggle Switch */
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #69f0ae;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
         }
-        .slider:before {
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        
+        /* Main Content */
+        .main {
+            padding: 25px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* SOS Card */
+        .sos-card {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            border-radius: 20px;
+            padding: 25px;
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(244, 67, 54, 0.35);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .sos-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(244, 67, 54, 0.4);
+        }
+        
+        .sos-card::before {
+            content: '';
             position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
+            top: -60%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
             border-radius: 50%;
         }
-        input:checked + .slider { background-color: #ef4444; }
-        input:checked + .slider:before { transform: translateX(24px); }
-
-        .mobile-header {
-            background: var(--safe-blue);
-            color: white;
-            padding: 15px;
+        
+        .sos-content {
             display: flex;
             align-items: center;
-            gap: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 20;
-        }
-        .mobile-header h1 { color: white; font-size: 1.2rem; margin: 0; }
-        .mobile-header i { color: white; }
-
-        /* Layout Grid */
-        .main-grid {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
+            gap: 20px;
             position: relative;
-        }
-
-        /* Left Panel (Route Planner) */
-        .control-panel {
-            width: 350px;
-            background: white;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-            z-index: 10;
-            overflow-y: auto;
-        }
-
-        /* Map Area */
-        .map-wrapper {
-            flex: 1;
-            position: relative;
-        }
-        #map { height: 100%; width: 100%; }
-
-        /* Cards */
-        .card {
-            background: white;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-        }
-        .card h3 {
-            font-size: 1rem;
-            margin-bottom: 10px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        /* Inputs */
-        .form-group { margin-bottom: 10px; }
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-        .btn-action {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-        .btn-blue { background: var(--safe-blue); color: white; }
-        .btn-outline { background: white; border: 1px solid #ced4da; color: #495057; }
-        .btn-warning { background: #ffc107; color: #212529; }
-
-        /* Stats */
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 5px;
-        }
-        .stat-item { display: flex; align-items: center; gap: 5px; }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .main-grid { flex-direction: column; }
-            .control-panel {
-                width: 100%;
-                height: auto;
-                max-height: 40vh;
-                order: 2; /* Map on top? Or controls on top? Image shows controls on top */
-                order: 1; 
-                padding: 10px;
-            }
-            .map-wrapper {
-                flex: 1;
-                order: 2;
-            }
-            /* Hide less critical cards on mobile initial view if needed */
-            .incident-card { display: none; } 
-            .mobile-show-incident { display: block; margin-top: 10px; }
+            z-index: 1;
         }
         
-        /* Floating Action Button for Mobile Incident Report */
-        .fab-report {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            background: #ffc107;
+        .sos-button {
+            width: 80px;
+            height: 80px;
+            background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            z-index: 1000;
-            font-size: 1.5rem;
-            color: #333;
-            display: none;
+            font-size: 2rem;
+            color: #f44336;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            animation: sosGlow 2s infinite;
+            flex-shrink: 0;
         }
-        @media (max-width: 768px) { .fab-report { display: flex; } }
-
+        
+        @keyframes sosGlow {
+            0%, 100% { box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+            50% { box-shadow: 0 5px 35px rgba(255,255,255,0.4); }
+        }
+        
+        .sos-text h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .sos-text p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        /* Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            color: var(--text);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--primary);
+        }
+        
+        /* Feature Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 500px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .feature-card {
+            background: var(--card);
+            border-radius: 18px;
+            padding: 22px 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin: 0 auto 12px;
+        }
+        
+        .feature-icon.route { background: linear-gradient(135deg, #e3f2fd, #bbdefb); color: #1976d2; }
+        .feature-icon.report { background: linear-gradient(135deg, #fff3e0, #ffe0b2); color: #f57c00; }
+        .feature-icon.contacts { background: linear-gradient(135deg, #f3e5f5, #e1bee7); color: #7b1fa2; }
+        .feature-icon.tips { background: linear-gradient(135deg, #e0f7fa, #b2ebf2); color: #0097a7; }
+        .feature-icon.nearby { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); color: #388e3c; }
+        .feature-icon.share { background: linear-gradient(135deg, #fce4ec, #f8bbd9); color: #c2185b; }
+        
+        .feature-card h4 {
+            font-size: 0.95rem;
+            color: var(--text);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .feature-card p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Helplines */
+        .helplines {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+        
+        .helpline-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .helpline-btn {
+            background: linear-gradient(135deg, var(--primary-light), #f8bbd9);
+            border: none;
+            border-radius: 14px;
+            padding: 18px 10px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        
+        .helpline-btn:hover {
+            transform: translateY(-3px);
+        }
+        
+        .helpline-btn i {
+            font-size: 1.6rem;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .helpline-btn span {
+            font-size: 0.85rem;
+            color: var(--text);
+            font-weight: 600;
+            display: block;
+        }
+        
+        .helpline-btn small {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Tip Card */
+        .tip-card {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            border-radius: 18px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .tip-icon {
+            width: 50px;
+            height: 50px;
+            background: #ffc107;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+        
+        .tip-text h4 {
+            font-size: 0.95rem;
+            color: #ff8f00;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        
+        .tip-text p {
+            font-size: 0.85rem;
+            color: #5d4037;
+            line-height: 1.5;
+        }
+        
+        /* SOS Modal */
+        .sos-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+        
+        .sos-modal.show {
+            display: flex;
+        }
+        
+        .sos-modal-icon {
+            font-size: 4rem;
+            color: #f44336;
+            margin-bottom: 20px;
+            animation: shake 0.5s infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        
+        .sos-modal h2 {
+            color: white;
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .sos-modal p {
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .countdown {
+            font-size: 6rem;
+            font-weight: 700;
+            color: #f44336;
+            line-height: 1;
+            margin-bottom: 30px;
+        }
+        
+        .sos-cancel {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid white;
+            color: white;
+            padding: 16px 60px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .sos-cancel:hover {
+            background: rgba(255,255,255,0.25);
+        }
+        
+        .sos-sending, .sos-sent {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .sos-sending.show, .sos-sent.show {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-top-color: #4caf50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .sos-sent i {
+            font-size: 4rem;
+            color: #4caf50;
+            margin-bottom: 20px;
+        }
+        
+        .sos-done {
+            background: #4caf50;
+            border: none;
+            color: white;
+            padding: 16px 60px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <div class="mobile-header">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/1200px-Emblem_of_India.svg.png" alt="Logo" style="width: 30px; height: 30px;">
-            <h1>SafeRoute</h1>
-            <div style="margin-left: auto;">
-                <i class="fas fa-bars"></i>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-top">
+            <div class="brand">
+                <div class="brand-icon">
+                    🛡️
+                </div>
+                <div>
+                    <h1>रक्षा</h1>
+                    <p>WOMEN SAFETY PORTAL</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="/women/contacts" class="header-btn">
+                    <i class="fas fa-bell"></i>
+                </a>
+                <a href="/logout" class="header-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
             </div>
         </div>
-
-        <div class="main-grid">
-            <!-- Left Panel -->
-            <div class="control-panel">
-                <!-- Route Planner -->
-                <div class="card">
-                    <h3>Route Planner</h3>
-                    
-                    <!-- Urgent Help Toggle -->
-                    <div class="urgent-toggle-container">
-                        <div class="urgent-label">
-                            <i class="fas fa-ambulance"></i> URGENT HELP
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="urgentToggle" onchange="toggleUrgentMode()">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-
-                    <div class="form-group" style="position: relative;">
-                        <input type="text" id="startLocation" class="form-control" placeholder="Starting Point" autocomplete="off">
-                        <div id="startSuggestions" class="suggestions-box"></div>
-                    </div>
-                    <button class="btn-action btn-outline" onclick="useMyLocation()">
-                        <i class="fas fa-crosshairs"></i> Use My Location
-                    </button>
-                    <div class="form-group" style="margin-top: 10px; position: relative;">
-                        <input type="text" id="endLocation" class="form-control" placeholder="Destination" value="Vile Parle Police Station" autocomplete="off">
-                        <div id="endSuggestions" class="suggestions-box"></div>
-                    </div>
-                    <button class="btn-action btn-blue" onclick="findSafeRoute()">Find Safe Route</button>
-                </div>
-
-                <!-- Stats (Desktop) -->
-                <div class="card">
-                    <h3>Available Routes Info</h3>
-                    <div class="stats-row">
-                        <div class="stat-item">
-                            <i class="fas fa-video"></i> Nearby CCTV: <strong id="cctvCount">--</strong>
-                        </div>
-                    </div>
-                    <div class="stats-row">
-                        <div class="stat-item">
-                            <i class="fas fa-exclamation-triangle text-warning"></i> Recent Incidents: <strong id="incidentCount">--</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Report Incident (Desktop) -->
-                <div class="card incident-card">
-                    <h3>Report an Incident</h3>
-                    <div class="form-group">
-                        <select class="form-control" id="incidentType">
-                            <option>Harassment</option>
-                            <option>Theft</option>
-                            <option>Suspicious Activity</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Description / Severity (1-5)">
-                    </div>
-                    <button class="btn-action btn-warning" onclick="reportIncident()">Report Incident</button>
-                </div>
-                
-                <button class="btn-action btn-outline" onclick="shareLocation()">
-                    <i class="fas fa-share-alt"></i> Share Location
-                </button>
-            </div>
-
-            <!-- Map Area -->
-            <div class="map-wrapper">
-                <div id="map"></div>
-                
-                <!-- Mobile Floating Action Button -->
-                <button class="fab-report" onclick="toggleIncidentModal()">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </button>
+        
+        <div class="welcome">
+            <h2>Namaste, <span>Citizen</span> 🙏</h2>
+            <div class="status-pill">
+                <div class="status-dot"></div>
+                Protection Active
             </div>
         </div>
     </div>
-
-    <!-- Mobile Incident Modal -->
-    <div id="incidentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
-        <div style="background:white; padding:20px; width:90%; border-radius:10px;">
-            <h3>Report Incident</h3>
-            <div class="form-group">
-                <select class="form-control">
-                    <option>Harassment</option>
-                    <option>Theft</option>
-                </select>
+    
+    <!-- Main Content -->
+    <div class="main">
+        <!-- SOS Card -->
+        <div class="sos-card" onclick="triggerSOS()">
+            <div class="sos-content">
+                <div class="sos-button">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <div class="sos-text">
+                    <h3>Emergency SOS</h3>
+                    <p>Tap to alert police & your guardians with your live location</p>
+                </div>
             </div>
-            <button class="btn-action btn-warning" onclick="reportIncident()">Submit</button>
-            <button class="btn-action btn-outline" onclick="toggleIncidentModal()">Cancel</button>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="section-header">
+            <span class="section-title"><i class="fas fa-bolt"></i> Quick Actions</span>
+        </div>
+        
+        <div class="features-grid">
+            <a href="/women/saferoute" class="feature-card">
+                <div class="feature-icon route">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h4>Safe Route</h4>
+                <p>Plan journey</p>
+            </a>
+            
+            <a href="/women/report" class="feature-card">
+                <div class="feature-icon report">
+                    <i class="fas fa-flag"></i>
+                </div>
+                <h4>Report</h4>
+                <p>File incident</p>
+            </a>
+            
+            <a href="/women/contacts" class="feature-card">
+                <div class="feature-icon contacts">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <h4>Guardians</h4>
+                <p>My contacts</p>
+            </a>
+            
+            <a href="/women/tips" class="feature-card">
+                <div class="feature-icon tips">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h4>Safety Tips</h4>
+                <p>Stay aware</p>
+            </a>
+            
+            <a href="/women/nearby" class="feature-card">
+                <div class="feature-icon nearby">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h4>Nearby Help</h4>
+                <p>Police, hospital</p>
+            </a>
+            
+            <a href="#" class="feature-card" onclick="shareLocation(); return false;">
+                <div class="feature-icon share">
+                    <i class="fas fa-share-alt"></i>
+                </div>
+                <h4>Share Live</h4>
+                <p>Location</p>
+            </a>
+        </div>
+        
+        <!-- Helplines -->
+        <div class="helplines">
+            <div class="section-header">
+                <span class="section-title"><i class="fas fa-phone-volume"></i> Emergency Helplines</span>
+            </div>
+            
+            <div class="helpline-grid">
+                <a href="tel:100" class="helpline-btn">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Police</span>
+                    <small>100</small>
+                </a>
+                <a href="tel:1091" class="helpline-btn">
+                    <i class="fas fa-female"></i>
+                    <span>Women</span>
+                    <small>1091</small>
+                </a>
+                <a href="tel:112" class="helpline-btn">
+                    <i class="fas fa-ambulance"></i>
+                    <span>Emergency</span>
+                    <small>112</small>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Tip -->
+        <div class="tip-card">
+            <div class="tip-icon">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <div class="tip-text">
+                <h4>Safety Tip</h4>
+                <p>Share your live location with trusted family members when travelling alone at night.</p>
+            </div>
         </div>
     </div>
-
-    <!-- Urgent Confirmation Modal -->
-    <div id="urgentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(220, 38, 38, 0.9); z-index:3000; align-items:center; justify-content:center; flex-direction: column; text-align: center; color: white;">
-        <div style="background:white; padding:30px; width:85%; border-radius:15px; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-            <div style="width: 60px; height: 60px; background: #fee2e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
-                <i class="fas fa-exclamation-triangle" style="color: #dc2626; font-size: 30px;"></i>
-            </div>
-            <h2 style="margin-bottom: 10px; color: #dc2626;">URGENT MODE ACTIVE</h2>
-            <p style="margin-bottom: 20px; font-size: 1rem; color: #555;">
-                Alert sent to Police Control Room.<br>
-                Routing to nearest <strong id="urgentDestName">Safe Zone</strong>.
-            </p>
-            <div style="background: #f3f4f6; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
-                <i class="fas fa-route"></i> Route Optimized for Safety
-            </div>
-            <button class="btn-action" style="background: #dc2626; color: white; font-size: 1.1rem;" onclick="closeUrgentModal()">
-                OK, SHOW ROUTE
+    
+    <!-- SOS Modal -->
+    <div id="sosModal" class="sos-modal">
+        <div id="countdownSection">
+            <i class="fas fa-exclamation-triangle sos-modal-icon"></i>
+            <h2>SOS Activating</h2>
+            <p>Alert will be sent to Police & Guardians</p>
+            <div class="countdown" id="countdown">5</div>
+            <button class="sos-cancel" onclick="cancelSOS()">
+                <i class="fas fa-times"></i> CANCEL
             </button>
         </div>
+        
+        <div class="sos-sending" id="sendingSection">
+            <div class="spinner"></div>
+            <h2 style="color:white">Sending SOS...</h2>
+            <p style="color:rgba(255,255,255,0.7)">Stay calm. Help is on the way.</p>
+        </div>
+        
+        <div class="sos-sent" id="sentSection">
+            <i class="fas fa-check-circle"></i>
+            <h2 style="color:#4caf50">Alert Sent!</h2>
+            <p style="color:rgba(255,255,255,0.7)">Police & Guardians notified with your location</p>
+            <button class="sos-done" onclick="closeSOS()">Done</button>
+        </div>
     </div>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="{{ url_for('static', filename='js/mobile_map.js') }}"></script>
+    
     <script>
-        function toggleIncidentModal() {
-            const modal = document.getElementById('incidentModal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        // SOS Functionality
+        let sosCountdown = 5;
+        let sosInterval = null;
+        let userLocation = null;
+        
+        // Get location on load
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                },
+                () => {},
+                { enableHighAccuracy: true }
+            );
         }
-
-        function useMyLocation() {
-            document.getElementById('startLocation').value = "DJ Sanghvi College (Current)";
-            // Trigger map update in real app
+        
+        function triggerSOS() {
+            const modal = document.getElementById('sosModal');
+            modal.classList.add('show');
+            
+            document.getElementById('countdownSection').style.display = 'block';
+            document.getElementById('sendingSection').classList.remove('show');
+            document.getElementById('sentSection').classList.remove('show');
+            
+            sosCountdown = 5;
+            document.getElementById('countdown').textContent = sosCountdown;
+            
+            sosInterval = setInterval(() => {
+                sosCountdown--;
+                document.getElementById('countdown').textContent = sosCountdown;
+                
+                if (sosCountdown <= 0) {
+                    clearInterval(sosInterval);
+                    sendSOS();
+                }
+            }, 1000);
         }
-
-        function reportIncident() {
-            alert("Incident Reported! Authorities have been notified.");
-            toggleIncidentModal();
+        
+        function cancelSOS() {
+            clearInterval(sosInterval);
+            document.getElementById('sosModal').classList.remove('show');
         }
-
-        function shareLocation() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'My Safe Route',
-                    text: 'I am travelling from DJ Sanghvi to Vile Parle PS.',
-                    url: window.location.href
+        
+        async function sendSOS() {
+            document.getElementById('countdownSection').style.display = 'none';
+            document.getElementById('sendingSection').classList.add('show');
+            
+            // Get fresh location with better error handling
+            let lat = null;
+            let lng = null;
+            let address = 'Location could not be determined';
+            
+            // Try to get current location
+            try {
+                const pos = await new Promise((resolve, reject) => {
+                    if (!navigator.geolocation) {
+                        reject(new Error('Geolocation not supported'));
+                        return;
+                    }
+                    navigator.geolocation.getCurrentPosition(
+                        resolve, 
+                        reject, 
+                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                    );
                 });
-            } else {
-                alert("Location link copied to clipboard!");
+                lat = pos.coords.latitude;
+                lng = pos.coords.longitude;
+                
+                // Try to get address from coordinates
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`, {
+                        headers: { 'User-Agent': 'RakshaSafetyApp/1.0' }
+                    });
+                    const data = await res.json();
+                    address = data.display_name || `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+                } catch (geoErr) {
+                    address = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+                    console.log('Geocoding failed, using coordinates:', geoErr);
+                }
+            } catch (locErr) {
+                console.error('Location error:', locErr);
+                // Use cached location if available
+                if (userLocation) {
+                    lat = userLocation.lat;
+                    lng = userLocation.lng;
+                    address = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)} (cached)`;
+                }
+            }
+            
+            // Send to server
+            try {
+                const response = await fetch('/api/women/sos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        latitude: lat, 
+                        longitude: lng, 
+                        address: address,
+                        coords: { lat: lat, lng: lng }
+                    })
+                });
+                const result = await response.json();
+                console.log('SOS sent:', result);
+            } catch (err) {
+                console.error('SOS send error:', err);
+            }
+            
+            // Show success
+            document.getElementById('sendingSection').classList.remove('show');
+            document.getElementById('sentSection').classList.add('show');
+        }
+        
+        function closeSOS() {
+            document.getElementById('sosModal').classList.remove('show');
+        }
+        
+        function shareLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const url = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                        if (navigator.share) {
+                            navigator.share({ title: 'My Location', text: 'Here is my current location', url });
+                        } else {
+                            navigator.clipboard.writeText(url);
+                            alert('Location link copied!');
+                        }
+                    },
+                    () => alert('Unable to get location')
+                );
             }
         }
     </script>

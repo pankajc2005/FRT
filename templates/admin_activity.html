@@ -1,0 +1,752 @@
+{% extends "layout.html" %}
+
+{% block title %}Activity Log - Full View{% endblock %}
+{% block page_title %}Activity Log{% endblock %}
+
+{% block content %}
+<style>
+    .activity-container {
+        max-width: 100%;
+        padding: 0 20px;
+    }
+    
+    .activity-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+        background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+        padding: 25px;
+        border-radius: 16px;
+        color: white;
+    }
+    
+    .activity-header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .activity-header .stats {
+        display: flex;
+        gap: 25px;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .stat-item .value {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    
+    .stat-item .label {
+        font-size: 0.85rem;
+        opacity: 0.9;
+    }
+    
+    /* Filter Section */
+    .filter-section {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    
+    .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .filter-group label {
+        font-size: 0.8rem;
+        color: #6b7280;
+        font-weight: 600;
+    }
+    
+    .filter-group select,
+    .filter-group input {
+        padding: 10px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        min-width: 150px;
+        transition: all 0.2s;
+    }
+    
+    .filter-group select:focus,
+    .filter-group input:focus {
+        border-color: #1e40af;
+        outline: none;
+    }
+    
+    .btn-filter {
+        padding: 10px 25px;
+        background: #1e40af;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 20px;
+    }
+    
+    .btn-filter:hover {
+        background: #1e3a8a;
+    }
+    
+    .btn-clear {
+        padding: 10px 25px;
+        background: #6b7280;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+    
+    /* Activity Table */
+    .activity-table-container {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    
+    .activity-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .activity-table th {
+        background: #f8fafc;
+        padding: 15px 20px;
+        text-align: left;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 2px solid #e5e7eb;
+        position: sticky;
+        top: 0;
+    }
+    
+    .activity-table td {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 0.9rem;
+        color: #1f2937;
+    }
+    
+    .activity-table tr:hover {
+        background: #f8fafc;
+    }
+    
+    /* Action Badges */
+    .action-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .action-badge.login { background: #dbeafe; color: #1e40af; }
+    .action-badge.logout { background: #fef3c7; color: #92400e; }
+    .action-badge.face_match { background: #dcfce7; color: #166534; }
+    .action-badge.face_search { background: #e0e7ff; color: #4338ca; }
+    .action-badge.person_add { background: #dcfce7; color: #166534; }
+    .action-badge.person_delete { background: #fee2e2; color: #dc2626; }
+    .action-badge.alert_delete { background: #fee2e2; color: #dc2626; }
+    .action-badge.surveillance_activate { background: #fef3c7; color: #92400e; }
+    .action-badge.surveillance_deactivate { background: #e5e7eb; color: #374151; }
+    .action-badge.officer_search { background: #dbeafe; color: #1e40af; }
+    .action-badge.officer_view_alerts { background: #e0e7ff; color: #4338ca; }
+    
+    /* Status Badge */
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .status-badge.success { background: #dcfce7; color: #166534; }
+    .status-badge.failed { background: #fee2e2; color: #dc2626; }
+    .status-badge.error { background: #fef3c7; color: #92400e; }
+    
+    /* User Badge */
+    .user-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        background: #f3f4f6;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .user-badge.admin { background: #fee2e2; color: #dc2626; }
+    .user-badge.officer { background: #dbeafe; color: #1e40af; }
+    .user-badge.women { background: #fce7f3; color: #be185d; }
+    
+    /* Details */
+    .details-cell {
+        max-width: 300px;
+    }
+    
+    .details-toggle {
+        cursor: pointer;
+        color: #1e40af;
+        font-size: 0.85rem;
+    }
+    
+    .details-content {
+        display: none;
+        margin-top: 10px;
+        padding: 10px;
+        background: #f8fafc;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-family: monospace;
+    }
+    
+    .details-content.show {
+        display: block;
+    }
+    
+    /* Hash */
+    .hash-cell {
+        font-family: monospace;
+        font-size: 0.75rem;
+        color: #6b7280;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Loading */
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.9);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .loading-overlay.show {
+        display: flex;
+    }
+    
+    .loading-spinner {
+        font-size: 2rem;
+        color: #1e40af;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    /* No data */
+    .no-data {
+        text-align: center;
+        padding: 50px;
+        color: #6b7280;
+    }
+    
+    .no-data i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+    }
+    
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 20px;
+        background: white;
+        border-top: 1px solid #e5e7eb;
+    }
+    
+    .pagination button {
+        padding: 10px 20px;
+        border: 2px solid #e5e7eb;
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    
+    .pagination button:hover:not(:disabled) {
+        border-color: #1e40af;
+        color: #1e40af;
+    }
+    
+    .pagination button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .pagination .page-info {
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        color: #6b7280;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .activity-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .activity-table-container {
+            overflow-x: auto;
+        }
+        
+        .activity-table th,
+        .activity-table td {
+            padding: 10px 12px;
+            white-space: nowrap;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .activity-container {
+            padding: 0 10px;
+        }
+        
+        .filter-row {
+            flex-direction: column;
+        }
+        
+        .filter-group {
+            width: 100%;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+        }
+        
+        .activity-header .stats {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+    
+    /* Export button */
+    .btn-export {
+        padding: 10px 20px;
+        background: #16a34a;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-export:hover {
+        background: #15803d;
+    }
+</style>
+
+<div class="activity-container">
+    <!-- Header with Stats -->
+    <div class="activity-header">
+        <h1>
+            <i class="fas fa-list-alt"></i>
+            System Activity Log
+        </h1>
+        <div class="stats">
+            <div class="stat-item">
+                <div class="value" id="total-count">-</div>
+                <div class="label">Total Records</div>
+            </div>
+            <div class="stat-item">
+                <div class="value" id="today-count">-</div>
+                <div class="label">Today</div>
+            </div>
+            <div class="stat-item">
+                <div class="value" id="officer-count">-</div>
+                <div class="label">Officer Actions</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filter-section">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>Action Type</label>
+                <select id="filter-action">
+                    <option value="">All Actions</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>User</label>
+                <select id="filter-user">
+                    <option value="">All Users</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="filter-status">
+                    <option value="">All Status</option>
+                    <option value="success">Success</option>
+                    <option value="failed">Failed</option>
+                    <option value="error">Error</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>Date (IST)</label>
+                <input type="date" id="filter-date">
+            </div>
+            
+            <button class="btn-filter" onclick="applyFilters()">
+                <i class="fas fa-filter"></i> Apply Filters
+            </button>
+            
+            <button class="btn-clear" onclick="clearFilters()">
+                <i class="fas fa-times"></i> Clear
+            </button>
+            
+            <button class="btn-export" onclick="exportToCSV()">
+                <i class="fas fa-download"></i> Export CSV
+            </button>
+        </div>
+    </div>
+    
+    <!-- Activity Table -->
+    <div class="activity-table-container">
+        <table class="activity-table">
+            <thead>
+                <tr>
+                    <th>Timestamp (IST)</th>
+                    <th>Action</th>
+                    <th>Target</th>
+                    <th>User</th>
+                    <th>Status</th>
+                    <th>Details</th>
+                    <th>Hash</th>
+                </tr>
+            </thead>
+            <tbody id="activity-body">
+                <!-- Data will be loaded here -->
+            </tbody>
+        </table>
+        
+        <div class="no-data" id="no-data" style="display: none;">
+            <i class="fas fa-inbox"></i>
+            <p>No activity records found</p>
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    <div class="pagination" id="pagination">
+        <button id="btn-prev" onclick="prevPage()">
+            <i class="fas fa-chevron-left"></i> Previous
+        </button>
+        <div class="page-info">
+            <span id="page-info">Page 1 of 1</span>
+        </div>
+        <button id="btn-next" onclick="nextPage()">
+            Next <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loading">
+    <i class="fas fa-spinner loading-spinner"></i>
+</div>
+
+<script>
+let allActivities = [];
+let filteredActivities = [];
+let currentPage = 1;
+const itemsPerPage = 50;
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    loadActivities();
+});
+
+async function loadActivities() {
+    document.getElementById('loading').classList.add('show');
+    
+    try {
+        const response = await fetch('/api/admin/activity');
+        const data = await response.json();
+        
+        allActivities = data.activities;
+        filteredActivities = [...allActivities];
+        
+        // Populate filter dropdowns
+        populateFilters(data.filters);
+        
+        // Update stats
+        updateStats();
+        
+        // Render table
+        renderTable();
+        
+    } catch (err) {
+        console.error('Error loading activities:', err);
+        alert('Failed to load activity log');
+    } finally {
+        document.getElementById('loading').classList.remove('show');
+    }
+}
+
+function populateFilters(filters) {
+    const actionSelect = document.getElementById('filter-action');
+    const userSelect = document.getElementById('filter-user');
+    
+    // Clear existing options except first
+    actionSelect.innerHTML = '<option value="">All Actions</option>';
+    userSelect.innerHTML = '<option value="">All Users</option>';
+    
+    if (filters.actions) {
+        filters.actions.forEach(action => {
+            actionSelect.innerHTML += `<option value="${action}">${action}</option>`;
+        });
+    }
+    
+    if (filters.users) {
+        filters.users.forEach(user => {
+            userSelect.innerHTML += `<option value="${user}">${user}</option>`;
+        });
+    }
+}
+
+function updateStats() {
+    document.getElementById('total-count').textContent = allActivities.length;
+    
+    // Count today's activities
+    const today = new Date().toISOString().split('T')[0];
+    const todayCount = allActivities.filter(a => a.timestamp && a.timestamp.startsWith(today)).length;
+    document.getElementById('today-count').textContent = todayCount;
+    
+    // Count officer actions
+    const officerCount = allActivities.filter(a => 
+        a.action && (a.action.startsWith('OFFICER_') || a.user === 'officer')
+    ).length;
+    document.getElementById('officer-count').textContent = officerCount;
+}
+
+function applyFilters() {
+    const actionFilter = document.getElementById('filter-action').value.toLowerCase();
+    const userFilter = document.getElementById('filter-user').value.toLowerCase();
+    const statusFilter = document.getElementById('filter-status').value;
+    const dateFilter = document.getElementById('filter-date').value;
+    
+    filteredActivities = allActivities.filter(activity => {
+        let match = true;
+        
+        if (actionFilter && !activity.action.toLowerCase().includes(actionFilter)) {
+            match = false;
+        }
+        
+        if (userFilter && !activity.user.toLowerCase().includes(userFilter)) {
+            match = false;
+        }
+        
+        if (statusFilter && activity.status !== statusFilter) {
+            match = false;
+        }
+        
+        if (dateFilter && !activity.timestamp_ist.includes(dateFilter)) {
+            match = false;
+        }
+        
+        return match;
+    });
+    
+    currentPage = 1;
+    renderTable();
+}
+
+function clearFilters() {
+    document.getElementById('filter-action').value = '';
+    document.getElementById('filter-user').value = '';
+    document.getElementById('filter-status').value = '';
+    document.getElementById('filter-date').value = '';
+    
+    filteredActivities = [...allActivities];
+    currentPage = 1;
+    renderTable();
+}
+
+function renderTable() {
+    const tbody = document.getElementById('activity-body');
+    const noData = document.getElementById('no-data');
+    
+    if (filteredActivities.length === 0) {
+        tbody.innerHTML = '';
+        noData.style.display = 'block';
+        document.getElementById('pagination').style.display = 'none';
+        return;
+    }
+    
+    noData.style.display = 'none';
+    document.getElementById('pagination').style.display = 'flex';
+    
+    // Calculate pagination
+    const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, filteredActivities.length);
+    const pageData = filteredActivities.slice(startIndex, endIndex);
+    
+    // Update pagination info
+    document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages} (${filteredActivities.length} records)`;
+    document.getElementById('btn-prev').disabled = currentPage === 1;
+    document.getElementById('btn-next').disabled = currentPage === totalPages;
+    
+    // Build table rows
+    let html = '';
+    pageData.forEach((activity, index) => {
+        const actionClass = activity.action.toLowerCase().replace(/_/g, '_');
+        const statusClass = activity.status.toLowerCase();
+        const userClass = activity.user === 'admin' ? 'admin' : (activity.user === 'officer' ? 'officer' : 'women');
+        
+        html += `
+            <tr>
+                <td>${activity.timestamp_ist || '-'}</td>
+                <td>
+                    <span class="action-badge ${actionClass}">
+                        <i class="fas ${getActionIcon(activity.action)}"></i>
+                        ${activity.action}
+                    </span>
+                </td>
+                <td>${activity.target || '-'}</td>
+                <td>
+                    <span class="user-badge ${userClass}">
+                        <i class="fas fa-user"></i>
+                        ${activity.user || '-'}
+                    </span>
+                </td>
+                <td>
+                    <span class="status-badge ${statusClass}">
+                        ${activity.status}
+                    </span>
+                </td>
+                <td class="details-cell">
+                    ${activity.details ? `
+                        <span class="details-toggle" onclick="toggleDetails(${startIndex + index})">
+                            <i class="fas fa-info-circle"></i> View Details
+                        </span>
+                        <div class="details-content" id="details-${startIndex + index}">
+                            <pre>${JSON.stringify(activity.details, null, 2)}</pre>
+                        </div>
+                    ` : '-'}
+                </td>
+                <td class="hash-cell" title="${activity.hash || '-'}">
+                    ${activity.hash ? activity.hash.substring(0, 16) + '...' : '-'}
+                </td>
+            </tr>
+        `;
+    });
+    
+    tbody.innerHTML = html;
+}
+
+function getActionIcon(action) {
+    const icons = {
+        'LOGIN': 'fa-sign-in-alt',
+        'LOGOUT': 'fa-sign-out-alt',
+        'FACE_MATCH': 'fa-user-check',
+        'FACE_SEARCH': 'fa-search',
+        'PERSON_ADD': 'fa-user-plus',
+        'PERSON_DELETE': 'fa-user-minus',
+        'ALERT_DELETE': 'fa-trash',
+        'SURVEILLANCE_ACTIVATE': 'fa-eye',
+        'SURVEILLANCE_DEACTIVATE': 'fa-eye-slash',
+        'OFFICER_SEARCH': 'fa-camera',
+        'OFFICER_VIEW_ALERTS': 'fa-bell'
+    };
+    return icons[action] || 'fa-circle';
+}
+
+function toggleDetails(index) {
+    const details = document.getElementById('details-' + index);
+    details.classList.toggle('show');
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+    }
+}
+
+function nextPage() {
+    const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+    }
+}
+
+function exportToCSV() {
+    const headers = ['Timestamp (IST)', 'Action', 'Target', 'User', 'Status', 'Details', 'Hash'];
+    
+    let csv = headers.join(',') + '\n';
+    
+    filteredActivities.forEach(activity => {
+        const row = [
+            `"${activity.timestamp_ist || ''}"`,
+            `"${activity.action || ''}"`,
+            `"${activity.target || ''}"`,
+            `"${activity.user || ''}"`,
+            `"${activity.status || ''}"`,
+            `"${activity.details ? JSON.stringify(activity.details).replace(/"/g, '""') : ''}"`,
+            `"${activity.hash || ''}"`
+        ];
+        csv += row.join(',') + '\n';
+    });
+    
+    // Download
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `activity_log_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+</script>
+{% endblock %}

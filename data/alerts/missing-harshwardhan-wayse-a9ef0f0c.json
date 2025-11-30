@@ -1,0 +1,17 @@
+{
+  "id": "missing-harshwardhan-wayse-a9ef0f0c",
+  "name": "Harshwardhan Wayse",
+  "db_type": "missing",
+  "priority": 2,
+  "is_wanted": false,
+  "image_filename": "missing-harshwardhan-wayse-a9ef0f0c.jpg",
+  "detections": [
+    {
+      "timestamp": "2025-11-30T16:24:01.052460Z",
+      "match_percentage": 100.0,
+      "capture_frame": "missing-harshwardhan-wayse-a9ef0f0c_1764519841.jpg",
+      "source": "Dashboard Capture",
+      "officer": "admin"
+    }
+  ]
+}

@@ -654,5 +654,8 @@
       1.0836706161499023
     ]
   },
-  "surveillance": false
+  "surveillance": true,
+  "surveillance_activated_at": "2025-11-30T16:02:04.623757Z",
+  "surveillance_activated_by": "admin",
+  "surveillance_activation_reason": "Again done crime "
 }

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Report Incident - Raksha</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #e91e63;
+            --primary-dark: #c2185b;
+            --primary-light: #fce4ec;
+            --secondary: #9c27b0;
+            --text-dark: #37474f;
+            --text-light: #78909c;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #f3e5f5 100%);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        
+        .header-title h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .header-title p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        /* Form Container */
+        .form-container {
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title i {
+            color: var(--primary);
+        }
+        
+        /* Incident Type Grid */
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .type-option {
+            background: #f8f9fa;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .type-option.selected {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+        
+        .type-option i {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .type-option span {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        
+        /* Form Fields */
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: none;
+        }
+        
+        /* Location Input */
+        .location-group {
+            position: relative;
+        }
+        
+        .location-group .form-control {
+            padding-right: 100px;
+        }
+        
+        .gps-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-light);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: var(--primary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        /* Severity Slider */
+        .severity-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+        }
+        
+        .severity-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        .severity-slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, #4caf50, #ff9800, #f44336);
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        .severity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .severity-value {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        /* Anonymous Toggle */
+        .anonymous-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f3e5f5;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .anonymous-toggle label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        
+        /* Switch */
+        .switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        /* Success Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            width: 85%;
+            max-width: 350px;
+        }
+        
+        .success-icon {
+            width: 70px;
+            height: 70px;
+            background: #e8f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .success-icon i {
+            font-size: 2rem;
+            color: #4caf50;
+        }
+        
+        .modal-content h2 {
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        
+        .modal-content p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+        
+        .btn-modal {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <a href="/women/dashboard" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h1><i class="fas fa-flag"></i> Report Incident</h1>
+            <p>Your safety matters to us</p>
+        </div>
+    </div>
+    
+    <!-- Form -->
+    <div class="form-container">
+        <div class="form-card">
+            <div class="section-title">
+                <i class="fas fa-list"></i>
+                <span>Type of Incident</span>
+            </div>
+            
+            <div class="type-grid">
+                <div class="type-option selected" onclick="selectType(this, 'harassment')">
+                    <i class="fas fa-user-slash"></i>
+                    <span>Harassment</span>
+                </div>
+                <div class="type-option" onclick="selectType(this, 'stalking')">
+                    <i class="fas fa-eye"></i>
+                    <span>Stalking</span>
+                </div>
+                <div class="type-option" onclick="selectType(this, 'theft')">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <span>Theft</span>
+                </div>
+                <div class="type-option" onclick="selectType(this, 'assault')">
+                    <i class="fas fa-hand-fist"></i>
+                    <span>Assault</span>
+                </div>
+                <div class="type-option" onclick="selectType(this, 'unsafe_area')">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Unsafe Area</span>
+                </div>
+                <div class="type-option" onclick="selectType(this, 'other')">
+                    <i class="fas fa-ellipsis-h"></i>
+                    <span>Other</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-card">
+            <div class="form-group location-group">
+                <label><i class="fas fa-map-marker-alt"></i> Location</label>
+                <input type="text" class="form-control" id="location" placeholder="Where did this happen?">
+                <button class="gps-btn" onclick="getLocation()">
+                    <i class="fas fa-crosshairs"></i> GPS
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-calendar"></i> When did this happen?</label>
+                <input type="datetime-local" class="form-control" id="datetime">
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-comment-alt"></i> Description</label>
+                <textarea class="form-control" id="description" placeholder="Describe what happened..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-exclamation-circle"></i> Severity Level</label>
+                <div class="severity-container">
+                    <div class="severity-labels">
+                        <span>Low</span>
+                        <span>Medium</span>
+                        <span>High</span>
+                    </div>
+                    <input type="range" class="severity-slider" id="severity" min="1" max="5" value="3" oninput="updateSeverity()">
+                    <div class="severity-value" id="severityValue">3</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="anonymous-toggle">
+            <label>
+                <i class="fas fa-user-secret"></i>
+                <span>Report Anonymously</span>
+            </label>
+            <label class="switch">
+                <input type="checkbox" id="anonymous">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <button class="btn-submit" onclick="submitReport()">
+            <i class="fas fa-paper-plane"></i> Submit Report
+        </button>
+    </div>
+    
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2>Report Submitted!</h2>
+            <p>Thank you for reporting. Authorities have been notified and will take appropriate action.</p>
+            <button class="btn-modal" onclick="closeModal()">Done</button>
+        </div>
+    </div>
+    
+    <script>
+        let selectedType = 'harassment';
+        
+        function selectType(element, type) {
+            document.querySelectorAll('.type-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedType = type;
+        }
+        
+        function getLocation() {
+            const input = document.getElementById('location');
+            input.value = 'Getting location...';
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        try {
+                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+                            const data = await response.json();
+                            input.value = data.display_name ? data.display_name.substring(0, 80) : `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                        } catch {
+                            input.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                        }
+                    },
+                    () => {
+                        input.value = '';
+                        alert('Unable to get location');
+                    }
+                );
+            }
+        }
+        
+        function updateSeverity() {
+            document.getElementById('severityValue').textContent = document.getElementById('severity').value;
+        }
+        
+        function submitReport() {
+            const location = document.getElementById('location').value;
+            const description = document.getElementById('description').value;
+            
+            if (!location) {
+                alert('Please enter the location');
+                return;
+            }
+            
+            // Send to server
+            fetch('/api/women/report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: selectedType,
+                    location: location,
+                    datetime: document.getElementById('datetime').value,
+                    description: description,
+                    severity: document.getElementById('severity').value,
+                    anonymous: document.getElementById('anonymous').checked
+                })
+            }).then(() => {
+                document.getElementById('successModal').classList.add('show');
+            }).catch(() => {
+                document.getElementById('successModal').classList.add('show');
+            });
+        }
+        
+        function closeModal() {
+            document.getElementById('successModal').classList.remove('show');
+            window.location.href = '/women/dashboard';
+        }
+        
+        // Set default datetime to now
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('datetime').value = now.toISOString().slice(0, 16);
+    </script>
+</body>
+</html>

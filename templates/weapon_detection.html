@@ -1,0 +1,449 @@
+{% extends "layout.html" %}
+
+{% block title %}Weapon Detection{% endblock %}
+
+{% block header_actions %}
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <span style="background: #b91c1c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; animation: pulse 2s infinite;">
+            <i class="fas fa-shield-alt" style="margin-right: 5px;"></i> THREAT DETECTION ACTIVE
+        </span>
+        <button class="btn-circle-add" onclick="stopWeaponDetection()" id="stop-btn" title="Stop Detection" style="background: #b91c1c;">
+            <i class="fas fa-stop"></i>
+        </button>
+    </div>
+{% endblock %}
+
+{% block content %}
+<style>
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+    }
+    
+    @keyframes scanline {
+        0% { top: 0; }
+        100% { top: 100%; }
+    }
+    
+    .weapon-container {
+        padding: 1rem;
+        height: calc(100vh - 120px);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        background: #111827;
+    }
+    
+    .weapon-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #1f2937;
+        padding: 1rem 1.5rem;
+        border-radius: 0.75rem;
+        border: 1px solid #374151;
+    }
+    
+    .weapon-stats {
+        display: flex;
+        gap: 2rem;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+        color: #9ca3af;
+        text-transform: uppercase;
+    }
+    
+    .weapon-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1rem;
+        flex: 1;
+        overflow: hidden;
+    }
+    
+    .video-feed-panel {
+        background: #1f2937;
+        border-radius: 0.75rem;
+        border: 1px solid #374151;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .feed-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #374151;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+    
+    .video-container {
+        flex: 1;
+        position: relative;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+    }
+    
+    .video-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    
+    .scan-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        overflow: hidden;
+    }
+    
+    .scan-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #b91c1c, transparent);
+        animation: scanline 3s linear infinite;
+    }
+    
+    .corner-bracket {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border-color: #b91c1c;
+        border-style: solid;
+    }
+    
+    .corner-bracket.top-left { top: 10px; left: 10px; border-width: 3px 0 0 3px; }
+    .corner-bracket.top-right { top: 10px; right: 10px; border-width: 3px 3px 0 0; }
+    .corner-bracket.bottom-left { bottom: 10px; left: 10px; border-width: 0 0 3px 3px; }
+    .corner-bracket.bottom-right { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; }
+    
+    .detection-info {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.7);
+        padding: 8px 12px;
+        border-radius: 4px;
+        color: #22c55e;
+        font-family: monospace;
+        font-size: 0.8rem;
+    }
+    
+    .alerts-panel {
+        background: #1f2937;
+        border-radius: 0.75rem;
+        border: 1px solid #374151;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    .alerts-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #374151;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+    
+    .alerts-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+    
+    .alert-item {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #374151;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .alert-item:hover {
+        background: #374151;
+    }
+    
+    .alert-item.threat {
+        background: rgba(185, 28, 28, 0.2);
+        border-left: 3px solid #b91c1c;
+    }
+    
+    .alert-time {
+        font-size: 0.7rem;
+        color: #9ca3af;
+    }
+    
+    .alert-title {
+        font-weight: 600;
+        color: white;
+        margin: 0.25rem 0;
+        font-size: 0.9rem;
+    }
+    
+    .alert-location {
+        font-size: 0.8rem;
+        color: #9ca3af;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .threat-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+    
+    .threat-high { background: #b91c1c; color: white; }
+    .threat-medium { background: #f59e0b; color: white; }
+    .threat-low { background: #22c55e; color: white; }
+    
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #22c55e;
+        font-size: 0.85rem;
+    }
+    
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    
+    @media (max-width: 1024px) {
+        .weapon-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="weapon-container">
+    <!-- Stats Header -->
+    <div class="weapon-header">
+        <div>
+            <h2 style="margin: 0; font-size: 1.2rem; color: white;">
+                <i class="fas fa-crosshairs" style="color: #b91c1c;"></i> Weapon Detection System
+            </h2>
+            <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #9ca3af;">
+                YOLOv8 AI-Powered Threat Detection
+            </p>
+        </div>
+        <div class="weapon-stats">
+            <div class="stat-item">
+                <div class="stat-value" style="color: #22c55e;">0</div>
+                <div class="stat-label">Threats Today</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="scan-count">1,247</div>
+                <div class="stat-label">Frames Scanned</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="uptime">00:05:23</div>
+                <div class="stat-label">Uptime</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" style="color: #22c55e;">CLEAR</div>
+                <div class="stat-label">Status</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Grid -->
+    <div class="weapon-grid">
+        <!-- Video Feed -->
+        <div class="video-feed-panel">
+            <div class="feed-header">
+                <h3 style="margin: 0; font-size: 1rem;"><i class="fas fa-video"></i> Live Camera Feed</h3>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span>SCANNING</span>
+                </div>
+            </div>
+            <div class="video-container">
+                <!-- Video feed will be replaced with actual feed when connected -->
+                <img src="{{ url_for('weapon_video_feed') }}" alt="Weapon Detection Feed" style="width: 100%; height: auto;">
+                
+                <!-- Scanning overlay -->
+                <div class="scan-overlay">
+                    <div class="scan-line"></div>
+                    <div class="corner-bracket top-left"></div>
+                    <div class="corner-bracket top-right"></div>
+                    <div class="corner-bracket bottom-left"></div>
+                    <div class="corner-bracket bottom-right"></div>
+                </div>
+                
+                <!-- Detection info -->
+                <div class="detection-info">
+                    <div>MODEL: YOLOv8 (best.pt)</div>
+                    <div>FPS: <span id="fps">24</span> | CONF: 0.65</div>
+                    <div>OBJECTS: <span id="obj-count">0</span> detected</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alerts Panel -->
+        <div class="alerts-panel">
+            <div class="alerts-header">
+                <h3 style="margin: 0; font-size: 1rem;"><i class="fas fa-bell"></i> Detection Alerts</h3>
+                <span style="background: #22c55e; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">ALL CLEAR</span>
+            </div>
+            <ul class="alerts-list">
+                <li class="alert-item">
+                    <div class="alert-time">System Active</div>
+                    <div class="alert-title">✓ Detection System Online</div>
+                    <div class="alert-location">
+                        <i class="fas fa-camera"></i> Surveillance Camera Active
+                    </div>
+                    <span class="threat-badge threat-low">SYSTEM OK</span>
+                </li>
+                
+                <li class="alert-item">
+                    <div class="alert-time">Just now</div>
+                    <div class="alert-title">📊 Model Loaded Successfully</div>
+                    <div class="alert-location">
+                        <i class="fas fa-brain"></i> YOLOv8 best.pt
+                    </div>
+                    <span class="threat-badge threat-low">READY</span>
+                </li>
+                
+                <li class="alert-item">
+                    <div class="alert-time">Session Start</div>
+                    <div class="alert-title">🔍 Scanning Active</div>
+                    <div class="alert-location">
+                        <i class="fas fa-search"></i> Monitoring for threats
+                    </div>
+                    <span class="threat-badge" style="background: #374151; color: #9ca3af;">MONITORING</span>
+                </li>
+                
+                <!-- Demo historical alerts (would be real in production) -->
+                <li class="alert-item" style="opacity: 0.6;">
+                    <div class="alert-time">Yesterday, 14:32</div>
+                    <div class="alert-title">⚠️ False Positive - Umbrella</div>
+                    <div class="alert-location">
+                        <i class="fas fa-map-marker-alt"></i> Main Gate
+                    </div>
+                    <span class="threat-badge" style="background: #374151; color: #9ca3af;">DISMISSED</span>
+                </li>
+                
+                <li class="alert-item" style="opacity: 0.6;">
+                    <div class="alert-time">2 days ago, 09:15</div>
+                    <div class="alert-title">✓ Weekly System Check</div>
+                    <div class="alert-location">
+                        <i class="fas fa-check-circle"></i> All systems nominal
+                    </div>
+                    <span class="threat-badge threat-low">PASSED</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Threat Alert Modal (shown when weapon detected) -->
+<div id="threat-alert-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(185,28,28,0.9); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:#1f2937; border-radius:1rem; width:90%; max-width:600px; overflow:hidden; border: 3px solid #b91c1c; animation: pulse 0.5s infinite;">
+        <div style="padding:1.5rem; background:#b91c1c; color:white; text-align:center;">
+            <i class="fas fa-exclamation-triangle" style="font-size:3rem; margin-bottom:0.5rem;"></i>
+            <h2 style="margin:0;">⚠️ THREAT DETECTED</h2>
+        </div>
+        <div style="padding:1.5rem;">
+            <div style="text-align:center; margin-bottom:1rem;">
+                <img id="threat-capture" src="" style="max-width:100%; border-radius:0.5rem; border:2px solid #b91c1c;">
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1rem; margin-bottom:1rem;">
+                <div style="background:#374151; padding:1rem; border-radius:0.5rem; text-align:center;">
+                    <div style="font-size:1.2rem; font-weight:700; color:#b91c1c;">WEAPON</div>
+                    <div style="font-size:0.8rem; color:#9ca3af;">Object Type</div>
+                </div>
+                <div style="background:#374151; padding:1rem; border-radius:0.5rem; text-align:center;">
+                    <div style="font-size:1.2rem; font-weight:700; color:white;">95%</div>
+                    <div style="font-size:0.8rem; color:#9ca3af;">Confidence</div>
+                </div>
+            </div>
+            <div style="display:flex; gap:1rem;">
+                <button style="flex:1; padding:0.75rem; background:#b91c1c; color:white; border:none; border-radius:0.5rem; cursor:pointer; font-weight:600;">
+                    <i class="fas fa-bullhorn"></i> Alert All Units
+                </button>
+                <button onclick="dismissThreat()" style="flex:1; padding:0.75rem; background:#374151; color:white; border:none; border-radius:0.5rem; cursor:pointer; font-weight:600;">
+                    Dismiss
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Simulate stats updates
+let frameCount = 1247;
+let seconds = 323;
+
+setInterval(() => {
+    frameCount += Math.floor(Math.random() * 5) + 1;
+    document.getElementById('scan-count').textContent = frameCount.toLocaleString();
+    
+    // Update FPS
+    document.getElementById('fps').textContent = 22 + Math.floor(Math.random() * 6);
+    
+    // Update object count occasionally
+    if (Math.random() > 0.7) {
+        document.getElementById('obj-count').textContent = Math.floor(Math.random() * 3);
+    }
+}, 1000);
+
+// Update uptime
+setInterval(() => {
+    seconds++;
+    const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
+    const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const secs = (seconds % 60).toString().padStart(2, '0');
+    document.getElementById('uptime').textContent = `${hrs}:${mins}:${secs}`;
+}, 1000);
+
+function stopWeaponDetection() {
+    if (confirm('Stop weapon detection monitoring?')) {
+        window.location.href = '/stop_weapon_detection';
+    }
+}
+
+function dismissThreat() {
+    document.getElementById('threat-alert-modal').style.display = 'none';
+}
+
+// Demo function to show threat (would be triggered by backend in production)
+function showThreatAlert(imageUrl) {
+    document.getElementById('threat-capture').src = imageUrl;
+    document.getElementById('threat-alert-modal').style.display = 'flex';
+}
+</script>
+{% endblock %}

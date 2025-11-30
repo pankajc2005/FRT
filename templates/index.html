@@ -71,13 +71,21 @@
                 </a>
 
                 <!-- Crowd Detection -->
-                <div class="action-box" onclick="requestCrowdDetectionPermission()" id="crowd-detection-box">
+                <div class="action-box" onclick="requestCrowdDetectionPermission()" style="cursor:pointer;">
                     <div class="action-icon" style="color: #7c3aed;">
                         <i class="fas fa-users"></i>
                     </div>
                     <h3>Crowd Detection</h3>
                     <p>Monitor crowd density</p>
-                    <span id="crowd-status-badge" style="display:none; position:absolute; top:8px; right:8px; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.65rem;">LIVE</span>
+                </div>
+
+                <!-- Weapon Detection -->
+                <div class="action-box" onclick="requestWeaponDetectionPermission()" style="cursor:pointer;">
+                    <div class="action-icon" style="color: #b91c1c;">
+                        <i class="fas fa-crosshairs"></i>
+                    </div>
+                    <h3>Weapon Detection</h3>
+                    <p>AI-powered threat detection</p>
                 </div>
 
                 <!-- Add Criminal -->
@@ -174,68 +182,66 @@
 
 <!-- Crowd Detection Permission Modal -->
 <div class="modal-backdrop" id="crowd-permission-modal" style="display:none;">
-    <div class="modal-content" style="max-width: 480px;">
+    <div class="modal-content" style="max-width: 450px;">
         <div class="panel-header" style="background: linear-gradient(135deg, #7c3aed, #5b21b6);">
-            <h2 style="color: white;"><i class="fas fa-users"></i> Crowd Detection System</h2>
+            <h2 style="color: white;"><i class="fas fa-users"></i> Crowd Detection</h2>
             <button onclick="closeCrowdPermissionModal()" style="border:none; background:none; cursor:pointer; font-size:1.2rem; color:white;">&times;</button>
         </div>
         <div style="padding: 1.5rem;">
             <div style="text-align: center; margin-bottom: 1.5rem;">
-                <div style="width: 80px; height: 80px; background: #f3e8ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
-                    <i class="fas fa-network-wired" style="font-size: 2rem; color: #7c3aed;"></i>
+                <div style="width: 70px; height: 70px; background: #f3e8ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-video" style="font-size: 1.8rem; color: #7c3aed;"></i>
                 </div>
-                <h3 style="margin: 0 0 0.5rem; color: #1f2937;">Connect to Surveillance Network</h3>
+                <h3 style="margin: 0 0 0.5rem; color: #1f2937;">Start Crowd Monitoring</h3>
                 <p style="color: #6b7280; font-size: 0.9rem; margin: 0;">
-                    This will connect to the CCTV surveillance cameras for real-time crowd density monitoring.
+                    This will start the surveillance stream with crowd density analysis enabled.
                 </p>
-            </div>
-            
-            <div style="background: #ede9fe; border: 1px solid #7c3aed; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem;">
-                <div style="display: flex; align-items: start; gap: 0.75rem;">
-                    <i class="fas fa-info-circle" style="color: #7c3aed; margin-top: 2px;"></i>
-                    <div style="font-size: 0.85rem; color: #5b21b6;">
-                        <strong>System Access:</strong>
-                        <ul style="margin: 0.5rem 0 0 1rem; padding: 0;">
-                            <li>CCTV Network: 4 cameras in Vile Parle area</li>
-                            <li>AI Crowd Analysis Engine</li>
-                            <li>Real-time Alert System</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div style="background: #f0fdf4; border: 1px solid #22c55e; border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 1.5rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #166534;">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Authorized access for Vile Parle PS officers only</span>
-                </div>
             </div>
             
             <div style="display: flex; gap: 1rem;">
                 <button onclick="closeCrowdPermissionModal()" class="btn-dashboard btn-outline" style="flex: 1;">
                     Cancel
                 </button>
-                <button onclick="grantCrowdPermissions()" class="btn-dashboard btn-primary" style="flex: 1; background: #7c3aed;">
-                    <i class="fas fa-plug"></i> Connect Now
+                <button onclick="startCrowdStream()" class="btn-dashboard btn-primary" style="flex: 1; background: #7c3aed;">
+                    <i class="fas fa-play"></i> Start Stream
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Crowd Detection Initializing Modal -->
-<div class="modal-backdrop" id="crowd-init-modal" style="display:none;">
-    <div class="modal-content" style="max-width: 400px;">
-        <div style="padding: 2rem; text-align: center;">
-            <div class="crowd-init-animation" style="margin-bottom: 1.5rem;">
-                <i class="fas fa-satellite-dish fa-spin" style="font-size: 3rem; color: #7c3aed;"></i>
+<!-- Weapon Detection Permission Modal -->
+<div class="modal-backdrop" id="weapon-permission-modal" style="display:none;">
+    <div class="modal-content" style="max-width: 450px;">
+        <div class="panel-header" style="background: linear-gradient(135deg, #b91c1c, #7f1d1d);">
+            <h2 style="color: white;"><i class="fas fa-crosshairs"></i> Weapon Detection</h2>
+            <button onclick="closeWeaponPermissionModal()" style="border:none; background:none; cursor:pointer; font-size:1.2rem; color:white;">&times;</button>
+        </div>
+        <div style="padding: 1.5rem;">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <div style="width: 70px; height: 70px; background: #fef2f2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-shield-alt" style="font-size: 1.8rem; color: #b91c1c;"></i>
+                </div>
+                <h3 style="margin: 0 0 0.5rem; color: #1f2937;">Activate Threat Detection</h3>
+                <p style="color: #6b7280; font-size: 0.9rem; margin: 0;">
+                    This will start the surveillance stream with YOLOv8 weapon detection enabled.
+                </p>
             </div>
-            <h3 style="margin: 0 0 0.5rem; color: #1f2937;">Connecting to CCTV Network</h3>
-            <p style="color: #6b7280; font-size: 0.9rem; margin: 0 0 1rem;">
-                <span id="init-status">Establishing secure connection...</span>
-            </p>
-            <div style="width: 100%; height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
-                <div id="init-progress" style="width: 0%; height: 100%; background: #7c3aed; transition: width 0.3s;"></div>
+
+            <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #92400e;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>AI Model: YOLOv8 (best.pt) will be loaded</span>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="closeWeaponPermissionModal()" class="btn-dashboard btn-outline" style="flex: 1;">
+                    Cancel
+                </button>
+                <button onclick="startWeaponStream()" class="btn-dashboard btn-primary" style="flex: 1; background: #b91c1c;">
+                    <i class="fas fa-power-off"></i> Activate
+                </button>
             </div>
         </div>
     </div>
@@ -243,8 +249,6 @@
 
 <script>
 // Crowd Detection Functions
-let crowdDetectionActive = false;
-
 function requestCrowdDetectionPermission() {
     document.getElementById('crowd-permission-modal').style.display = 'flex';
 }
@@ -253,49 +257,23 @@ function closeCrowdPermissionModal() {
     document.getElementById('crowd-permission-modal').style.display = 'none';
 }
 
-function grantCrowdPermissions() {
+function startCrowdStream() {
     closeCrowdPermissionModal();
-    // No need for actual permissions - using surveillance cameras
-    startCrowdDetectionInit();
+    window.location.href = '/crowd_detection';
 }
 
-function startCrowdDetectionInit() {
-    document.getElementById('crowd-init-modal').style.display = 'flex';
-    
-    const progress = document.getElementById('init-progress');
-    const status = document.getElementById('init-status');
-    
-    const steps = [
-        { text: 'Establishing secure connection...', progress: 15 },
-        { text: 'Authenticating with CCTV network...', progress: 30 },
-        { text: 'Connecting to Camera 1: Main Gate...', progress: 45 },
-        { text: 'Connecting to Camera 2: Vile Parle Market...', progress: 55 },
-        { text: 'Connecting to Camera 3: Station West...', progress: 65 },
-        { text: 'Connecting to Camera 4: SV Road Junction...', progress: 75 },
-        { text: 'Loading AI crowd analysis model...', progress: 90 },
-        { text: 'Starting real-time monitoring...', progress: 100 }
-    ];
-    
-    let step = 0;
-    const interval = setInterval(() => {
-        if (step < steps.length) {
-            status.textContent = steps[step].text;
-            progress.style.width = steps[step].progress + '%';
-            step++;
-        } else {
-            clearInterval(interval);
-            crowdDetectionActive = true;
-            
-            // Show LIVE badge
-            document.getElementById('crowd-status-badge').style.display = 'block';
-            document.getElementById('crowd-detection-box').style.position = 'relative';
-            
-            setTimeout(() => {
-                document.getElementById('crowd-init-modal').style.display = 'none';
-                window.location.href = '/crowd_detection';
-            }, 500);
-        }
-    }, 600);
+// Weapon Detection Functions
+function requestWeaponDetectionPermission() {
+    document.getElementById('weapon-permission-modal').style.display = 'flex';
+}
+
+function closeWeaponPermissionModal() {
+    document.getElementById('weapon-permission-modal').style.display = 'none';
+}
+
+function startWeaponStream() {
+    closeWeaponPermissionModal();
+    window.location.href = '/weapon_detection';
 }
 </script>
 

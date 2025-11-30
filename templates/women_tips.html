@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Safety Tips - Raksha</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #e91e63;
+            --primary-dark: #c2185b;
+            --primary-light: #fce4ec;
+            --secondary: #9c27b0;
+            --text-dark: #37474f;
+            --text-light: #78909c;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #f3e5f5 100%);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        
+        .header-title h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .header-title p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        /* Content */
+        .content {
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        /* Category Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .tab {
+            padding: 10px 18px;
+            background: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-light);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        /* Tips Section */
+        .tips-section {
+            display: none;
+        }
+        
+        .tips-section.active {
+            display: block;
+        }
+        
+        /* Tip Card */
+        .tip-card {
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+            cursor: pointer;
+        }
+        
+        .tip-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .tip-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .tip-icon.travel { background: #e3f2fd; color: #1976d2; }
+        .tip-icon.home { background: #e8f5e9; color: #388e3c; }
+        .tip-icon.digital { background: #fff3e0; color: #f57c00; }
+        .tip-icon.emergency { background: #ffebee; color: #d32f2f; }
+        .tip-icon.awareness { background: #f3e5f5; color: #7b1fa2; }
+        
+        .tip-title {
+            flex: 1;
+        }
+        
+        .tip-title h3 {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+        
+        .tip-title span {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        
+        .tip-arrow {
+            color: var(--text-light);
+            transition: transform 0.2s;
+        }
+        
+        .tip-card.expanded .tip-arrow {
+            transform: rotate(180deg);
+        }
+        
+        /* Tip Details */
+        .tip-details {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .tip-card.expanded .tip-details {
+            display: block;
+        }
+        
+        .detail-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .detail-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .detail-icon i {
+            font-size: 0.7rem;
+            color: var(--primary);
+        }
+        
+        .detail-text {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+        
+        /* Quick Actions */
+        .quick-help {
+            background: linear-gradient(135deg, #fff9c4 0%, #ffe082 100%);
+            border-radius: 16px;
+            padding: 18px;
+            margin-top: 20px;
+        }
+        
+        .quick-help h3 {
+            font-size: 1rem;
+            color: #f57f17;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .help-links {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .help-link {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        
+        .help-link i {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <a href="/women/dashboard" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <h1><i class="fas fa-lightbulb"></i> Safety Tips</h1>
+            <p>Stay informed, stay safe</p>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('travel')">Travel</button>
+            <button class="tab" onclick="showTab('home')">Home</button>
+            <button class="tab" onclick="showTab('digital')">Digital</button>
+            <button class="tab" onclick="showTab('emergency')">Emergency</button>
+            <button class="tab" onclick="showTab('awareness')">Awareness</button>
+        </div>
+        
+        <!-- Travel Tips -->
+        <div class="tips-section active" id="travel-tips">
+            <div class="tip-card" onclick="toggleTip(this)">
+                <div class="tip-header">
+                    <div class="tip-icon travel"><i class="fas fa-car"></i></div>
+                    <div class="tip-title">
+                        <h3>Safe Cab Travel</h3>
+                        <span>Essential tips for ride-sharing</span>
+                    </div>
+                    <i class="fas fa-chevron-down tip-arrow"></i>
+                </div>
+                <div class="tip-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Always verify the driver's photo and vehicle number before getting in</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Share your live trip with a trusted contact</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Sit in the back seat behind the driver</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Keep your phone charged and data on</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tip-card" onclick="toggleTip(this)">
+                <div class="tip-header">
+                    <div class="tip-icon travel"><i class="fas fa-bus"></i></div>
+                    <div class="tip-title">
+                        <h3>Public Transport Safety</h3>
+                        <span>Bus, metro & train tips</span>
+                    </div>
+                    <i class="fas fa-chevron-down tip-arrow"></i>
+                </div>
+                <div class="tip-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Stand near the driver or in well-lit areas</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Use women's coaches in metro when available</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Keep valuables in front pockets</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Avoid isolated bus stops late at night</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tip-card" onclick="toggleTip(this)">
+                <div class="tip-header">
+                    <div class="tip-icon travel"><i class="fas fa-walking"></i></div>
+                    <div class="tip-title">
+                        <h3>Walking Alone</h3>
+                        <span>Safety while walking</span>
+                    </div>
+                    <i class="fas fa-chevron-down tip-arrow"></i>
+                </div>
+                <div class="tip-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Stay on well-lit, busy streets</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Avoid using headphones in unfamiliar areas</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Walk confidently and be aware of surroundings</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Keep your phone easily accessible</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Home Tips -->
+        <div class="tips-section" id="home-tips">
+            <div class="tip-card" onclick="toggleTip(this)">
+                <div class="tip-header">
+                    <div class="tip-icon home"><i class="fas fa-door-open"></i></div>
+                    <div class="tip-title">
+                        <h3>Home Entry Safety</h3>
+                        <span>Before opening the door</span>
+                    </div>
+                    <i class="fas fa-chevron-down tip-arrow"></i>
+                </div>
+                <div class="tip-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Always use peephole or video doorbell</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Verify delivery persons with the company</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Don't share that you live alone</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tip-card" onclick="toggleTip(this)">
+                <div class="tip-header">
+                    <div class="tip-icon home"><i class="fas fa-lock"></i></div>
+                    <div class="tip-title">
+                        <h3>Home Security</h3>
+                        <span>Keep your home safe</span>
+                    </div>
+                    <i class="fas fa-chevron-down tip-arrow"></i>
+                </div>
+                <div class="tip-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Install good quality locks on all doors</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Keep emergency numbers on speed dial</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Know your neighbors and share contacts</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Digital Tips -->
+        <div class="tips-section" id="digital-tips">
+            <div class="tip-card" onclick="toggleTip(this)">
+                <div class="tip-header">
+                    <div class="tip-icon digital"><i class="fas fa-shield-alt"></i></div>
+                    <div class="tip-title">
+                        <h3>Online Privacy</h3>
+                        <span>Protect your data</span>
+                    </div>
+                    <i class="fas fa-chevron-down tip-arrow"></i>
+                </div>
+                <div class="tip-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Avoid sharing live locations on social media</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Use strong, unique passwords</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Be cautious with friend requests from strangers</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tip-card" onclick="toggleTip(this)">
+                <div class="tip-header">
+                    <div class="tip-icon digital"><i class="fas fa-user-secret"></i></div>
+                    <div class="tip-title">
+                        <h3>Cyber Harassment</h3>
+                        <span>Dealing with online abuse</span>
+                    </div>
+                    <i class="fas fa-chevron-down tip-arrow"></i>
+                </div>
+                <div class="tip-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Screenshot and save all evidence</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Block and report the harasser</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">File complaint at cybercrime.gov.in</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Emergency Tips -->
+        <div class="tips-section" id="emergency-tips">
+            <div class="tip-card" onclick="toggleTip(this)">
+                <div class="tip-header">
+                    <div class="tip-icon emergency"><i class="fas fa-phone-volume"></i></div>
+                    <div class="tip-title">
+                        <h3>Emergency Numbers</h3>
+                        <span>Important helplines</span>
+                    </div>
+                    <i class="fas fa-chevron-down tip-arrow"></i>
+                </div>
+                <div class="tip-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text"><strong>112</strong> - Emergency Response</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text"><strong>181</strong> - Women Helpline</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text"><strong>1091</strong> - Women in Distress</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text"><strong>100</strong> - Police</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tip-card" onclick="toggleTip(this)">
+                <div class="tip-header">
+                    <div class="tip-icon emergency"><i class="fas fa-running"></i></div>
+                    <div class="tip-title">
+                        <h3>If You Feel Unsafe</h3>
+                        <span>Immediate actions</span>
+                    </div>
+                    <i class="fas fa-chevron-down tip-arrow"></i>
+                </div>
+                <div class="tip-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Make noise and attract attention</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Move towards crowded areas or shops</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Press SOS button or call 112</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Enter a public place and ask for help</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Awareness Tips -->
+        <div class="tips-section" id="awareness-tips">
+            <div class="tip-card" onclick="toggleTip(this)">
+                <div class="tip-header">
+                    <div class="tip-icon awareness"><i class="fas fa-gavel"></i></div>
+                    <div class="tip-title">
+                        <h3>Know Your Rights</h3>
+                        <span>Legal protections</span>
+                    </div>
+                    <i class="fas fa-chevron-down tip-arrow"></i>
+                </div>
+                <div class="tip-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Police must register your FIR</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">You can file Zero FIR at any police station</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Female officer must be present for women's statement</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">You cannot be arrested between sunset and sunrise</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tip-card" onclick="toggleTip(this)">
+                <div class="tip-header">
+                    <div class="tip-icon awareness"><i class="fas fa-fist-raised"></i></div>
+                    <div class="tip-title">
+                        <h3>Self Defense Basics</h3>
+                        <span>Protect yourself</span>
+                    </div>
+                    <i class="fas fa-chevron-down tip-arrow"></i>
+                </div>
+                <div class="tip-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Target sensitive areas: eyes, nose, throat, groin</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Use everyday items: keys, umbrella, bag</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Yell "FIRE" instead of "Help" for more response</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-check"></i></div>
+                        <div class="detail-text">Consider taking a self-defense class</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Help -->
+        <div class="quick-help">
+            <h3><i class="fas fa-bolt"></i> Quick Resources</h3>
+            <div class="help-links">
+                <a href="tel:112" class="help-link">
+                    <i class="fas fa-phone"></i>
+                    Call 112
+                </a>
+                <a href="tel:181" class="help-link">
+                    <i class="fas fa-heart"></i>
+                    Women Helpline
+                </a>
+                <a href="/women/sos" class="help-link">
+                    <i class="fas fa-exclamation-circle"></i>
+                    SOS Alert
+                </a>
+                <a href="/women/contacts" class="help-link">
+                    <i class="fas fa-users"></i>
+                    My Contacts
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(category) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tips-section').forEach(s => s.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(category + '-tips').classList.add('active');
+        }
+        
+        function toggleTip(card) {
+            card.classList.toggle('expanded');
+        }
+    </script>
+</body>
+</html>

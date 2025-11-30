@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - Tri-Netra</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sign In - Tri-Netra | Indian Police Department</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -14,82 +14,282 @@
         }
 
         body {
-            height: 100vh;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
             display: flex;
-            overflow: hidden;
+            background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
         }
 
-        /* Left Side - Form */
-        .login-section {
-            width: 35%;
-            background: white;
-            padding: 40px;
+        html {
+            height: -webkit-fill-available;
+        }
+
+        /* Left Side - Branding (Desktop) */
+        .brand-section {
+            width: 42%;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            align-items: center;
+            justify-content: center;
             position: relative;
-            min-width: 400px;
+            padding: 40px;
+            background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
         }
 
-        .app-header {
+        .brand-pattern {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+        }
+
+        .brand-emblem {
+            width: 100px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: brightness(0) invert(1);
+        }
+
+        .brand-logo {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
         }
 
-        .app-logo-small {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
+        .brand-logo i {
+            font-size: 3.5rem;
+            color: #b91c1c;
         }
 
-        .app-name-small {
-            font-weight: 600;
-            color: #333;
-            font-size: 0.9rem;
-            line-height: 1.2;
-        }
-        
-        .app-name-small span {
-            display: block;
-            color: #666;
-            font-size: 0.8rem;
-            font-weight: 400;
+        .brand-title {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            margin-bottom: 8px;
         }
 
-        .form-container {
+        .brand-subtitle {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .brand-footer {
+            position: absolute;
+            bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+        }
+
+        /* Right Side - Login */
+        .login-section {
+            flex: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .login-container {
             width: 100%;
-            max-width: 320px;
-            margin: 0 auto;
-            align-self: flex-start;
-            margin-top: 10vh;
+            max-width: 400px;
         }
 
-        h1 {
-            font-size: 2rem;
-            color: #1f2937;
-            margin-bottom: 2rem;
+        /* Mobile Header (hidden on desktop) */
+        .mobile-header {
+            display: none;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .mobile-header img {
+            width: 50px;
+            margin-bottom: 10px;
+        }
+
+        .mobile-header h2 {
+            font-size: 1.5rem;
+            color: #b91c1c;
             font-weight: 700;
         }
 
+        .mobile-header p {
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .login-header h1 {
+            font-size: 1.6rem;
+            color: #1f2937;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .login-header p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        /* Role Selection Cards */
+        .role-selection {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .role-card {
+            padding: 16px 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .role-card:hover {
+            border-color: #9ca3af;
+        }
+
+        .role-card.active.admin {
+            border-color: #b91c1c;
+            background: #fef2f2;
+            box-shadow: 0 4px 12px rgba(185, 28, 28, 0.15);
+        }
+
+        .role-card.active.officer {
+            border-color: #1e40af;
+            background: #eff6ff;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.15);
+        }
+
+        .role-card.active.women {
+            border-color: #be185d;
+            background: #fdf2f8;
+            box-shadow: 0 4px 12px rgba(190, 24, 93, 0.15);
+        }
+
+        .role-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-size: 1.2rem;
+        }
+
+        .role-card.admin .role-icon {
+            background: linear-gradient(135deg, #fecaca, #fef2f2);
+            color: #b91c1c;
+        }
+
+        .role-card.officer .role-icon {
+            background: linear-gradient(135deg, #bfdbfe, #eff6ff);
+            color: #1e40af;
+        }
+
+        .role-card.women .role-icon {
+            background: linear-gradient(135deg, #fbcfe8, #fdf2f8);
+            color: #be185d;
+        }
+
+        .role-card h3 {
+            font-size: 0.8rem;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .role-card p {
+            font-size: 0.65rem;
+            color: #9ca3af;
+        }
+
+        /* Form Styles */
+        .login-form {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .input-wrapper {
             position: relative;
+        }
+
+        .input-wrapper > i:first-child {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 0.9rem;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            transition: border-color 0.2s;
-            color: #374151;
+            padding: 12px 12px 12px 38px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px; /* Prevents zoom on iOS */
+            transition: all 0.2s;
+            background: white;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: #dc2626;
+            border-color: #b91c1c;
+            box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1);
+        }
+
+        .form-control.officer-focus:focus {
+            border-color: #1e40af;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .form-control.women-focus:focus {
+            border-color: #be185d;
+            box-shadow: 0 0 0 3px rgba(190, 24, 93, 0.1);
         }
 
         .password-toggle {
@@ -99,159 +299,358 @@
             transform: translateY(-50%);
             color: #9ca3af;
             cursor: pointer;
+            padding: 5px;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn-login {
-            background-color: #b91c1c; /* Dark Red */
-            color: white;
+            width: 100%;
+            padding: 14px;
             border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 600;
-            font-size: 0.95rem;
             cursor: pointer;
-            transition: background-color 0.2s;
-            width: 120px;
-        }
-
-        .btn-login:hover {
-            background-color: #991b1b;
-        }
-
-        .form-footer {
+            transition: all 0.3s;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 1.5rem;
-        }
-
-        .forgot-password {
-            color: #9ca3af;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-
-        .forgot-password:hover {
-            color: #dc2626;
-        }
-
-        .status-text {
-            color: #9ca3af;
-            font-size: 0.9rem;
-        }
-
-        /* Right Side - Branding */
-        .brand-section {
-            width: 65%;
-            background-color: #ef4444; /* Red */
-            display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative;
+            gap: 10px;
+            margin-top: 8px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-login.admin-btn {
+            background: linear-gradient(135deg, #b91c1c, #991b1b);
             color: white;
         }
 
-        .brand-logo-large {
-            font-size: 8rem;
-            margin-bottom: 1rem;
-            background: white;
-            color: #ef4444;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
+        .btn-login.officer-btn {
+            background: linear-gradient(135deg, #1e40af, #1e3a8a);
+            color: white;
+        }
+
+        .btn-login.women-btn {
+            background: linear-gradient(135deg, #be185d, #9d174d);
+            color: white;
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        /* Help Links */
+        .help-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .help-links a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            gap: 5px;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .brand-title {
-            font-size: 4rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            margin-top: 1rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        /* Flash Messages */
+        .flash-message {
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .brand-footer {
-            position: absolute;
-            bottom: 30px;
-            right: 40px;
-            background: rgba(0,0,0,0.2);
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            font-weight: 500;
+        .flash-message.error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .login-section {
-                width: 100%;
+        .flash-message.success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* Footer */
+        .login-footer {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.75rem;
+            margin-top: 25px;
+        }
+
+        /* ========== MOBILE RESPONSIVE ========== */
+        @media (max-width: 900px) {
+            body {
+                flex-direction: column;
             }
+            
             .brand-section {
                 display: none;
+            }
+            
+            .mobile-header {
+                display: block;
+            }
+            
+            .login-section {
+                padding: 25px 20px;
+                justify-content: flex-start;
+                padding-top: 40px;
+            }
+            
+            .login-header {
+                margin-bottom: 20px;
+            }
+            
+            .login-header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .role-selection {
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+            
+            .role-card {
+                padding: 14px 8px;
+            }
+            
+            .role-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+                margin-bottom: 6px;
+            }
+            
+            .role-card h3 {
+                font-size: 0.75rem;
+            }
+            
+            .role-card p {
+                font-size: 0.6rem;
+            }
+            
+            .login-form {
+                padding: 18px;
+            }
+            
+            .form-group {
+                margin-bottom: 14px;
+            }
+            
+            .help-links {
+                flex-direction: row;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .login-section {
+                padding: 20px 15px;
+            }
+            
+            .role-card {
+                padding: 12px 6px;
+            }
+            
+            .role-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+            
+            .role-card h3 {
+                font-size: 0.7rem;
+            }
+            
+            .role-card p {
+                display: none;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-container {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        /* Safe area for notched phones */
+        @supports (padding: env(safe-area-inset-bottom)) {
+            .login-section {
+                padding-bottom: calc(20px + env(safe-area-inset-bottom));
             }
         }
     </style>
 </head>
 <body>
-    <!-- Left Section -->
-    <div class="login-section">
-        <div class="app-header">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/1200px-Emblem_of_India.svg.png" alt="Logo" class="app-logo-small">
-            <div class="app-name-small">
-                Tri-Netra
-                <span>Application</span>
-            </div>
-        </div>
-
-        <div class="form-container">
-            <h1>Sign In</h1>
-
-            <form method="POST" action="{{ url_for('login') }}">
-                <div class="form-group">
-                    <input type="text" name="username" class="form-control" placeholder="admin@ipd.gov.in" required autofocus>
-                </div>
-                
-                <div class="form-group">
-                    <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
-                    <i class="fas fa-eye password-toggle" onclick="togglePassword()"></i>
-                </div>
-
-                <div class="form-footer">
-                    <button type="submit" class="btn-login">Sign In</button>
-                    <a href="#" class="forgot-password">Forgot Password</a>
-                </div>
-            </form>
-
-            <div style="margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
-                <a href="{{ url_for('women_login') }}" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: linear-gradient(135deg, #ff6b9d 0%, #ff8fa3 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: 600; transition: transform 0.2s;">
-                    <i class="fas fa-female" style="font-size: 1.2rem;"></i>
-                    <span>Women Safety Portal</span>
-                </a>
-            </div>
-        </div>
-
-        <div class="status-text">
-            Signed out
-        </div>
-    </div>
-
-    <!-- Right Section -->
+    <!-- Left Section - Branding (Desktop Only) -->
     <div class="brand-section">
-        <div class="brand-logo-large">
-            <i class="fas fa-eye"></i>
+        <div class="brand-pattern"></div>
+        <div class="brand-content">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/1200px-Emblem_of_India.svg.png" 
+                 alt="Emblem of India" class="brand-emblem">
+            <div class="brand-logo">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="brand-title">TRI-NETRA</div>
+            <div class="brand-subtitle">Facial Recognition System</div>
         </div>
-        <div class="brand-title">Tri-Netra</div>
-        
         <div class="brand-footer">
+            <i class="fas fa-shield-alt"></i>
             Indian Police Department
         </div>
     </div>
 
+    <!-- Right Section - Login -->
+    <div class="login-section">
+        <div class="login-container">
+            <!-- Mobile Header -->
+            <div class="mobile-header">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/1200px-Emblem_of_India.svg.png" alt="Emblem">
+                <h2>TRI-NETRA</h2>
+                <p>Facial Recognition System</p>
+            </div>
+
+            <div class="login-header">
+                <h1>Welcome Back</h1>
+                <p>Select your role to sign in</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' }}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Role Selection -->
+            <div class="role-selection">
+                <div class="role-card admin active" onclick="selectRole('admin')">
+                    <div class="role-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3>Admin</h3>
+                    <p>Full Access</p>
+                </div>
+                <div class="role-card officer" onclick="selectRole('officer')">
+                    <div class="role-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>Officer</h3>
+                    <p>Field Ops</p>
+                </div>
+                <div class="role-card women" onclick="selectRole('women')">
+                    <div class="role-icon">
+                        <i class="fas fa-female"></i>
+                    </div>
+                    <h3>Women</h3>
+                    <p>Safety Portal</p>
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <form class="login-form" method="POST" action="{{ url_for('login') }}" id="loginForm">
+                <input type="hidden" name="role" id="selectedRole" value="admin">
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="username" id="username" class="form-control" 
+                               placeholder="Enter username" required autocomplete="username">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" id="password" class="form-control" 
+                               placeholder="Enter password" required autocomplete="current-password">
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword()"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login admin-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span id="btnText">Sign In as Admin</span>
+                </button>
+            </form>
+
+            <div class="help-links">
+                <a href="#" onclick="showHelp(); return false;">
+                    <i class="fas fa-question-circle"></i>
+                    Help
+                </a>
+                <a href="#" onclick="showContact(); return false;">
+                    <i class="fas fa-headset"></i>
+                    Support
+                </a>
+            </div>
+
+            <div class="login-footer">
+                © 2025 Indian Police Department
+            </div>
+        </div>
+    </div>
+
     <script>
+        let currentRole = 'admin';
+
+        function selectRole(role) {
+            currentRole = role;
+            document.getElementById('selectedRole').value = role;
+            
+            // Update card styles
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector('.role-card.' + role).classList.add('active');
+            
+            // Update button style and text
+            const btn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
+            const formInputs = document.querySelectorAll('.form-control');
+            
+            btn.className = 'btn-login';
+            formInputs.forEach(input => {
+                input.classList.remove('officer-focus', 'women-focus');
+            });
+            
+            if (role === 'admin') {
+                btn.classList.add('admin-btn');
+                btnText.textContent = 'Sign In as Admin';
+            } else if (role === 'officer') {
+                btn.classList.add('officer-btn');
+                btnText.textContent = 'Sign In as Officer';
+                formInputs.forEach(input => input.classList.add('officer-focus'));
+            } else if (role === 'women') {
+                btn.classList.add('women-btn');
+                btnText.textContent = 'Sign In to Safety Portal';
+                formInputs.forEach(input => input.classList.add('women-focus'));
+            }
+        }
+
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const icon = document.querySelector('.password-toggle');
@@ -265,6 +664,14 @@
                 icon.classList.remove('fa-eye-slash');
                 icon.classList.add('fa-eye');
             }
+        }
+
+        function showHelp() {
+            alert('For assistance, contact your system administrator.\n\nDefault Credentials:\n• Admin: admin / admin123\n• Officer: officer / officer123\n• Women: women / women123');
+        }
+
+        function showContact() {
+            alert('IT Support: support@ipd.gov.in\nEmergency: 100\nWomen Helpline: 1091');
         }
     </script>
 </body>

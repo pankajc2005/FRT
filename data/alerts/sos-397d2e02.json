@@ -1,0 +1,20 @@
+{
+  "id": "sos-397d2e02",
+  "timestamp": "2025-11-30T19:38:27.367816Z",
+  "timestamp_ist": "2025-12-01 01:08:27 IST",
+  "type": "SOS_EMERGENCY",
+  "name": "WOMAN IN DISTRESS - SOS",
+  "description": "Emergency SOS Alert! A woman has triggered distress signal. Location: Khopoli, Khalapur Taluka, Raigad, Maharashtra, 410203, India",
+  "location": "Khopoli, Khalapur Taluka, Raigad, Maharashtra, 410203, India",
+  "coordinates": {
+    "lat": 18.7796163,
+    "lng": 73.3434982
+  },
+  "map_link": "https://www.google.com/maps?q=18.7796163,73.3434982",
+  "priority": 1,
+  "severity": "CRITICAL",
+  "db_type": "sos_alert",
+  "image": "/static/sos_icon.png",
+  "status": "ACTIVE",
+  "requires_immediate_response": true
+}

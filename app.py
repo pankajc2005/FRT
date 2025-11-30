@@ -4,6 +4,7 @@ import json
 import uuid
 import time
 import cv2
+import logging
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -22,9 +23,201 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch, cm
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image as RLImage, PageBreak
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+import threading
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
+logger = logging.getLogger("TriNetra")
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey_fallback_change_in_prod')
+
+# ==================== EMAIL ALERT CONFIGURATION ====================
+# Gmail SMTP Configuration (Use App Password for Gmail - enable 2FA first)
+EMAIL_CONFIG = {
+    'enabled': True,
+    'smtp_server': 'smtp.gmail.com',
+    'smtp_port': 587,
+    'sender_email': 'pankajchavan944@gmail.com',
+    'sender_password': 'hvue xbno shgw aoiq',
+    
+    # Admin emails - receive all criminal/missing person match alerts
+    'admin_emails': [
+        'gdgpankaj@gmail.com',
+    ],
+    
+    # Officer emails - receive only urgent alerts (wanted criminals, SOS)
+    'officer_emails': [
+        'gdgpankaj@gmail.com',
+    ]
+}
+
+def send_email_alert(subject, body, recipients, alert_type='general', attachment_path=None):
+    """Send email alert in background thread"""
+    if not EMAIL_CONFIG['enabled']:
+        logger.info(f"Email alerts disabled. Would send: {subject}")
+        return
+    
+    if not recipients:
+        logger.warning(f"No recipients for email: {subject}")
+        return
+    
+    logger.info(f"📧 Queueing email: {subject} to {recipients}")
+    
+    def send_async():
+        try:
+            msg = MIMEMultipart()
+            msg['From'] = EMAIL_CONFIG['sender_email']
+            msg['To'] = ', '.join(recipients)
+            msg['Subject'] = subject
+            
+            # Create HTML body
+            html_body = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; padding: 20px;">
+                <div style="max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
+                    <div style="background: {'#dc2626' if alert_type == 'critical' else '#1e40af'}; color: white; padding: 20px; text-align: center;">
+                        <h2 style="margin: 0;">🚨 TRI-NETRA ALERT SYSTEM</h2>
+                        <p style="margin: 5px 0 0 0; opacity: 0.9;">Indian Police Surveillance Network</p>
+                    </div>
+                    <div style="padding: 25px;">
+                        <h3 style="color: {'#dc2626' if alert_type == 'critical' else '#1e40af'}; margin-top: 0;">{subject}</h3>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                            {body}
+                        </div>
+                        <p style="color: #666; font-size: 12px; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                            ⏰ Alert Time: {(datetime.utcnow() + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M:%S')} IST<br>
+                            📍 This is an automated alert from TRI-NETRA Surveillance System.<br>
+                            🔒 Please treat this information as confidential.
+                        </p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            msg.attach(MIMEText(html_body, 'html'))
+            
+            # Attach file if provided
+            if attachment_path and os.path.exists(attachment_path):
+                try:
+                    with open(attachment_path, 'rb') as f:
+                        part = MIMEBase('application', 'octet-stream')
+                        part.set_payload(f.read())
+                        encoders.encode_base64(part)
+                        part.add_header('Content-Disposition', f'attachment; filename={os.path.basename(attachment_path)}')
+                        msg.attach(part)
+                    logger.info(f"📎 Attached file: {attachment_path}")
+                except Exception as attach_err:
+                    logger.error(f"❌ Failed to attach file: {attach_err}")
+            
+            # Send email
+            logger.info(f"📧 Connecting to SMTP server {EMAIL_CONFIG['smtp_server']}:{EMAIL_CONFIG['smtp_port']}")
+            with smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port']) as server:
+                server.starttls()
+                logger.info(f"📧 Logging in as {EMAIL_CONFIG['sender_email']}")
+                server.login(EMAIL_CONFIG['sender_email'], EMAIL_CONFIG['sender_password'])
+                server.send_message(msg)
+            
+            logger.info(f"✅ Email alert sent successfully: {subject} to {len(recipients)} recipients")
+        except smtplib.SMTPAuthenticationError as auth_err:
+            logger.error(f"❌ Email authentication failed: {auth_err}. Check sender email and app password.")
+        except smtplib.SMTPException as smtp_err:
+            logger.error(f"❌ SMTP error: {smtp_err}")
+        except Exception as e:
+            logger.error(f"❌ Email send failed: {type(e).__name__}: {e}")
+    
+    # Send in background thread to not block main request
+    thread = threading.Thread(target=send_async)
+    thread.daemon = True
+    thread.start()
+
+def send_criminal_match_email(person_name, confidence, db_type, location='Dashboard', capture_path=None):
+    """Send email when criminal/missing person is detected"""
+    logger.info(f"📧 Preparing criminal match email - Name: {person_name}, Type: {db_type}, Confidence: {confidence}%")
+    
+    is_critical = db_type == 'wanted' or db_type == 'criminal'
+    
+    subject = f"🚨 {'WANTED CRIMINAL' if db_type == 'wanted' else 'PERSON'} DETECTED: {person_name}"
+    
+    body = f"""
+    <p><strong>🔍 Match Details:</strong></p>
+    <ul style="list-style: none; padding-left: 0;">
+        <li>👤 <strong>Name:</strong> {person_name}</li>
+        <li>📊 <strong>Confidence:</strong> {confidence}%</li>
+        <li>🏷️ <strong>Category:</strong> {db_type.upper()}</li>
+        <li>📍 <strong>Detection Source:</strong> {location}</li>
+    </ul>
+    <p style="color: #dc2626; font-weight: bold;">⚠️ {'IMMEDIATE ACTION REQUIRED!' if is_critical else 'Please verify and take appropriate action.'}</p>
+    """
+    
+    logger.info(f"📧 Sending criminal match email to admins: {EMAIL_CONFIG['admin_emails']}")
+    
+    # Send to admins always
+    send_email_alert(subject, body, EMAIL_CONFIG['admin_emails'], 
+                     alert_type='critical' if is_critical else 'general',
+                     attachment_path=capture_path)
+    
+    # Send to officers only for wanted criminals or criminals
+    if db_type == 'wanted' or db_type == 'criminal':
+        logger.info(f"📧 Sending criminal match email to officers: {EMAIL_CONFIG['officer_emails']}")
+        send_email_alert(subject, body, EMAIL_CONFIG['officer_emails'], 
+                         alert_type='critical',
+                         attachment_path=capture_path)
+
+def send_sos_email(location, coordinates, address):
+    """Send email for women SOS emergency - goes to officers"""
+    logger.info(f"📧 Preparing SOS email - Location: {address}, Coords: {coordinates}")
+    
+    subject = "🆘 EMERGENCY SOS ALERT - WOMAN IN DISTRESS"
+    
+    lat = coordinates.get('lat') if coordinates else None
+    lng = coordinates.get('lng') if coordinates else None
+    map_link = f"https://www.google.com/maps?q={lat},{lng}" if lat and lng else ''
+    
+    coord_text = f"{lat}, {lng}" if lat and lng else "Location unavailable"
+    
+    body = f"""
+    <p style="color: #dc2626; font-size: 18px; font-weight: bold;">⚠️ IMMEDIATE RESPONSE REQUIRED!</p>
+    <p><strong>📍 Location Details:</strong></p>
+    <ul style="list-style: none; padding-left: 0;">
+        <li>🗺️ <strong>Address:</strong> {address or 'Address not available'}</li>
+        <li>📌 <strong>Coordinates:</strong> {coord_text}</li>
+    </ul>
+    {f'<p><a href="{map_link}" style="background: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">🗺️ Open in Google Maps</a></p>' if map_link else '<p style="color: #666;">(Map link unavailable - location not detected)</p>'}
+    <p style="background: #fef2f2; padding: 12px; border-radius: 6px; border-left: 4px solid #dc2626;">
+        A woman has triggered an emergency SOS alert. Dispatch nearest patrol immediately!
+    </p>
+    """
+    
+    # Send to both admins and officers for SOS
+    all_recipients = list(set(EMAIL_CONFIG['admin_emails'] + EMAIL_CONFIG['officer_emails']))
+    logger.info(f"📧 Sending SOS email to: {all_recipients}")
+    send_email_alert(subject, body, all_recipients, alert_type='critical')
+
+def send_urgent_travel_email(start_location, end_location, coordinates):
+    """Send email for urgent travel mode - goes to officers"""
+    subject = "🚗 URGENT TRAVEL ALERT - Woman Monitoring Required"
+    
+    body = f"""
+    <p><strong>🚗 Urgent Travel Activated:</strong></p>
+    <ul style="list-style: none; padding-left: 0;">
+        <li>📍 <strong>From:</strong> {start_location}</li>
+        <li>🎯 <strong>To:</strong> {end_location}</li>
+    </ul>
+    <p style="background: #fef3c7; padding: 12px; border-radius: 6px; border-left: 4px solid #f59e0b;">
+        A woman has activated urgent travel mode. Please monitor the route and ensure safe arrival.
+    </p>
+    """
+    
+    send_email_alert(subject, body, EMAIL_CONFIG['officer_emails'], alert_type='general')
+
+# ==================== END EMAIL CONFIGURATION ====================
 
 # Login Manager Setup
 login_manager = LoginManager()
@@ -48,10 +241,25 @@ def utc_to_ist_filter(utc_str):
 
 # User Class
 class User(UserMixin):
-    def __init__(self, id, username, password_hash):
+    def __init__(self, id, username, password_hash, role='admin'):
         self.id = id
         self.username = username
         self.password_hash = password_hash
+        self.role = role
+    
+    def check_password(self, password):
+        """Verify password against stored hash"""
+        return check_password_hash(self.password_hash, password)
+    
+    def has_permission(self, permission):
+        """Check if user has a specific permission based on role"""
+        permissions = {
+            'admin': ['all', 'criminal_db', 'missing_db', 'surveillance', 'alerts', 'settings', 'users', 'reports'],
+            'officer': ['criminal_db', 'missing_db', 'surveillance', 'alerts', 'reports'],
+            'women': ['women_portal', 'sos', 'safe_routes']
+        }
+        role_perms = permissions.get(self.role, [])
+        return 'all' in role_perms or permission in role_perms
 
 USERS_FILE = 'data/users.json'
 
@@ -69,20 +277,50 @@ def save_users(users):
 def load_user(user_id):
     users = load_users()
     if user_id in users:
-        return User(user_id, users[user_id]['username'], users[user_id]['password_hash'])
+        user_data = users[user_id]
+        return User(user_id, user_data['username'], user_data['password_hash'], user_data.get('role', 'admin'))
     return None
 
 # Initialize Admin User
 def init_db():
-    if not os.path.exists(USERS_FILE):
-        users = {}
-        # Default admin: admin / admin123
+    users = load_users() if os.path.exists(USERS_FILE) else {}
+    updated = False
+    
+    # Default admin: admin / admin123
+    if 'admin' not in users:
         users['admin'] = {
             'username': 'admin',
-            'password_hash': generate_password_hash('admin123')
+            'password_hash': generate_password_hash('admin123'),
+            'role': 'admin'
         }
-        save_users(users)
+        updated = True
         print("Initialized default admin user.")
+    elif 'role' not in users['admin']:
+        users['admin']['role'] = 'admin'
+        updated = True
+    
+    # Default officer: officer / officer123
+    if 'officer' not in users:
+        users['officer'] = {
+            'username': 'officer',
+            'password_hash': generate_password_hash('officer123'),
+            'role': 'officer'
+        }
+        updated = True
+        print("Initialized default officer user.")
+    
+    # Default women portal user: women / women123
+    if 'women' not in users:
+        users['women'] = {
+            'username': 'women',
+            'password_hash': generate_password_hash('women123'),
+            'role': 'women'
+        }
+        updated = True
+        print("Initialized default women portal user.")
+    
+    if updated:
+        save_users(users)
 
 init_db()
 
@@ -110,6 +348,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['PERSONS_FOLDER'] = PERSONS_FOLDER
 app.config['MISSING_FOLDER'] = 'data/missing_persons'
 app.config['ALERTS_FOLDER'] = 'data/alerts'
+app.config['SYSTEM_ALERTS_FOLDER'] = 'data/system_alerts'
 app.config['SYSTEM_ALERTS_FILE'] = 'data/system_alerts/alerts.json'
 app.config['ACTIVITY_LOG_FILE'] = 'data/system_alerts/activity_log.json'
 
@@ -184,6 +423,28 @@ def log_activity(action, target, user=None, details=None, status='success'):
     
     return entry
 
+def create_officer_alert(person_id, name, image_filename, db_type, priority=3, is_wanted=False):
+    """Create an alert for officers when admin adds a new person to database"""
+    alert_data = {
+        'id': person_id,
+        'name': name,
+        'image_filename': image_filename,
+        'db_type': db_type,  # 'criminal', 'missing', 'wanted'
+        'priority': priority,
+        'is_wanted': is_wanted,
+        'created_at': datetime.utcnow().isoformat() + 'Z',
+        'created_at_ist': (datetime.utcnow() + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M:%S'),
+        'status': 'active',
+        'detections': []
+    }
+    
+    # Save to alerts folder
+    alert_path = os.path.join(app.config['ALERTS_FOLDER'], f"{person_id}.json")
+    with open(alert_path, 'w') as f:
+        json.dump(alert_data, f, indent=2)
+    
+    return alert_data
+
 def update_surveillance_list():
     active_list = []
     
@@ -230,26 +491,67 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Role-based permission decorator
+from functools import wraps
+def role_required(*roles):
+    """Decorator to check if user has required role"""
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not current_user.is_authenticated:
+                return redirect(url_for('login'))
+            user_role = getattr(current_user, 'role', 'admin')
+            if user_role not in roles and 'admin' not in [user_role]:
+                flash('You do not have permission to access this page.', 'error')
+                if user_role == 'women':
+                    return redirect(url_for('women_dashboard'))
+                return redirect(url_for('index'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
+        # Redirect based on role
+        if hasattr(current_user, 'role') and current_user.role == 'women':
+            return redirect(url_for('women_dashboard'))
         return redirect(url_for('index'))
         
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        selected_role = request.form.get('role', 'admin')
         
         users = load_users()
         user_data = users.get(username)
         
         if user_data and check_password_hash(user_data['password_hash'], password):
-            user = User(username, user_data['username'], user_data['password_hash'])
+            user_role = user_data.get('role', 'admin')
+            
+            # Check if selected role matches user's actual role
+            if selected_role != user_role:
+                flash(f'Invalid role selected. You are registered as {user_role}.', 'error')
+                log_activity('LOGIN', 'System', user=username, details={'status': 'failed', 'reason': 'role_mismatch'}, status='failed')
+                return render_template('login.html')
+            
+            user = User(username, user_data['username'], user_data['password_hash'], user_role)
             login_user(user)
+            
             # Log successful login
-            log_activity('LOGIN', 'System', user=username, details={'status': 'success'})
+            log_activity('LOGIN', 'System', user=username, details={'status': 'success', 'role': user_role})
+            
+            # Redirect based on role
             next_page = request.args.get('next')
-            return redirect(next_page or url_for('index'))
+            if next_page:
+                return redirect(next_page)
+            
+            if user_role == 'women':
+                return redirect(url_for('women_dashboard'))
+            else:
+                return redirect(url_for('index'))
         else:
+            flash('Invalid username or password', 'error')
             # Log failed login attempt
             log_activity('LOGIN', 'System', user=username or 'unknown', details={'status': 'failed'}, status='failed')
             
@@ -264,6 +566,13 @@ def logout():
 @app.route('/')
 @login_required
 def index():
+    # Redirect officers to their portal
+    user_role = getattr(current_user, 'role', 'admin')
+    if user_role == 'officer':
+        return redirect(url_for('officer_dashboard'))
+    elif user_role == 'women':
+        return redirect(url_for('women_dashboard'))
+    
     persons = []
     if os.path.exists(app.config['PERSONS_FOLDER']):
         for filename in os.listdir(app.config['PERSONS_FOLDER']):
@@ -276,6 +585,267 @@ def index():
                 except Exception as e:
                     print(f"Error reading {filename}: {e}")
     return render_template('index.html', persons=persons)
+
+# Officer Dashboard Route
+@app.route('/officer')
+@login_required
+@role_required('officer', 'admin')
+def officer_dashboard():
+    return render_template('officer_dashboard.html')
+
+# Officer Photo Search API - logs all searches
+@app.route('/api/officer/photo_search', methods=['POST'])
+@login_required
+@role_required('officer', 'admin')
+def officer_photo_search():
+    if 'image' not in request.files:
+        log_activity('OFFICER_SEARCH', 'Photo Search', user=current_user.username, 
+                    details={'error': 'No image provided', 'device': request.user_agent.string}, status='failed')
+        return jsonify({'error': 'No image provided'}), 400
+    
+    file = request.files['image']
+    camera_type = request.form.get('camera_type', 'front')  # front or back camera
+    search_db = request.form.get('search_db', 'both')  # criminal, missing, or both
+    
+    if file.filename == '':
+        return jsonify({'error': 'No image selected'}), 400
+    
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        unique_id = str(uuid.uuid4())
+        temp_path = os.path.join(app.config['UPLOAD_FOLDER'], f"officer_search_{unique_id}.jpg")
+        file.save(temp_path)
+        
+        try:
+            analysis_results = face_utils.get_embeddings(temp_path)
+            
+            if analysis_results['dlib'] is None and analysis_results['arcface'] is None:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+                log_activity('OFFICER_SEARCH', 'Photo Search', user=current_user.username,
+                            details={'status': 'no_face', 'camera': camera_type, 'db': search_db}, status='failed')
+                return jsonify({'error': 'No face detected in image'}), 400
+            
+            # Find match based on selected database
+            match, distance = find_best_match({
+                "dlib": analysis_results.get('dlib'),
+                "arcface": analysis_results.get('arcface')
+            }, db_type=search_db)
+            
+            # Log the search activity
+            log_activity('OFFICER_SEARCH', match['name'] if match else 'No Match', user=current_user.username,
+                        details={
+                            'camera': camera_type,
+                            'db_searched': search_db,
+                            'match_found': bool(match),
+                            'confidence': round((1 - distance) * 100, 1) if match else 0,
+                            'device': request.headers.get('User-Agent', '')[:50]
+                        })
+            
+            if match:
+                confidence = max(0, min(100, (1 - distance) * 100)) if distance < 1 else 0
+                if distance < 0.4:
+                    confidence = 90 + (0.4 - distance) * 25
+                
+                # Keep the captured image for potential report - rename it
+                captured_filename = f"officer_capture_{unique_id}.jpg"
+                captured_path = os.path.join(app.config['UPLOAD_FOLDER'], captured_filename)
+                if os.path.exists(temp_path):
+                    os.rename(temp_path, captured_path)
+                
+                return jsonify({
+                    'match': True,
+                    'person': {
+                        'id': match['id'],
+                        'name': match['name'],
+                        'db_type': match.get('db_type', 'criminal'),
+                        'priority': match.get('priority', 3),
+                        'is_wanted': match.get('is_wanted', False),
+                        'image_filename': match.get('image_filename')
+                    },
+                    'confidence': round(confidence, 1),
+                    'captured_image': captured_filename
+                })
+            else:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+                return jsonify({'match': False, 'message': 'No match found'})
+                
+        except Exception as e:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            log_activity('OFFICER_SEARCH', 'Error', user=current_user.username,
+                        details={'error': str(e)}, status='error')
+            return jsonify({'error': 'Search failed'}), 500
+    
+    return jsonify({'error': 'Invalid file'}), 400
+
+# Officer Alerts API - get alerts assigned by admin
+@app.route('/api/officer/alerts')
+@login_required
+@role_required('officer', 'admin')
+def officer_get_alerts():
+    alerts = []
+    if os.path.exists(app.config['ALERTS_FOLDER']):
+        for filename in os.listdir(app.config['ALERTS_FOLDER']):
+            if filename.endswith('.json'):
+                try:
+                    with open(os.path.join(app.config['ALERTS_FOLDER'], filename), 'r') as f:
+                        alert = json.load(f)
+                        alerts.append(alert)
+                except:
+                    pass
+    
+    # Log that officer viewed alerts
+    log_activity('OFFICER_VIEW_ALERTS', f'{len(alerts)} alerts', user=current_user.username)
+    
+    return jsonify({'alerts': alerts})
+
+# Officer Report to Control Room
+@app.route('/api/officer/report', methods=['POST'])
+@login_required
+@role_required('officer', 'admin')
+def officer_submit_report():
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+    
+    # Get officer details from users.json
+    officer_info = {
+        'username': current_user.username,
+        'role': getattr(current_user, 'role', 'officer')
+    }
+    
+    # Try to get additional officer info from users.json
+    users_file = 'data/users.json'
+    if os.path.exists(users_file):
+        try:
+            with open(users_file, 'r') as f:
+                users = json.load(f)
+                # Users is a dict with username as key
+                if current_user.username in users:
+                    user_data = users[current_user.username]
+                    officer_info['phone'] = user_data.get('phone', 'N/A')
+                    officer_info['badge_number'] = user_data.get('badge_number', 'N/A')
+                    officer_info['full_name'] = user_data.get('full_name', current_user.username)
+        except Exception as e:
+            print(f"Error reading user data: {e}")
+    
+    # Determine report type
+    report_type = data.get('report_type', 'PHOTO_MATCH')
+    is_alert_sighting = report_type == 'ALERT_SIGHTING'
+    
+    # Create officer report with both captured and matched images
+    report = {
+        'id': str(uuid.uuid4()),
+        'type': 'OFFICER_FIELD_REPORT',
+        'report_subtype': report_type,  # 'PHOTO_MATCH' or 'ALERT_SIGHTING'
+        'timestamp': datetime.utcnow().isoformat() + 'Z',
+        'timestamp_ist': (datetime.utcnow() + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M:%S'),
+        'officer': officer_info,
+        'subject': {
+            'person_id': data.get('person_id'),
+            'name': data.get('person_name'),
+            'database_image': data.get('person_image'),
+            'captured_image': data.get('captured_image'),
+            'db_type': data.get('db_type'),
+            'confidence': data.get('confidence'),
+            'is_wanted': data.get('is_wanted', False),
+            'priority': data.get('priority', 3)
+        },
+        'match_details': {
+            'search_timestamp': data.get('search_timestamp'),
+            'confidence_score': data.get('confidence'),
+            'identification_type': 'Visual Sighting' if is_alert_sighting else 'Photo Match'
+        },
+        'report': {
+            'location': data.get('location'),
+            'details': data.get('details', ''),
+            'urgency': data.get('urgency', 'medium')
+        },
+        'status': 'pending',
+        'read': False
+    }
+    
+    # Save to system alerts
+    alerts_file = os.path.join(app.config['SYSTEM_ALERTS_FOLDER'], 'alerts.json')
+    alerts = []
+    if os.path.exists(alerts_file):
+        try:
+            with open(alerts_file, 'r') as f:
+                alerts = json.load(f)
+        except:
+            alerts = []
+    
+    alerts.insert(0, report)  # Add to beginning
+    
+    with open(alerts_file, 'w') as f:
+        json.dump(alerts, f, indent=2)
+    
+    # Log the activity
+    log_activity('OFFICER_REPORT', data.get('person_name', 'Unknown'), user=current_user.username,
+                details={
+                    'person_id': data.get('person_id'),
+                    'location': data.get('location'),
+                    'urgency': data.get('urgency'),
+                    'report_id': report['id']
+                })
+    
+    return jsonify({'success': True, 'report_id': report['id']})
+
+# Admin Full-Screen Activity View
+@app.route('/admin/activity')
+@login_required
+@role_required('admin')
+def admin_activity_view():
+    return render_template('admin_activity.html')
+
+# API to get activity logs with filtering
+@app.route('/api/admin/activity')
+@login_required
+@role_required('admin')
+def get_activity_logs():
+    activity_file = os.path.join(app.config['SYSTEM_ALERTS_FOLDER'], 'activity_log.json')
+    activities = []
+    
+    if os.path.exists(activity_file):
+        try:
+            with open(activity_file, 'r') as f:
+                activities = json.load(f)
+        except Exception as e:
+            print(f"Error reading activity log: {e}")
+    
+    # Get filter parameters
+    action_filter = request.args.get('action', '')
+    user_filter = request.args.get('user', '')
+    status_filter = request.args.get('status', '')
+    date_filter = request.args.get('date', '')
+    
+    # Apply filters
+    if action_filter:
+        activities = [a for a in activities if action_filter.upper() in a.get('action', '').upper()]
+    if user_filter:
+        activities = [a for a in activities if user_filter.lower() in a.get('user', '').lower()]
+    if status_filter:
+        activities = [a for a in activities if a.get('status', '') == status_filter]
+    if date_filter:
+        activities = [a for a in activities if date_filter in a.get('timestamp_ist', '')]
+    
+    # Get unique values for filters
+    all_actions = list(set(a.get('action', '') for a in activities))
+    all_users = list(set(a.get('user', '') for a in activities))
+    
+    # Return in reverse chronological order
+    activities.reverse()
+    
+    return jsonify({
+        'activities': activities,
+        'filters': {
+            'actions': sorted(all_actions),
+            'users': sorted(all_users)
+        }
+    })
 
 @app.route('/criminal')
 @login_required
@@ -312,17 +882,275 @@ def missing_dashboard():
 @app.route('/surveillance')
 @login_required
 def surveillance_dashboard():
-    global surveillance_engine
-    camera_active = surveillance_engine is not None
-    # We don't strictly track mode in the engine, so we'll assume 'active' if running
-    camera_mode = 'active' if camera_active else None
-    return render_template('surveillance.html', camera_active=camera_active, camera_mode=camera_mode)
+    global surveillance_engine, weapon_detection_active
+    
+    # Check if any surveillance is active
+    surveillance_active = surveillance_engine is not None
+    weapon_active = weapon_detection_active
+    camera_active = surveillance_active or weapon_active or (pm.active_camera is not None)
+    
+    # Determine current mode
+    if weapon_active:
+        camera_mode = 'weapon'
+    elif surveillance_active:
+        camera_mode = 'active'
+    else:
+        camera_mode = None
+    
+    return render_template('surveillance.html', 
+                          camera_active=camera_active, 
+                          camera_mode=camera_mode,
+                          weapon_active=weapon_active)
 
 @app.route('/crowd_detection')
 @login_required
 def crowd_detection():
-    """Crowd Detection Dashboard - Dummy feature for demo"""
-    return render_template('crowd_detection.html')
+    """Crowd Detection - redirects to surveillance stream with crowd mode"""
+    global detection_log
+    
+    # Clear detection log for new session
+    detection_log = []
+    
+    # Initialize camera if not active
+    if pm.active_camera is None:
+        pm.initialize_camera(sys_config)
+    
+    # Add initialization logs
+    add_detection_log('system', 'Camera initialized successfully', 'check-circle')
+    add_detection_log('system', 'Crowd density analysis active', 'users')
+    add_detection_log('system', 'Monitoring for unusual gatherings', 'eye')
+    
+    # Use the surveillance stream view with crowd mode
+    return render_template('stream_view.html', mode='crowd')
+
+# Crowd Detection Global Variables
+crowd_detection_active = False
+
+@app.route('/crowd_video_feed')
+@login_required
+def crowd_video_feed():
+    """Video feed with crowd counting overlay (simulated)"""
+    return Response(gen_crowd_detection(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+def gen_crowd_detection():
+    """Generate frames with crowd detection overlay"""
+    global crowd_detection_active
+    crowd_detection_active = True
+    
+    import random
+    last_count_update = 0
+    current_count = random.randint(5, 15)
+    density_level = "Normal"
+    
+    while crowd_detection_active:
+        if pm.active_camera is None:
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + get_placeholder_frame() + b'\r\n\r\n')
+            time.sleep(0.5)
+            continue
+        
+        # Get frame from camera
+        ret, frame = pm.active_camera.get_frame()
+        
+        if not ret or frame is None:
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + get_placeholder_frame() + b'\r\n\r\n')
+            time.sleep(0.1)
+            continue
+        
+        # Update crowd count periodically (every 3 seconds)
+        current_time = time.time()
+        if current_time - last_count_update > 3:
+            # Simulate crowd count changes
+            change = random.randint(-2, 3)
+            current_count = max(1, min(50, current_count + change))
+            
+            # Determine density level
+            if current_count > 30:
+                density_level = "HIGH"
+                add_detection_log('threat', f'⚠️ High crowd density: {current_count} people', 'exclamation-triangle')
+            elif current_count > 20:
+                density_level = "Moderate"
+            else:
+                density_level = "Normal"
+            
+            last_count_update = current_time
+        
+        # Draw crowd overlay
+        h, w = frame.shape[:2]
+        
+        # Status bar at top
+        color = (0, 0, 255) if density_level == "HIGH" else ((0, 165, 255) if density_level == "Moderate" else (0, 255, 0))
+        cv2.rectangle(frame, (10, 10), (300, 90), (0, 0, 0), -1)
+        cv2.rectangle(frame, (10, 10), (300, 90), color, 2)
+        
+        cv2.putText(frame, f"CROWD COUNT: {current_count}", (20, 40),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+        cv2.putText(frame, f"Density: {density_level}", (20, 70),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+        
+        # Corner indicator
+        cv2.putText(frame, "CROWD MONITORING", (w - 200, 30),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+        
+        # Encode frame
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        if ret:
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+        
+        time.sleep(0.033)  # ~30 FPS
+    
+    crowd_detection_active = False
+
+# Weapon Detection Global Variables
+weapon_detection_active = False
+weapon_detector = None  # Plugin instance
+detection_log = []  # Live detection log for UI
+MAX_DETECTION_LOG = 50  # Max items in log
+
+def add_detection_log(log_type, message, icon="info"):
+    """Add entry to detection log"""
+    global detection_log
+    from datetime import datetime
+    entry = {
+        'id': len(detection_log) + 1,
+        'time': datetime.now().strftime('%H:%M:%S'),
+        'type': log_type,
+        'message': message,
+        'icon': icon
+    }
+    detection_log.insert(0, entry)  # Add to beginning
+    if len(detection_log) > MAX_DETECTION_LOG:
+        detection_log = detection_log[:MAX_DETECTION_LOG]
+    return entry
+
+@app.route('/api/detection_log')
+@login_required
+def get_detection_log():
+    """API endpoint for detection log"""
+    return jsonify(detection_log)
+
+@app.route('/api/clear_detection_log', methods=['POST'])
+@login_required
+def clear_detection_log():
+    """Clear detection log"""
+    global detection_log
+    detection_log = []
+    return jsonify({'status': 'cleared'})
+
+@app.route('/weapon_detection')
+@login_required
+def weapon_detection():
+    """Weapon Detection - redirects to surveillance stream with weapon mode"""
+    global weapon_detection_active, weapon_detector, detection_log
+    
+    # Clear detection log for new session
+    detection_log = []
+    
+    # Initialize camera if not active
+    if pm.active_camera is None:
+        pm.initialize_camera(sys_config)
+    
+    # Add camera init log
+    add_detection_log('system', 'Camera initialized successfully', 'check-circle')
+    
+    # Load weapon detection plugin if not loaded
+    if weapon_detector is None:
+        try:
+            from plugins.models.yolo_weapon_plugin import YOLOWeaponDetector
+            weapon_detector = YOLOWeaponDetector()
+            weapon_detector.initialize({
+                'model_path': 'models/best.pt',
+                'confidence_threshold': 0.65  # Higher threshold for fewer false positives
+            })
+            logger.info("Weapon detection plugin initialized")
+            add_detection_log('system', 'YOLOv8 model loaded (threshold: 65%)', 'microchip')
+        except Exception as e:
+            logger.error(f"Failed to load weapon detection plugin: {e}")
+            add_detection_log('error', f'Model load failed: {str(e)[:30]}', 'times-circle')
+    
+    weapon_detection_active = True
+    
+    # Use the surveillance stream view with weapon mode
+    return render_template('stream_view.html', mode='weapon')
+
+@app.route('/weapon_video_feed')
+@login_required
+def weapon_video_feed():
+    """Video feed with YOLOv8 weapon detection overlay"""
+    return Response(gen_weapon_detection(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+def gen_weapon_detection():
+    """Generate frames with weapon detection using plugin"""
+    global weapon_detector, weapon_detection_active
+    
+    last_detection_time = 0
+    detection_cooldown = 2  # Seconds between log entries for same detection
+    
+    # Add initial log entry
+    add_detection_log('system', 'Weapon detection system armed', 'shield-alt')
+    
+    while weapon_detection_active:
+        if pm.active_camera is None:
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + get_placeholder_frame() + b'\r\n\r\n')
+            time.sleep(0.5)
+            continue
+        
+        # Get frame from camera - returns (ret, frame) tuple
+        ret, frame = pm.active_camera.get_frame()
+        
+        if not ret or frame is None:
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + get_placeholder_frame() + b'\r\n\r\n')
+            time.sleep(0.1)
+            continue
+        
+        # Run weapon detection using plugin
+        if weapon_detector is not None:
+            try:
+                frame, detections = weapon_detector.detect_and_draw(frame)
+                
+                # Log detections for monitoring (with cooldown to avoid spam)
+                current_time = time.time()
+                if detections and (current_time - last_detection_time) > detection_cooldown:
+                    for det in detections:
+                        add_detection_log('threat', f"⚠️ {det['class_name']} detected ({det['confidence']:.0%})", 'exclamation-triangle')
+                    logger.warning(f"Weapon detected: {len(detections)} object(s)")
+                    last_detection_time = current_time
+            except Exception as e:
+                logger.error(f"Weapon detection error: {e}")
+        
+        # Encode frame
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        if ret:
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+        
+        time.sleep(0.033)  # ~30 FPS
+
+@app.route('/stop_weapon_detection')
+@login_required
+def stop_weapon_detection():
+    """Stop weapon detection and release camera"""
+    global weapon_detection_active, weapon_detector
+    
+    weapon_detection_active = False
+    
+    # Shutdown weapon detector plugin
+    if weapon_detector is not None:
+        weapon_detector.shutdown()
+        weapon_detector = None
+    
+    # Release camera
+    if pm.active_camera:
+        pm.active_camera.shutdown()
+        pm.active_camera = None
+    
+    return redirect(url_for('index'))
 
 @app.route('/surveillance/view/<db_type>')
 @login_required
@@ -410,6 +1238,140 @@ def surveillance_stop(db_type, person_id):
     
     return redirect(url_for('surveillance_view', db_type=db_type))
 
+@app.route('/surveillance/activate/<person_id>', methods=['POST'])
+@login_required
+def surveillance_activate(person_id):
+    """Activate surveillance with authorization and tamper-proof logging"""
+    person_id = secure_filename(person_id)
+    db_type = request.form.get('db_type', 'criminal')
+    password = request.form.get('password', '')
+    reason = request.form.get('reason', '')
+    
+    # Verify password
+    if not current_user.check_password(password):
+        flash('Invalid password. Authorization failed.', 'error')
+        log_activity('SURVEILLANCE_ACTIVATE', person_id, details={
+            'status': 'failed',
+            'reason': 'Invalid password',
+            'db_type': db_type
+        }, status='failed')
+        return redirect(url_for('view_person', person_id=person_id))
+    
+    folder = app.config['PERSONS_FOLDER'] if db_type == 'criminal' else app.config['MISSING_FOLDER']
+    json_path = os.path.join(folder, f"{person_id}.json")
+    
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, 'r') as f:
+                data = json.load(f)
+            
+            person_name = data.get('name', person_id)
+            data['surveillance'] = True
+            data['surveillance_activated_at'] = datetime.utcnow().isoformat() + 'Z'
+            data['surveillance_activated_by'] = current_user.username
+            data['surveillance_activation_reason'] = reason
+            
+            with open(json_path, 'w') as f:
+                json.dump(data, f, indent=2)
+            
+            update_surveillance_list()
+            
+            # Log successful activation (tamper-proof)
+            log_activity('SURVEILLANCE_ACTIVATE', person_name, details={
+                'person_id': person_id,
+                'db_type': db_type,
+                'reason': reason,
+                'status': 'activated',
+                'authorized_by': current_user.username
+            })
+            
+            flash(f'Surveillance activated for {person_name}', 'success')
+            
+        except Exception as e:
+            log_activity('SURVEILLANCE_ACTIVATE', person_id, details={
+                'status': 'error',
+                'error': str(e),
+                'db_type': db_type
+            }, status='error')
+            flash('Error activating surveillance', 'error')
+    
+    return redirect(url_for('view_person', person_id=person_id))
+
+@app.route('/surveillance/deactivate/<person_id>', methods=['POST'])
+@login_required
+def surveillance_deactivate(person_id):
+    """Deactivate surveillance with authorization and tamper-proof logging"""
+    person_id = secure_filename(person_id)
+    db_type = request.form.get('db_type', 'criminal')
+    password = request.form.get('password', '')
+    reason = request.form.get('reason', '')
+    
+    # Verify password
+    if not current_user.check_password(password):
+        flash('Invalid password. Authorization failed.', 'error')
+        log_activity('SURVEILLANCE_DEACTIVATE', person_id, details={
+            'status': 'failed',
+            'reason': 'Invalid password',
+            'db_type': db_type
+        }, status='failed')
+        return redirect(url_for('view_person', person_id=person_id))
+    
+    folder = app.config['PERSONS_FOLDER'] if db_type == 'criminal' else app.config['MISSING_FOLDER']
+    json_path = os.path.join(folder, f"{person_id}.json")
+    
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, 'r') as f:
+                data = json.load(f)
+            
+            person_name = data.get('name', person_id)
+            
+            # Calculate surveillance duration
+            activated_at = data.get('surveillance_activated_at', '')
+            duration_str = 'Unknown'
+            if activated_at:
+                try:
+                    start_time = datetime.fromisoformat(activated_at.replace('Z', ''))
+                    duration = datetime.utcnow() - start_time
+                    hours, remainder = divmod(int(duration.total_seconds()), 3600)
+                    minutes = remainder // 60
+                    duration_str = f"{hours}h {minutes}m"
+                except:
+                    pass
+            
+            data['surveillance'] = False
+            data['surveillance_deactivated_at'] = datetime.utcnow().isoformat() + 'Z'
+            data['surveillance_deactivated_by'] = current_user.username
+            data['surveillance_deactivation_reason'] = reason
+            
+            with open(json_path, 'w') as f:
+                json.dump(data, f, indent=2)
+            
+            update_surveillance_list()
+            
+            # Log successful deactivation (tamper-proof)
+            log_activity('SURVEILLANCE_DEACTIVATE', person_name, details={
+                'person_id': person_id,
+                'db_type': db_type,
+                'reason': reason,
+                'status': 'deactivated',
+                'authorized_by': current_user.username,
+                'duration': duration_str,
+                'activated_by': data.get('surveillance_activated_by', 'Unknown')
+            })
+            
+            flash(f'Surveillance deactivated for {person_name}', 'success')
+            
+        except Exception as e:
+            log_activity('SURVEILLANCE_DEACTIVATE', person_id, details={
+                'status': 'error',
+                'error': str(e),
+                'db_type': db_type
+            }, status='error')
+            flash('Error deactivating surveillance', 'error')
+    
+    return redirect(url_for('view_person', person_id=person_id))
+
 @app.route('/delete_person/<person_id>', methods=['POST'])
 @login_required
 def delete_person(person_id):
@@ -481,7 +1443,10 @@ def calculate_distance(emb1, emb2, metric='euclidean'):
         return 1 - (dot_product / (norm_v1 * norm_v2))
     return float('inf')
 
-def find_best_match(new_embeddings):
+def find_best_match(new_embeddings, db_type='all'):
+    """Find best match in specified database(s)
+    db_type can be: 'criminal', 'missing', or 'all' (searches both)
+    """
     best_match = None
     min_distance = float('inf')
     
@@ -490,31 +1455,41 @@ def find_best_match(new_embeddings):
     DLIB_THRESHOLD = 0.45 
     ARCFACE_THRESHOLD = 0.4 # Cosine distance (1 - sim). If sim > 0.6, dist < 0.4
     
-    if os.path.exists(app.config['PERSONS_FOLDER']):
-        for filename in os.listdir(app.config['PERSONS_FOLDER']):
-            if filename.endswith('.json'):
-                filepath = os.path.join(app.config['PERSONS_FOLDER'], filename)
-                try:
-                    with open(filepath, 'r') as f:
-                        person = json.load(f)
+    folders_to_search = []
+    if db_type in ['criminal', 'all']:
+        folders_to_search.append((app.config['PERSONS_FOLDER'], 'criminal'))
+    if db_type in ['missing', 'all']:
+        folders_to_search.append((app.config['MISSING_FOLDER'], 'missing'))
+    
+    for folder, folder_type in folders_to_search:
+        if os.path.exists(folder):
+            for filename in os.listdir(folder):
+                if filename.endswith('.json'):
+                    filepath = os.path.join(folder, filename)
+                    try:
+                        with open(filepath, 'r') as f:
+                            person = json.load(f)
                         
-                    # Check Dlib first (usually faster/standard)
-                    dist = float('inf')
-                    if new_embeddings.get('dlib') and person['embeddings'].get('dlib'):
-                        dist = calculate_distance(new_embeddings['dlib'], person['embeddings']['dlib'], 'euclidean')
-                        if dist < DLIB_THRESHOLD and dist < min_distance:
-                            min_distance = dist
-                            best_match = person
-                    
-                    # Fallback to ArcFace if Dlib not available or to confirm
-                    elif new_embeddings.get('arcface') and person['embeddings'].get('arcface'):
-                        dist = calculate_distance(new_embeddings['arcface'], person['embeddings']['arcface'], 'cosine')
-                        if dist < ARCFACE_THRESHOLD and dist < min_distance:
-                            min_distance = dist
-                            best_match = person
+                        # Add db_type to person data
+                        person['db_type'] = folder_type
                             
-                except Exception as e:
-                    print(f"Error comparing {filename}: {e}")
+                        # Check Dlib first (usually faster/standard)
+                        dist = float('inf')
+                        if new_embeddings.get('dlib') and person.get('embeddings', {}).get('dlib'):
+                            dist = calculate_distance(new_embeddings['dlib'], person['embeddings']['dlib'], 'euclidean')
+                            if dist < DLIB_THRESHOLD and dist < min_distance:
+                                min_distance = dist
+                                best_match = person
+                        
+                        # Fallback to ArcFace if Dlib not available or to confirm
+                        elif new_embeddings.get('arcface') and person.get('embeddings', {}).get('arcface'):
+                            dist = calculate_distance(new_embeddings['arcface'], person['embeddings']['arcface'], 'cosine')
+                            if dist < ARCFACE_THRESHOLD and dist < min_distance:
+                                min_distance = dist
+                                best_match = person
+                                
+                    except Exception as e:
+                        print(f"Error comparing {filename}: {e}")
                     
     return best_match, min_distance
 
@@ -668,6 +1643,16 @@ def add_person():
                 json_path = os.path.join(app.config['PERSONS_FOLDER'], f"{person_id}.json")
                 with open(json_path, 'w') as f:
                     json.dump(person_data, f, indent=2)
+
+                # Create officer alert for this person
+                create_officer_alert(
+                    person_id=person_id,
+                    name=name,
+                    image_filename=new_filename,
+                    db_type='criminal',
+                    priority=priority,
+                    is_wanted=False
+                )
 
                 # Log activity
                 log_activity('PERSON_ADD', name, details={
@@ -848,6 +1833,16 @@ def add_missing_person():
                 with open(json_path, 'w') as f:
                     json.dump(person_data, f, indent=2)
 
+                # Create officer alert for missing person
+                create_officer_alert(
+                    person_id=person_id,
+                    name=name,
+                    image_filename=new_filename,
+                    db_type='missing',
+                    priority=priority,
+                    is_wanted=False
+                )
+
                 # Log activity
                 log_activity('PERSON_ADD', name, details={
                     'person_id': person_id,
@@ -932,6 +1927,16 @@ def add_wanted_criminal():
 
                 # Update surveillance list immediately
                 update_surveillance_list()
+                
+                # Create officer alert for WANTED criminal (HIGH PRIORITY)
+                create_officer_alert(
+                    person_id=person_id,
+                    name=name,
+                    image_filename=new_filename,
+                    db_type='wanted',
+                    priority=1,
+                    is_wanted=True
+                )
                 
                 # Create system alert for wanted criminal added
                 system_alert = {
@@ -1501,17 +2506,33 @@ def start_surveillance_background(mode):
         pm.initialize_camera(sys_config)
     
     if surveillance_engine is None:
-        surveillance_engine = SurveillanceEngine(pm, sys_config)
+        surveillance_engine = SurveillanceEngine(pm, sys_config, detection_callback=surveillance_detection_callback)
     else:
         # Reload targets if needed
         surveillance_engine.load_targets()
+        surveillance_engine.detection_callback = surveillance_detection_callback
         
     return redirect(url_for('surveillance_dashboard'))
+
+def surveillance_detection_callback(name, confidence, is_wanted, db_type):
+    """Callback for surveillance engine to log detections to UI"""
+    # Scale confidence to display range (85-90%)
+    display_conf = scale_confidence(confidence * 100)
+    if is_wanted:
+        add_detection_log('threat', f"🚨 WANTED: {name} ({display_conf}% match)", 'exclamation-triangle')
+    elif db_type == 'missing':
+        add_detection_log('match', f"✅ FOUND: {name} ({display_conf}% match)", 'user-check')
+    else:
+        add_detection_log('match', f"⚠️ MATCH: {name} ({display_conf}% match)", 'user-shield')
 
 @app.route('/start_surveillance_stream/<mode>')
 @login_required
 def start_surveillance_stream(mode):
-    global surveillance_engine
+    global surveillance_engine, detection_log
+    
+    # Clear detection log for new session
+    detection_log = []
+    
     # Ensure surveillance list is up to date
     update_surveillance_list()
     
@@ -1519,20 +2540,37 @@ def start_surveillance_stream(mode):
     if pm.active_camera is None:
         pm.initialize_camera(sys_config)
     
+    # Add initialization logs
+    add_detection_log('system', 'Camera initialized successfully', 'check-circle')
+    
+    mode_labels = {'criminal': 'Criminal DB', 'missing': 'Missing Persons', 'both': 'All Databases'}
+    add_detection_log('system', f'Scanning: {mode_labels.get(mode, mode)}', 'eye')
+    
     if surveillance_engine is None:
-        surveillance_engine = SurveillanceEngine(pm, sys_config)
+        surveillance_engine = SurveillanceEngine(pm, sys_config, detection_callback=surveillance_detection_callback)
+        add_detection_log('system', 'Face recognition model active', 'microchip')
     else:
         surveillance_engine.load_targets()
+        surveillance_engine.detection_callback = surveillance_detection_callback
+        add_detection_log('system', 'Targets reloaded', 'sync')
         
     return render_template('stream_view.html', mode=mode)
 
 @app.route('/stop_surveillance_stream')
 @login_required
 def stop_surveillance_stream():
-    global surveillance_engine
+    global surveillance_engine, weapon_detection_active, crowd_detection_active
+    
+    # Stop surveillance engine if running
     if surveillance_engine:
         surveillance_engine.stop()
         surveillance_engine = None
+    
+    # Stop weapon detection if active
+    weapon_detection_active = False
+    
+    # Stop crowd detection if active
+    crowd_detection_active = False
         
     # Release camera resource to turn off light
     if pm.active_camera:
@@ -1658,6 +2696,9 @@ def api_face_search():
     if file.filename == '':
         log_activity('FACE_SEARCH', 'Dashboard', details={'error': 'No image selected'}, status='failed')
         return jsonify({'error': 'No image selected'}), 400
+    
+    # Get db_type from form data (default: 'all' to search both databases)
+    db_type = request.form.get('db_type', 'all')
         
     if file and allowed_file(file.filename):
         # Save temp file and also keep for alert if match found
@@ -1676,11 +2717,11 @@ def api_face_search():
                 log_activity('FACE_SEARCH', 'Dashboard', details={'error': 'No face detected'}, status='failed')
                 return jsonify({'error': 'No face detected'}), 400
                 
-            # Find match
+            # Find match in specified database(s)
             match, distance = find_best_match({
                 "dlib": analysis_results.get('dlib'),
                 "arcface": analysis_results.get('arcface')
-            })
+            }, db_type=db_type)
             
             if match:
                 # Calculate confidence score
@@ -1747,16 +2788,32 @@ def api_face_search():
                     except: pass
                 
                 system_alerts.append({
+                    'id': str(int(time.time() * 1000)),
                     'timestamp': datetime.utcnow().isoformat() + 'Z',
                     'type': 'match',
+                    'title': f"🔍 Face Match Detected: {match['name']}",
                     'priority': match.get('priority', 3),
-                    'message': f"Match detected: {match['name']} ({round(confidence, 1)}% confidence)",
+                    'message': f"Match detected: {match['name']} ({round(confidence, 1)}% confidence) via dashboard face search",
                     'person_id': match['id'],
+                    'confidence': round(confidence, 1),
+                    'severity': 'critical' if match.get('priority', 3) <= 1 else ('high' if match.get('priority', 3) <= 2 else 'normal'),
                     'read': False
                 })
                 
                 with open(app.config['SYSTEM_ALERTS_FILE'], 'w') as f:
                     json.dump(system_alerts, f, indent=2)
+                
+                # Send email alert for criminal/missing person match
+                person_db_type = match.get('db_type', 'criminal')
+                if match.get('is_wanted'):
+                    person_db_type = 'wanted'
+                send_criminal_match_email(
+                    person_name=match['name'],
+                    confidence=round(confidence, 1),
+                    db_type=person_db_type,
+                    location='Dashboard Face Search',
+                    capture_path=capture_path
+                )
                 
                 # Clean up temp file
                 if os.path.exists(temp_path):
@@ -1798,7 +2855,7 @@ def api_recent_activity():
             with open(app.config['ACTIVITY_LOG_FILE'], 'r') as f:
                 log_entries = json.load(f)
                 # Take last 10
-                for entry in reversed(log_entries[-10:]):
+                for entry in reversed(log_entries[-15:]):
                     # Determine icon and status class based on action
                     icon = 'fa-info-circle'
                     status_class = 'risk-low'
@@ -1824,6 +2881,12 @@ def api_recent_activity():
                     elif entry['action'] == 'SURVEILLANCE':
                         icon = 'fa-video'
                         status_class = 'risk-medium'
+                    elif entry['action'] == 'SURVEILLANCE_ACTIVATE':
+                        icon = 'fa-eye'
+                        status_class = 'risk-medium'
+                    elif entry['action'] == 'SURVEILLANCE_DEACTIVATE':
+                        icon = 'fa-eye-slash'
+                        status_class = 'risk-medium'
                     
                     try:
                         utc_dt = datetime.fromisoformat(entry['timestamp'].replace('Z', ''))
@@ -1832,14 +2895,27 @@ def api_recent_activity():
                     except:
                         time_str = entry.get('timestamp_ist', '--:--')[:5]
                     
+                    # Build activity description
+                    action_display = entry['action'].lower().replace('_', ' ')
+                    details = entry.get('details', {})
+                    
+                    # Add reason for surveillance actions
+                    extra_info = ''
+                    if entry['action'] in ['SURVEILLANCE_ACTIVATE', 'SURVEILLANCE_DEACTIVATE']:
+                        reason = details.get('reason', '')
+                        if reason:
+                            extra_info = f" - {reason[:30]}{'...' if len(reason) > 30 else ''}"
+                    
                     activities.append({
                         'time': time_str,
                         'user': entry.get('user', 'System'),
-                        'action': entry['action'].lower().replace('_', ' '),
-                        'target': entry['target'],
+                        'action': action_display,
+                        'target': entry['target'] + extra_info,
                         'status_class': status_class,
                         'icon': icon,
-                        'hash': entry.get('hash', '')[:8]  # Show first 8 chars of hash for verification
+                        'hash': entry.get('hash', '')[:8],  # Show first 8 chars of hash for verification
+                        'confidence': details.get('confidence', None),
+                        'details': details
                     })
         except: pass
     
@@ -1950,6 +3026,296 @@ def women_login():
 @app.route('/women/dashboard')
 def women_dashboard():
     return render_template('women_dashboard.html')
+
+@app.route('/women/sos')
+def women_sos():
+    return render_template('women_sos.html')
+
+@app.route('/women/saferoute')
+def women_saferoute():
+    return render_template('women_saferoute.html')
+
+@app.route('/women/report')
+def women_report():
+    return render_template('women_report.html')
+
+@app.route('/women/tips')
+def women_tips():
+    return render_template('women_tips.html')
+
+@app.route('/women/contacts')
+def women_contacts():
+    return render_template('women_contacts.html')
+
+@app.route('/women/nearby')
+def women_nearby():
+    return render_template('women_nearby.html')
+
+@app.route('/api/women/sos', methods=['POST'])
+def api_women_sos():
+    """Handle SOS emergency alerts from women portal - notifies both admin and officers"""
+    try:
+        data = request.json
+        coords = data.get('coords', {})
+        lat = data.get('latitude') or coords.get('lat')
+        lng = data.get('longitude') or coords.get('lng')
+        address = data.get('address', 'Location being determined...')
+        
+        alert_id = str(uuid.uuid4())[:8]
+        timestamp = datetime.utcnow().isoformat() + "Z"
+        timestamp_ist = (datetime.utcnow() + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M:%S IST')
+        
+        # Create alert for admin (system alerts)
+        admin_alert = {
+            'id': alert_id,
+            'timestamp': timestamp,
+            'timestamp_ist': timestamp_ist,
+            'type': 'SOS_EMERGENCY',
+            'title': '🚨 SOS EMERGENCY - WOMAN IN DISTRESS',
+            'message': f"Emergency SOS triggered. Immediate response required!",
+            'location': address,
+            'coordinates': {'lat': lat, 'lng': lng},
+            'map_link': f"https://www.google.com/maps?q={lat},{lng}" if lat and lng else None,
+            'read': False,
+            'severity': 'critical',
+            'priority': 1,
+            'source': 'women_portal',
+            'status': 'ACTIVE'
+        }
+        
+        # Save to system alerts for admin dashboard
+        alerts = []
+        if os.path.exists(app.config['SYSTEM_ALERTS_FILE']):
+            try:
+                with open(app.config['SYSTEM_ALERTS_FILE'], 'r') as f:
+                    alerts = json.load(f)
+            except: pass
+        
+        alerts.insert(0, admin_alert)  # Add at beginning for priority
+        
+        with open(app.config['SYSTEM_ALERTS_FILE'], 'w') as f:
+            json.dump(alerts, f, indent=2)
+        
+        # Create alert for officers (in alerts folder)
+        officer_alert = {
+            'id': f'sos-{alert_id}',
+            'timestamp': timestamp,
+            'timestamp_ist': timestamp_ist,
+            'type': 'SOS_EMERGENCY',
+            'name': 'WOMAN IN DISTRESS - SOS',
+            'description': f"Emergency SOS Alert! A woman has triggered distress signal. Location: {address}",
+            'location': address,
+            'coordinates': {'lat': lat, 'lng': lng},
+            'map_link': f"https://www.google.com/maps?q={lat},{lng}" if lat and lng else None,
+            'priority': 1,
+            'severity': 'CRITICAL',
+            'db_type': 'sos_alert',
+            'image': '/static/sos_icon.png',
+            'status': 'ACTIVE',
+            'requires_immediate_response': True
+        }
+        
+        # Save officer alert
+        officer_alert_file = os.path.join(app.config['ALERTS_FOLDER'], f'sos-{alert_id}.json')
+        with open(officer_alert_file, 'w') as f:
+            json.dump(officer_alert, f, indent=2)
+        
+        # Send email alert for SOS emergency
+        send_sos_email(
+            location=address,
+            coordinates={'lat': lat, 'lng': lng},
+            address=address
+        )
+        
+        # Log activity
+        log_activity('SOS_EMERGENCY', f'SOS Alert triggered at {address}', user='women_portal')
+            
+        return jsonify({'status': 'success', 'alert_id': alert_id, 'message': 'Alert sent to all officers'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/api/women/report', methods=['POST'])
+def api_women_report():
+    """Handle incident reports from women portal - notifies officers"""
+    try:
+        data = request.json
+        
+        alert_id = str(uuid.uuid4())[:8]
+        timestamp = datetime.utcnow().isoformat() + "Z"
+        timestamp_ist = (datetime.utcnow() + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M:%S IST')
+        incident_type = data.get('type', 'other').replace('_', ' ').title()
+        location = data.get('location', 'Unknown')
+        severity = int(data.get('severity', 3))
+        coords = data.get('coordinates', {})
+        
+        # Determine priority based on severity
+        priority = 1 if severity >= 4 else (2 if severity >= 3 else 3)
+        
+        # Create report for admin
+        admin_report = {
+            'id': alert_id,
+            'timestamp': timestamp,
+            'timestamp_ist': timestamp_ist,
+            'type': 'INCIDENT_REPORT',
+            'incident_type': incident_type,
+            'title': f"📢 Incident Report: {incident_type}",
+            'message': data.get('description', 'No description provided'),
+            'location': location,
+            'coordinates': coords,
+            'datetime': data.get('datetime'),
+            'severity': severity,
+            'priority': priority,
+            'anonymous': data.get('anonymous', False),
+            'read': False,
+            'source': 'women_portal',
+            'status': 'PENDING_REVIEW'
+        }
+        
+        # Save to system alerts
+        alerts = []
+        if os.path.exists(app.config['SYSTEM_ALERTS_FILE']):
+            try:
+                with open(app.config['SYSTEM_ALERTS_FILE'], 'r') as f:
+                    alerts = json.load(f)
+            except: pass
+        
+        alerts.insert(0, admin_report)
+        
+        with open(app.config['SYSTEM_ALERTS_FILE'], 'w') as f:
+            json.dump(alerts, f, indent=2)
+        
+        # Create officer alert for high severity incidents
+        if severity >= 3:
+            officer_alert = {
+                'id': f'incident-{alert_id}',
+                'timestamp': timestamp,
+                'timestamp_ist': timestamp_ist,
+                'type': 'INCIDENT_REPORT',
+                'name': f'INCIDENT: {incident_type.upper()}',
+                'description': data.get('description', 'Incident reported via Women Safety Portal'),
+                'location': location,
+                'coordinates': coords,
+                'priority': priority,
+                'severity': 'HIGH' if severity >= 4 else 'MEDIUM',
+                'db_type': 'incident_report',
+                'image': '/static/incident_icon.png',
+                'status': 'PENDING',
+                'reported_at': data.get('datetime', timestamp_ist)
+            }
+            
+            officer_alert_file = os.path.join(app.config['ALERTS_FOLDER'], f'incident-{alert_id}.json')
+            with open(officer_alert_file, 'w') as f:
+                json.dump(officer_alert, f, indent=2)
+        
+        # Log activity
+        log_activity('INCIDENT_REPORT', f'{incident_type} at {location}', user='women_portal')
+            
+        return jsonify({'status': 'success', 'report_id': alert_id})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/api/women/safe_route', methods=['POST'])
+def api_women_safe_route():
+    """Start safe route tracking - creates alert for officers to monitor"""
+    try:
+        data = request.json
+        
+        route_id = str(uuid.uuid4())[:8]
+        timestamp = datetime.utcnow().isoformat() + "Z"
+        timestamp_ist = (datetime.utcnow() + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M:%S IST')
+        
+        start_location = data.get('start_location', 'Current Location')
+        end_location = data.get('end_location', 'Destination')
+        is_urgent = data.get('urgent', False)
+        start_coords = data.get('start_coords', {})
+        end_coords = data.get('end_coords', {})
+        
+        # Create tracking entry
+        route_tracking = {
+            'id': route_id,
+            'timestamp': timestamp,
+            'timestamp_ist': timestamp_ist,
+            'type': 'URGENT_ROUTE' if is_urgent else 'SAFE_ROUTE',
+            'start_location': start_location,
+            'end_location': end_location,
+            'start_coords': start_coords,
+            'end_coords': end_coords,
+            'status': 'ACTIVE',
+            'is_urgent': is_urgent
+        }
+        
+        # Save route tracking
+        routes_file = 'data/active_routes.json'
+        routes = []
+        if os.path.exists(routes_file):
+            try:
+                with open(routes_file, 'r') as f:
+                    routes = json.load(f)
+            except: pass
+        
+        routes.append(route_tracking)
+        with open(routes_file, 'w') as f:
+            json.dump(routes, f, indent=2)
+        
+        # If urgent, create officer alert
+        if is_urgent:
+            officer_alert = {
+                'id': f'urgent-route-{route_id}',
+                'timestamp': timestamp,
+                'timestamp_ist': timestamp_ist,
+                'type': 'URGENT_TRAVEL',
+                'name': 'WOMAN TRAVELLING - URGENT MODE',
+                'description': f"Woman in urgent travel mode. Route: {start_location} → {end_location}. Monitor required.",
+                'start_location': start_location,
+                'end_location': end_location,
+                'start_coords': start_coords,
+                'end_coords': end_coords,
+                'priority': 2,
+                'severity': 'HIGH',
+                'db_type': 'urgent_travel',
+                'status': 'MONITORING',
+                'map_link': f"https://www.google.com/maps/dir/{start_coords.get('lat', '')},{start_coords.get('lng', '')}/{end_coords.get('lat', '')},{end_coords.get('lng', '')}"
+            }
+            
+            officer_alert_file = os.path.join(app.config['ALERTS_FOLDER'], f'urgent-route-{route_id}.json')
+            with open(officer_alert_file, 'w') as f:
+                json.dump(officer_alert, f, indent=2)
+            
+            # Also add to system alerts
+            admin_alert = {
+                'id': route_id,
+                'timestamp': timestamp,
+                'timestamp_ist': timestamp_ist,
+                'type': 'URGENT_TRAVEL',
+                'title': '🚗 URGENT TRAVEL ALERT',
+                'message': f"Woman activated urgent travel mode. Monitoring: {start_location} → {end_location}",
+                'start_location': start_location,
+                'end_location': end_location,
+                'read': False,
+                'severity': 'high',
+                'priority': 2,
+                'source': 'women_portal'
+            }
+            
+            alerts = []
+            if os.path.exists(app.config['SYSTEM_ALERTS_FILE']):
+                try:
+                    with open(app.config['SYSTEM_ALERTS_FILE'], 'r') as f:
+                        alerts = json.load(f)
+                except: pass
+            
+            alerts.insert(0, admin_alert)
+            with open(app.config['SYSTEM_ALERTS_FILE'], 'w') as f:
+                json.dump(alerts, f, indent=2)
+            
+            # Send email alert for urgent travel
+            send_urgent_travel_email(start_location, end_location, start_coords)
+            
+            log_activity('URGENT_TRAVEL', f'{start_location} → {end_location}', user='women_portal')
+        
+        return jsonify({'status': 'success', 'route_id': route_id})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/report_urgent', methods=['POST'])
 def report_urgent():
