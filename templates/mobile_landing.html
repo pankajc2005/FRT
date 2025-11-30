@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trinetra Safety</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="header">
+            <h1>TRINETRA SAFETY</h1>
+        </div>
+        
+        <a href="{{ url_for('women_login') }}" class="login-card women-login">
+            <div class="icon-wrapper">
+                <i class="fas fa-female"></i>
+            </div>
+            <h2>WOMEN LOGIN</h2>
+            <p>Emergency & Safety</p>
+        </a>
+
+        <a href="{{ url_for('login') }}" class="login-card officer-login">
+            <div class="icon-wrapper">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h2>OFFICER LOGIN</h2>
+            <p>Patrol & Surveillance</p>
+        </a>
+    </div>
+</body>
+</html>

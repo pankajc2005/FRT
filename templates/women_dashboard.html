@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SafeRoute - Trinetra</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+    <style>
+        /* SafeRoute Theme Overrides */
+        :root {
+            --safe-blue: #007bff;
+            --safe-bg: #f8f9fa;
+            --card-bg: #ffffff;
+        }
+        
+        body { background-color: var(--safe-bg); }
+        
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Suggestions & Toggle CSS */
+        .suggestions-box {
+            position: absolute;
+            background: white;
+            width: 100%; /* Relative to parent */
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 0 0 8px 8px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .suggestion-item {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .suggestion-item:hover { background-color: #f8f9fa; }
+        .suggestion-item i { color: #aaa; }
+        
+        .urgent-toggle-container {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .urgent-label {
+            color: #b91c1c;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Toggle Switch */
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #ef4444; }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .mobile-header {
+            background: var(--safe-blue);
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 20;
+        }
+        .mobile-header h1 { color: white; font-size: 1.2rem; margin: 0; }
+        .mobile-header i { color: white; }
+
+        /* Layout Grid */
+        .main-grid {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Left Panel (Route Planner) */
+        .control-panel {
+            width: 350px;
+            background: white;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        /* Map Area */
+        .map-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        #map { height: 100%; width: 100%; }
+
+        /* Cards */
+        .card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .card h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Inputs */
+        .form-group { margin-bottom: 10px; }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .btn-action {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .btn-blue { background: var(--safe-blue); color: white; }
+        .btn-outline { background: white; border: 1px solid #ced4da; color: #495057; }
+        .btn-warning { background: #ffc107; color: #212529; }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        .stat-item { display: flex; align-items: center; gap: 5px; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .main-grid { flex-direction: column; }
+            .control-panel {
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+                order: 2; /* Map on top? Or controls on top? Image shows controls on top */
+                order: 1; 
+                padding: 10px;
+            }
+            .map-wrapper {
+                flex: 1;
+                order: 2;
+            }
+            /* Hide less critical cards on mobile initial view if needed */
+            .incident-card { display: none; } 
+            .mobile-show-incident { display: block; margin-top: 10px; }
+        }
+        
+        /* Floating Action Button for Mobile Incident Report */
+        .fab-report {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: #ffc107;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+            font-size: 1.5rem;
+            color: #333;
+            display: none;
+        }
+        @media (max-width: 768px) { .fab-report { display: flex; } }
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="mobile-header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/1200px-Emblem_of_India.svg.png" alt="Logo" style="width: 30px; height: 30px;">
+            <h1>SafeRoute</h1>
+            <div style="margin-left: auto;">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Left Panel -->
+            <div class="control-panel">
+                <!-- Route Planner -->
+                <div class="card">
+                    <h3>Route Planner</h3>
+                    
+                    <!-- Urgent Help Toggle -->
+                    <div class="urgent-toggle-container">
+                        <div class="urgent-label">
+                            <i class="fas fa-ambulance"></i> URGENT HELP
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="urgentToggle" onchange="toggleUrgentMode()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <div class="form-group" style="position: relative;">
+                        <input type="text" id="startLocation" class="form-control" placeholder="Starting Point" autocomplete="off">
+                        <div id="startSuggestions" class="suggestions-box"></div>
+                    </div>
+                    <button class="btn-action btn-outline" onclick="useMyLocation()">
+                        <i class="fas fa-crosshairs"></i> Use My Location
+                    </button>
+                    <div class="form-group" style="margin-top: 10px; position: relative;">
+                        <input type="text" id="endLocation" class="form-control" placeholder="Destination" value="Vile Parle Police Station" autocomplete="off">
+                        <div id="endSuggestions" class="suggestions-box"></div>
+                    </div>
+                    <button class="btn-action btn-blue" onclick="findSafeRoute()">Find Safe Route</button>
+                </div>
+
+                <!-- Stats (Desktop) -->
+                <div class="card">
+                    <h3>Available Routes Info</h3>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <i class="fas fa-video"></i> Nearby CCTV: <strong id="cctvCount">--</strong>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <i class="fas fa-exclamation-triangle text-warning"></i> Recent Incidents: <strong id="incidentCount">--</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Incident (Desktop) -->
+                <div class="card incident-card">
+                    <h3>Report an Incident</h3>
+                    <div class="form-group">
+                        <select class="form-control" id="incidentType">
+                            <option>Harassment</option>
+                            <option>Theft</option>
+                            <option>Suspicious Activity</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Description / Severity (1-5)">
+                    </div>
+                    <button class="btn-action btn-warning" onclick="reportIncident()">Report Incident</button>
+                </div>
+                
+                <button class="btn-action btn-outline" onclick="shareLocation()">
+                    <i class="fas fa-share-alt"></i> Share Location
+                </button>
+            </div>
+
+            <!-- Map Area -->
+            <div class="map-wrapper">
+                <div id="map"></div>
+                
+                <!-- Mobile Floating Action Button -->
+                <button class="fab-report" onclick="toggleIncidentModal()">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Incident Modal -->
+    <div id="incidentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
+        <div style="background:white; padding:20px; width:90%; border-radius:10px;">
+            <h3>Report Incident</h3>
+            <div class="form-group">
+                <select class="form-control">
+                    <option>Harassment</option>
+                    <option>Theft</option>
+                </select>
+            </div>
+            <button class="btn-action btn-warning" onclick="reportIncident()">Submit</button>
+            <button class="btn-action btn-outline" onclick="toggleIncidentModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Urgent Confirmation Modal -->
+    <div id="urgentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(220, 38, 38, 0.9); z-index:3000; align-items:center; justify-content:center; flex-direction: column; text-align: center; color: white;">
+        <div style="background:white; padding:30px; width:85%; border-radius:15px; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            <div style="width: 60px; height: 60px; background: #fee2e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                <i class="fas fa-exclamation-triangle" style="color: #dc2626; font-size: 30px;"></i>
+            </div>
+            <h2 style="margin-bottom: 10px; color: #dc2626;">URGENT MODE ACTIVE</h2>
+            <p style="margin-bottom: 20px; font-size: 1rem; color: #555;">
+                Alert sent to Police Control Room.<br>
+                Routing to nearest <strong id="urgentDestName">Safe Zone</strong>.
+            </p>
+            <div style="background: #f3f4f6; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
+                <i class="fas fa-route"></i> Route Optimized for Safety
+            </div>
+            <button class="btn-action" style="background: #dc2626; color: white; font-size: 1.1rem;" onclick="closeUrgentModal()">
+                OK, SHOW ROUTE
+            </button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='js/mobile_map.js') }}"></script>
+    <script>
+        function toggleIncidentModal() {
+            const modal = document.getElementById('incidentModal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function useMyLocation() {
+            document.getElementById('startLocation').value = "DJ Sanghvi College (Current)";
+            // Trigger map update in real app
+        }
+
+        function reportIncident() {
+            alert("Incident Reported! Authorities have been notified.");
+            toggleIncidentModal();
+        }
+
+        function shareLocation() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My Safe Route',
+                    text: 'I am travelling from DJ Sanghvi to Vile Parle PS.',
+                    url: window.location.href
+                });
+            } else {
+                alert("Location link copied to clipboard!");
+            }
+        }
+    </script>
+</body>
+</html>

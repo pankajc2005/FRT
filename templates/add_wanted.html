@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="create-item-container">
+    <form action="{{ url_for('add_wanted_criminal') }}" method="post" enctype="multipart/form-data" id="createForm">
+        <div class="create-header">
+            <div class="header-left">
+                <a href="{{ url_for('criminal_dashboard') }}" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+                <div class="header-title">
+                    <span class="breadcrumb-small" style="color: #D32F2F;">🚨 WANTED CRIMINAL DETECTION</span>
+                    <h2>Add Wanted Criminal - Priority 1 Surveillance</h2>
+                </div>
+            </div>
+            <div class="header-right">
+                <button type="submit" class="btn-circle-check" style="background: #D32F2F;"><i class="fas fa-check"></i></button>
+            </div>
+        </div>
+
+        <!-- Priority Alert Banner -->
+        <div style="background: linear-gradient(135deg, #D32F2F, #B71C1C); color: white; padding: 15px 20px; border-radius: 8px; margin: 20px; display: flex; align-items: center; gap: 15px;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
+            <div>
+                <strong style="font-size: 1.1rem;">HIGHEST PRIORITY SURVEILLANCE</strong>
+                <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9rem;">
+                    This suspect will be automatically added to surveillance with Priority 1 (Critical). 
+                    System will immediately alert when detected.
+                </p>
+            </div>
+        </div>
+
+        <div class="form-content">
+            <div class="form-section">
+                <label class="section-label">Suspect Photo <span style="color: #D32F2F;">*</span></label>
+                <div class="file-upload-area" style="border-color: #D32F2F;">
+                    <input type="file" id="image" name="image" accept="image/*" required onchange="previewImage(this)">
+                    <div class="upload-placeholder" id="imagePreview">
+                        <div class="upload-icons">
+                            <i class="fas fa-camera" style="color: #D32F2F;"></i>
+                            <i class="far fa-folder"></i>
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <span>Upload Wanted Criminal Photo</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Suspect Name <span style="color: #D32F2F;">*</span></label>
+                <input type="text" name="name" class="form-input" placeholder="Enter Wanted Criminal Name" required 
+                       style="border-color: #D32F2F;">
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Crime Details / Reason</label>
+                <textarea name="crime_details" class="form-input" placeholder="Describe the crime or reason for wanted status..." 
+                          rows="3" style="resize: vertical;"></textarea>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Aadhaar No (if known)</label>
+                <input type="text" name="aadhaar" class="form-input" placeholder="Enter Aadhaar No">
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Phone No (if known)</label>
+                <input type="text" name="phone" class="form-input" placeholder="Enter Phone No">
+            </div>
+            
+            <div class="form-section">
+                <label class="section-label">Gender</label>
+                <div class="select-wrapper">
+                    <select name="gender" class="form-input">
+                        <option value="" disabled selected>Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Age</label>
+                <input type="number" name="age" class="form-input" placeholder="Enter Age" min="1" max="120">
+            </div>
+
+            <!-- Priority Display (Fixed at 1) -->
+            <div class="form-section">
+                <label class="section-label">Surveillance Priority</label>
+                <div style="display: flex; align-items: center; gap: 10px; padding: 12px 15px; background: #FFEBEE; border-radius: 8px; border: 2px solid #D32F2F;">
+                    <span style="background: #D32F2F; color: white; padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;">
+                        🔴 Priority 1 - CRITICAL
+                    </span>
+                    <span style="color: #666; font-size: 0.85rem;">Auto-assigned for wanted criminals</span>
+                </div>
+                <input type="hidden" name="priority" value="1">
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Face Embeddings</label>
+                <div class="embeddings-box">
+                    <span class="line-number">1</span>
+                    <span class="placeholder-text">Embeddings will be generated automatically...</span>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+function previewImage(input) {
+    var preview = document.getElementById('imagePreview');
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            preview.style.backgroundImage = 'url(' + e.target.result + ')';
+            preview.innerHTML = ''; 
+            preview.classList.add('has-image');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+{% endblock %}

@@ -8,6 +8,10 @@
         <input type="text" id="dashboard-search" placeholder="Search Database..." 
                style="padding: 0.5rem 1rem; border-radius: 2rem; border: 1px solid #e5e7eb; width: 250px;">
     </div>
+    <a href="{{ url_for('add_wanted_criminal') }}" class="btn-circle-add" title="Wanted Criminal Detection" 
+       style="background: #D32F2F; margin-right: 0.5rem;">
+        <i class="fas fa-crosshairs"></i>
+    </a>
     <button class="btn-circle-add" onclick="openCaptureModal()" title="Live Camera">
         <i class="fas fa-camera"></i>
     </button>
@@ -89,7 +93,7 @@
             <div class="results-card">
                 <div class="panel-header">
                     <h2><i class="fas fa-list-alt"></i> Match Results</h2>
-                    <button class="btn-dashboard btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                    <button class="btn-dashboard btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="exportResults()">
                         Export Report
                     </button>
                 </div>
@@ -105,41 +109,13 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {% for person in persons[:5] %}
-                            <tr>
-                                <td>
-                                    <img src="{{ url_for('serve_image', filename=person.image_filename) }}" 
-                                         style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-                                </td>
-                                <td>
-                                    <div style="font-weight: 600;">{{ person.name }}</div>
-                                    <div style="font-size: 0.75rem; color: #6b7280;">ID: {{ person.id[:8] }}</div>
-                                </td>
-                                <td>
-                                    <span class="match-score">98.5%</span>
-                                </td>
-                                <td>
-                                    <span class="risk-badge risk-high">High</span>
-                                </td>
-                                <td>
-                                    <div style="font-size: 0.85rem;">{{ person.submitted_gender }} / 35y</div>
-                                </td>
-                                <td>
-                                    <button class="btn-dashboard btn-outline" style="padding: 0.25rem 0.5rem;">
-                                        View
-                                    </button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            <!-- Empty State if no persons -->
-                            {% if not persons %}
+                        <tbody id="results-table-body">
                             <tr>
                                 <td colspan="6" style="text-align: center; padding: 2rem; color: #9ca3af;">
-                                    No recent matches found.
+                                    <i class="fas fa-camera" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                                    Capture or upload a photo to search the database.
                                 </td>
                             </tr>
-                            {% endif %}
                         </tbody>
                     </table>
                 </div>

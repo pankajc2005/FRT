@@ -22,5 +22,847 @@
     "timestamp": "2023-10-29T09:15:00Z",
     "read": true,
     "type": "warning"
+  },
+  {
+    "id": "71bcb680-fb02-406b-99b9-01bf69e32c2a",
+    "timestamp": "2025-11-29T12:12:38.547042Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Cooper Hospital.",
+    "location": "DJ Sanghvi College",
+    "destination": "Cooper Hospital",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "3e607234-de4b-4107-b8fd-e1678a7295ab",
+    "timestamp": "2025-11-29T12:20:16.711770Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha.",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "48f49854-65a1-45fb-940d-ffb9eac48b8a",
+    "timestamp": "2025-11-29T12:27:07.058427Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha.",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "d0d7f096-835d-489e-9906-848b1f3d4962",
+    "timestamp": "2025-11-29T12:43:44.883073Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha (SV Road).",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha (SV Road)",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "40d82f39-da1b-41d2-8d77-511f4926bbff",
+    "timestamp": "2025-11-29T12:50:06.793553Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha (SV Road).",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha (SV Road)",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "0b66495e-59d0-417b-9c0a-e3ea8cb7cdf6",
+    "timestamp": "2025-11-29T12:50:32.947864Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha (SV Road).",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha (SV Road)",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "21836145-1733-4894-97ad-77c346a4d270",
+    "timestamp": "2025-11-29T12:56:18.759199Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha (SV Road).",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha (SV Road)",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "f61bc8e4-37bc-407b-9a16-1ee4192c7c05",
+    "timestamp": "2025-11-29T13:03:33.378606Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha (SV Road).",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha (SV Road)",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "35b0ba66-026c-4088-800f-575127b08625",
+    "timestamp": "2025-11-29T13:07:54.265306Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha (SV Road).",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha (SV Road)",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "0f3bcb00-6062-413e-bece-02bedefbf1d9",
+    "timestamp": "2025-11-29T13:11:27.467880Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha (SV Road).",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha (SV Road)",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "df6c42c2-c1ff-40fa-9ade-805b2e0c1038",
+    "timestamp": "2025-11-29T13:27:43.016911Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha (SV Road).",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha (SV Road)",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "40662c01-ad0d-4251-82c0-e9b4df2239be",
+    "timestamp": "2025-11-29T13:43:58.220898Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha (SV Road).",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha (SV Road)",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "098fc6e2-83d7-442c-99df-dea5d2c61afd",
+    "timestamp": "2025-11-29T13:44:55.479976Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Alpha (SV Road).",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Alpha (SV Road)",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "408dd198-bbd7-4cd4-acaf-736c37751f3b",
+    "timestamp": "2025-11-29T13:49:04.586936Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "b32290ce-44be-41c1-b313-843ae6a118bf",
+    "timestamp": "2025-11-29T13:53:50.681110Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "f448d062-3705-4000-a711-10ea1696a534",
+    "timestamp": "2025-11-29T13:58:52.931610Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "0cffa47b-a48c-4fbc-9f2b-acefa67b6cd2",
+    "timestamp": "2025-11-29T13:59:03.404991Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "d6a76242-89ac-4f6a-a06a-70eb172c97d5",
+    "timestamp": "2025-11-29T14:03:16.140467Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "ff9a19d8-95bd-4caf-8971-2babb5c94cb9",
+    "timestamp": "2025-11-29T14:03:39.777912Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "106f090a-aeb3-491e-b496-266db7f94943",
+    "timestamp": "2025-11-29T14:04:22.505158Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "501748f0-0982-41e1-8de3-82af7026bc2f",
+    "timestamp": "2025-11-29T14:04:30.001006Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "4525b514-a4ea-4fa8-aa57-30768665fff3",
+    "timestamp": "2025-11-29T14:12:13.957471Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "7bff26f3-9be0-464e-9c00-446398bad663",
+    "timestamp": "2025-11-29T14:12:22.299406Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "a949fa86-4e62-4cce-b18f-4bb33fe08d4d",
+    "timestamp": "2025-11-29T14:20:59.364303Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "29a1fe31-217e-475b-a3e0-35361a7b1409",
+    "timestamp": "2025-11-29T14:21:33.280870Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "2e924338-833a-4fc1-b892-b26636d3e940",
+    "timestamp": "2025-11-29T14:22:38.585117Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "44c9c79e-33ff-40b1-bce6-cab3439775a4",
+    "timestamp": "2025-11-29T14:23:28.862057Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "64305dd6-87d2-47bc-97cd-15f2fcccb8bb",
+    "timestamp": "2025-11-29T14:23:51.954973Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "ff904c88-dab2-40d9-a19a-a483c4406f2a",
+    "timestamp": "2025-11-29T14:28:22.325194Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "b993a8f9-111a-4d5d-b921-62129124d53a",
+    "timestamp": "2025-11-29T14:39:23.528590Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "7d676077-f9d1-4bfc-950b-4d9d6fcc04d0",
+    "timestamp": "2025-11-29T14:40:02.290344Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Patrol Vehicle Delta (Juhu Tara).",
+    "location": "DJ Sanghvi College",
+    "destination": "Patrol Vehicle Delta (Juhu Tara)",
+    "coordinates": {
+      "lat": 19.0953,
+      "lng": 72.8109
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "dc660e7b-36bd-4d96-8f55-4639021fda5b",
+    "timestamp": "2025-11-29T14:45:54.117326Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to New Chauki.",
+    "location": "DJ Sanghvi College",
+    "destination": "New Chauki",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "5786d688-86b2-4bfa-b08c-f5551b9255a0",
+    "timestamp": "2025-11-29T14:55:42.367699Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Vile Parle Police Station.",
+    "location": "DJ Sanghvi College",
+    "destination": "Vile Parle Police Station",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372,
+      "name": "DJ Sanghvi College"
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "0203deef-a8ef-43df-862e-652ed609a3e5",
+    "timestamp": "2025-11-29T15:04:01.020120Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Vile Parle Police Station.",
+    "location": "DJ Sanghvi College",
+    "destination": "Vile Parle Police Station",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372,
+      "name": "DJ Sanghvi College"
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "90c8f89a-11ae-4732-ab04-88966377cccb",
+    "timestamp": "2025-11-29T15:05:28.752986Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Vile Parle Police Station.",
+    "location": "DJ Sanghvi College",
+    "destination": "Vile Parle Police Station",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372,
+      "name": "DJ Sanghvi College"
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "848d5eaa-6600-4d2e-8b26-6c8002717e1c",
+    "timestamp": "2025-11-29T15:07:36.838367Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Vile Parle Police Station.",
+    "location": "DJ Sanghvi College",
+    "destination": "Vile Parle Police Station",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372,
+      "name": "DJ Sanghvi College"
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "477c3c25-0b91-4706-a9c2-8aeac6e5ea32",
+    "timestamp": "2025-11-29T15:08:39.548754Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Vile Parle Police Station.",
+    "location": "DJ Sanghvi College",
+    "destination": "Vile Parle Police Station",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372,
+      "name": "DJ Sanghvi College"
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "15c3c7de-4e13-4d67-8306-071b33ee3071",
+    "timestamp": "2025-11-29T15:09:03.436795Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Vile Parle Police Station.",
+    "location": "DJ Sanghvi College",
+    "destination": "Vile Parle Police Station",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372,
+      "name": "DJ Sanghvi College"
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "9db93b6a-bea9-4f5c-a09d-07f4f1a2dc67",
+    "timestamp": "2025-11-30T08:31:44.630446Z",
+    "type": "wanted_added",
+    "title": "\ud83d\udea8 WANTED CRIMINAL ADDED",
+    "message": "Wanted criminal 'Pankaj Chavan' added to database with highest priority surveillance.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764491668049",
+    "timestamp": "2025-11-30T08:34:28.049503Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 56.0% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 55.97,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764491671240",
+    "timestamp": "2025-11-30T08:34:31.240625Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 58.9% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 58.88,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764491671987",
+    "timestamp": "2025-11-30T08:34:31.987794Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 51.0% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 51.02,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764491675961",
+    "timestamp": "2025-11-30T08:34:35.961386Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 62.9% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 62.89,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764491678991",
+    "timestamp": "2025-11-30T08:34:38.991035Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 42.7% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 42.73,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764491679338",
+    "timestamp": "2025-11-30T08:34:39.338017Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 50.5% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 50.52,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764491680929",
+    "timestamp": "2025-11-30T08:34:40.929321Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 60.5% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 60.54,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764491686805",
+    "timestamp": "2025-11-30T08:34:46.805369Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 64.9% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 64.88,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764491690058",
+    "timestamp": "2025-11-30T08:34:50.058305Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 64.8% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 64.84,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764491693203",
+    "timestamp": "2025-11-30T08:34:53.203268Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 62.4% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 62.36,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764492999616",
+    "timestamp": "2025-11-30T08:56:39.616855Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 59.1% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 59.12,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764493006782",
+    "timestamp": "2025-11-30T08:56:46.782849Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 65.2% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 65.25,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764493011941",
+    "timestamp": "2025-11-30T08:56:51.941660Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 62.7% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 62.73,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764493089178",
+    "timestamp": "2025-11-30T08:58:09.180135Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 66.9% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 66.88,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764493130703",
+    "timestamp": "2025-11-30T08:58:50.703271Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 77.4% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 77.44,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764493137924",
+    "timestamp": "2025-11-30T08:58:57.924786Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 75.4% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 75.44,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764493145261",
+    "timestamp": "2025-11-30T08:59:05.261964Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 68.4% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 68.41,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "1764493845279",
+    "timestamp": "2025-11-30T09:10:45.279462Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 67.8% confidence.",
+    "person_id": "wanted-pankaj-chavan-0b659bbb",
+    "priority": 1,
+    "confidence": 67.82,
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "80e46ed7-f934-48a8-83fd-93ac99605558",
+    "timestamp": "2025-11-30T09:14:15.190286Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Vile Parle Police Station.",
+    "location": "DJ Sanghvi College",
+    "destination": "Vile Parle Police Station",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372,
+      "name": "DJ Sanghvi College"
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "id": "d4cba25d-ee96-4297-8b16-effc1fe60642",
+    "timestamp": "2025-11-30T09:17:21.684196Z",
+    "type": "urgent_help",
+    "title": "SOS: URGENT HELP REQUESTED",
+    "message": "Woman in distress at DJ Sanghvi College. Auto-routing to Vile Parle Police Station.",
+    "location": "DJ Sanghvi College",
+    "destination": "Vile Parle Police Station",
+    "coordinates": {
+      "lat": 19.1075,
+      "lng": 72.8372,
+      "name": "DJ Sanghvi College"
+    },
+    "read": false,
+    "severity": "critical"
+  },
+  {
+    "timestamp": "2025-11-30T09:34:04.100560Z",
+    "type": "match",
+    "priority": 3,
+    "message": "Match detected: Pankaj (100.0% confidence)",
+    "person_id": "amit-rajegoankar-3bf84ae7",
+    "read": false
   }
 ]

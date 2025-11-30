@@ -1,0 +1,206 @@
+:root {
+    --primary-pink: #ff6b9d;
+    --safe-green: #10b981;
+    --sos-red: #ef4444;
+    --police-blue: #3b82f6;
+    --dark-text: #1f2937;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #f3f4f6;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.mobile-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+}
+
+.header h1 {
+    text-align: center;
+    color: var(--dark-text);
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+/* Landing Page */
+.login-card {
+    border-radius: 20px;
+    padding: 20px;
+    text-decoration: none;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.login-card:active {
+    transform: scale(0.98);
+}
+
+.women-login {
+    background: linear-gradient(135deg, #ff6b9d 0%, #ff8fa3 100%);
+    height: 70%;
+}
+
+.officer-login {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    height: 25%;
+}
+
+.icon-wrapper {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    background: rgba(255,255,255,0.2);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+/* Login Form */
+.login-page {
+    background: white;
+}
+
+.back-nav a {
+    color: var(--dark-text);
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.login-form-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--primary-pink);
+}
+
+.login-header i {
+    font-size: 4rem;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    display: flex;
+    margin-bottom: 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.country-code {
+    background: #f9fafb;
+    padding: 15px;
+    font-weight: 600;
+    color: var(--dark-text);
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+input {
+    border: none;
+    padding: 15px;
+    font-size: 1.5rem; /* 32px approx */
+    width: 100%;
+    outline: none;
+    height: 60px;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    background: var(--sos-red);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.success-btn {
+    background: var(--safe-green);
+}
+
+/* Dashboard */
+.sos-btn {
+    width: 100%;
+    height: 80px; /* Prominent */
+    background: var(--sos-red);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 2rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    animation: pulse 2s infinite;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+.sos-btn.active {
+    animation: none;
+    background: #b91c1c;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    70% { transform: scale(1.02); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.text-red { color: var(--sos-red); }
+.text-green { color: var(--safe-green); }
+
+.route-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #6b7280;
+}
+
+.dist {
+    font-size: 0.8rem;
+    font-weight: bold;
+    background: #e5e7eb;
+    padding: 2px 6px;
+    border-radius: 4px;
+}

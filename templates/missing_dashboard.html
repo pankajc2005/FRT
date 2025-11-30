@@ -17,28 +17,47 @@
                     <tr>
                         <th class="checkbox-col"><input type="checkbox"></th>
                         <th>Missing Person Name</th>
-                        <th>Missing Aadhar No</th>
-                        <th>Guardian Phone No</th>
-                        <th>Missing Photo</th>
-                        <th>Predicted Gender</th>
-                        <th class="action-col"><i class="fas fa-plus"></i></th>
+                        <th>Aadhaar No</th>
+                        <th>Guardian Phone</th>
+                        <th>Photo</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th class="action-col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for person in persons %}
                     <tr>
                         <td class="checkbox-col"><input type="checkbox"></td>
-                        <td class="primary-text">{{ person.name }}</td>
+                        <td class="primary-text">
+                            {{ person.name }}
+                            {% if person.surveillance %}
+                            <span style="background: #4CAF50; color: white; padding: 1px 5px; border-radius: 3px; font-size: 0.65rem; margin-left: 5px;">SURVEILLANCE</span>
+                            {% endif %}
+                        </td>
                         <td class="secondary-text">{{ person.missing_aadhaar or '-' }}</td>
                         <td class="secondary-text">{{ person.guardian_phone or '-' }}</td>
                         <td class="photo-cell">
                             <div class="table-thumb">
                                 <img src="{{ url_for('serve_image', filename=person.image_filename) }}" alt="{{ person.name }}">
-                                <span>{{ person.image_filename[:15] }}...</span>
                             </div>
                         </td>
-                        <td>{{ person.predicted_gender }}</td>
-                        <td></td>
+                        <td>{{ person.submitted_gender or person.predicted_gender or '-' }}</td>
+                        <td>{{ person.age or '-' }}</td>
+                        <td>
+                            <div style="display: flex; gap: 10px;">
+                                <a href="{{ url_for('view_missing_person', person_id=person.id) }}" 
+                                   style="color: #1e40af; text-decoration: none;" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <form action="{{ url_for('delete_missing_person', person_id=person.id) }}" method="POST" 
+                                      style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this missing person record?');">
+                                    <button type="submit" style="border:none; background:none; color:red; cursor:pointer;" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -47,11 +66,11 @@
     {% else %}
         <div class="empty-state">
             <div class="empty-icon">
-                <i class="fas fa-database"></i>
+                <i class="fas fa-user-slash"></i>
             </div>
-            <h2>No Items</h2>
-            <p>There are no items in this collection yet.</p>
-            <a href="{{ url_for('add_missing_person') }}" class="btn btn-primary">Create Item</a>
+            <h2>No Missing Persons</h2>
+            <p>There are no missing persons in the database yet.</p>
+            <a href="{{ url_for('add_missing_person') }}" class="btn btn-primary">Add Missing Person</a>
         </div>
     {% endif %}
 {% endblock %}

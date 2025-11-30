@@ -12,6 +12,36 @@
     .bg-missing { background-color: #1976D2 !important; }
     .btn-stop-criminal { background-color: #ffebee !important; color: #c62828 !important; border: 1px solid #ffcdd2 !important; }
     .btn-stop-missing { background-color: #e3f2fd !important; color: #1565c0 !important; border: 1px solid #bbdefb !important; }
+    
+    /* Priority Badge Styles */
+    .priority-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-align: center;
+    }
+    .priority-1 { background: #D32F2F; color: white; }
+    .priority-2 { background: #FF9800; color: white; }
+    .priority-3 { background: #FDD835; color: #333; }
+    .priority-4 { background: #4CAF50; color: white; }
+    .priority-5 { background: #9E9E9E; color: white; }
+    
+    .wanted-badge {
+        background: linear-gradient(135deg, #D32F2F, #B71C1C);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        margin-left: 8px;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
 </style>
 <div class="surveillance-container">
     <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-top: 20px;">
@@ -33,6 +63,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Priority</th>
                         <th>{% if db_type == 'criminal' %}Suspect Aadhaar{% else %}Guardian Phone{% endif %}</th>
                         <th>Photo</th>
                         <th>Status</th>
@@ -42,7 +73,24 @@
                 <tbody>
                     {% for person in persons %}
                     <tr>
-                        <td class="primary-text">{{ person.name }}</td>
+                        <td class="primary-text">
+                            {{ person.name }}
+                            {% if person.is_wanted %}<span class="wanted-badge">🚨 WANTED</span>{% endif %}
+                        </td>
+                        <td>
+                            {% set priority = person.priority|default(3) %}
+                            {% if priority == 1 %}
+                                <span class="priority-badge priority-1">🔴 P1 Critical</span>
+                            {% elif priority == 2 %}
+                                <span class="priority-badge priority-2">🟠 P2 High</span>
+                            {% elif priority == 3 %}
+                                <span class="priority-badge priority-3">🟡 P3 Medium</span>
+                            {% elif priority == 4 %}
+                                <span class="priority-badge priority-4">🟢 P4 Low</span>
+                            {% else %}
+                                <span class="priority-badge priority-5">⚪ P5 Minimal</span>
+                            {% endif %}
+                        </td>
                         <td class="secondary-text">
                             {% if db_type == 'criminal' %}
                                 {{ person.aadhaar or '-' }}

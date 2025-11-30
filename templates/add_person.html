@@ -39,9 +39,9 @@
             </div>
 
             <div class="form-section">
-                <label class="section-label">Suspect Aadhaar No</label>
+                <label class="section-label">Suspect Aadhaar No <span style="color: #9ca3af; font-weight: normal;">(Optional)</span></label>
                 <div class="select-wrapper">
-                    <input type="text" name="aadhaar" id="aadhaarInput" class="form-input" placeholder="Enter Aadhaar No">
+                    <input type="text" name="aadhaar" id="aadhaarInput" class="form-input" placeholder="Enter Aadhaar No (Optional)">
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div id="aadhaarError" class="validation-error" style="display:none; color: #D32F2F; margin-top: 5px; font-size: 0.9rem;">
@@ -68,6 +68,28 @@
                     </select>
                     <i class="fas fa-chevron-down"></i>
                 </div>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Age</label>
+                <input type="number" name="age" class="form-input" placeholder="Enter Age" min="1" max="120">
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Surveillance Priority</label>
+                <div class="select-wrapper">
+                    <select name="priority" class="form-input">
+                        <option value="1">🔴 Priority 1 - Critical (Armed/Dangerous)</option>
+                        <option value="2">🟠 Priority 2 - High (Serious Crime)</option>
+                        <option value="3" selected>🟡 Priority 3 - Medium (Standard)</option>
+                        <option value="4">🟢 Priority 4 - Low (Minor Offense)</option>
+                        <option value="5">⚪ Priority 5 - Minimal (Informational)</option>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <small style="color: #666; margin-top: 5px; display: block;">
+                    Higher priority suspects are matched first during surveillance.
+                </small>
             </div>
 
             <div class="form-section">

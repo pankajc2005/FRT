@@ -11,6 +11,21 @@
 {% endblock %}
 
 {% block content %}
+<style>
+    .priority-badge {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        margin-left: 5px;
+    }
+    .priority-1 { background: #D32F2F; color: white; }
+    .priority-2 { background: #FF9800; color: white; }
+    .priority-3 { background: #FDD835; color: #333; }
+    .priority-4 { background: #4CAF50; color: white; }
+    .priority-5 { background: #9E9E9E; color: white; }
+</style>
     {% if alerts %}
         <div class="table-container">
             <table class="data-table">
@@ -18,6 +33,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Type</th>
+                        <th>Priority</th>
                         <th>Best Match %</th>
                         <th>Latest Detection</th>
                         <th>Capture Frame</th>
@@ -27,7 +43,10 @@
                 <tbody>
                     {% for alert in alerts %}
                     <tr onclick='window.location="{{ url_for("view_alert", person_id=alert.id) }}";' style="cursor: pointer;">
-                        <td class="primary-text">{{ alert.name }}</td>
+                        <td class="primary-text">
+                            {{ alert.name }}
+                            {% if alert.is_wanted %}<span style="background: #D32F2F; color: white; padding: 1px 5px; border-radius: 3px; font-size: 0.65rem; margin-left: 5px;">WANTED</span>{% endif %}
+                        </td>
                         <td>
                             {% if alert.db_type == 'criminal' %}
                                 <span style="color: #d32f2f; font-weight: bold; background: #ffebee; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">CRIMINAL</span>
@@ -35,10 +54,24 @@
                                 <span style="color: #f57c00; font-weight: bold; background: #fff3e0; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">MISSING</span>
                             {% endif %}
                         </td>
-                        <td style="font-weight: bold; color: #2e7d32;">{{ alert.best_match_percentage }}%</td>
+                        <td>
+                            {% set priority = alert.priority|default(3) %}
+                            {% if priority == 1 %}
+                                <span class="priority-badge priority-1">P1</span>
+                            {% elif priority == 2 %}
+                                <span class="priority-badge priority-2">P2</span>
+                            {% elif priority == 3 %}
+                                <span class="priority-badge priority-3">P3</span>
+                            {% elif priority == 4 %}
+                                <span class="priority-badge priority-4">P4</span>
+                            {% else %}
+                                <span class="priority-badge priority-5">P5</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-weight: bold; color: #2e7d32;">{{ alert.best_match_percentage|default(0) }}%</td>
                         <td>
                             {% if alert.detections %}
-                                {{ alert.detections[-1].timestamp.split('T')[0] }} {{ alert.detections[-1].timestamp.split('T')[1][:8] }}
+                                {{ alert.detections[-1].timestamp|utc_to_ist }}
                             {% else %}
                                 -
                             {% endif %}

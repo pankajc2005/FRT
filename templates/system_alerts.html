@@ -36,9 +36,43 @@
                         {{ alert.title }}
                     </h3>
                     <p style="color: #666; margin-bottom: 10px;">{{ alert.message }}</p>
+                    
+                    {% if alert.type == 'urgent_help' %}
+                    <div style="background: #fff5f5; border: 1px solid #feb2b2; padding: 10px; border-radius: 4px; margin-bottom: 10px; font-size: 0.9rem;">
+                        <div style="margin-bottom: 5px;">
+                            <i class="fas fa-map-marker-alt" style="color: #c53030; width: 20px;"></i>
+                            <strong>Current Location:</strong> {{ alert.location }}
+                        </div>
+                        <div style="margin-bottom: 5px;">
+                            <i class="fas fa-route" style="color: #2f855a; width: 20px;"></i>
+                            <strong>Routing To:</strong> {{ alert.destination }}
+                        </div>
+                        {% if alert.coordinates %}
+                        <div>
+                            <i class="fas fa-satellite-dish" style="color: #2b6cb0; width: 20px;"></i>
+                            <strong>GPS:</strong> {{ alert.coordinates.lat }}, {{ alert.coordinates.lng }}
+                        </div>
+                        {% endif %}
+                        <div style="margin-top: 10px;">
+                            <a href="https://www.google.com/maps/search/?api=1&query={{ alert.coordinates.lat }},{{ alert.coordinates.lng }}" target="_blank" style="color: #c53030; font-weight: 600; text-decoration: none;">
+                                <i class="fas fa-external-link-alt"></i> Track Live Location
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <span style="font-size: 0.8rem; color: #999;">
                         <i class="far fa-clock"></i> {{ alert.timestamp }}
                     </span>
+                    
+                    {% if alert.person_id %}
+                    <div style="margin-top: 10px;">
+                        <a href="{{ url_for('view_alert', person_id=alert.person_id) }}" 
+                           style="display: inline-flex; align-items: center; gap: 5px; background: #D32F2F; color: white; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                            <i class="fas fa-eye"></i> View Detection Details
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
                 {% if not alert.read %}
                 <a href="{{ url_for('mark_alert_read', alert_id=alert.id) }}" title="Mark as Read" style="color: #999; hover: color: #333;">

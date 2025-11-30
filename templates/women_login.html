@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Women Login - Trinetra</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+</head>
+<body>
+    <div class="mobile-container login-page" style="font-family: 'Segoe UI', sans-serif;">
+        <div class="back-nav">
+            <a href="{{ url_for('login') }}"><i class="fas fa-arrow-left"></i> Back to Main Login</a>
+        </div>
+        
+        <div class="login-form-container">
+            <div class="login-header">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/1200px-Emblem_of_India.svg.png" alt="Logo" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 15px;">
+                <h2 style="color: #333; font-weight: 700;">Women Safety Portal</h2>
+                <p style="color: #666; margin-top: 5px;">Tri-Netra Secure Access</p>
+            </div>
+
+            <form id="otpForm" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <span class="country-code">+91</span>
+                    <input type="tel" id="phone" placeholder="98765 43210" pattern="[0-9]{10}" required autofocus>
+                </div>
+                
+                <div id="otpSection" style="display: none;">
+                    <div class="input-group">
+                        <input type="text" id="otp" placeholder="Enter OTP (123456)" pattern="[0-9]{6}">
+                    </div>
+                </div>
+
+                <button type="button" id="getOtpBtn" class="action-btn" onclick="sendOtp()">GET OTP</button>
+                <button type="submit" id="loginBtn" class="action-btn success-btn" style="display: none;">VERIFY & LOGIN</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function sendOtp() {
+            const phone = document.getElementById('phone').value;
+            if (phone.length === 10) {
+                document.getElementById('getOtpBtn').style.display = 'none';
+                document.getElementById('otpSection').style.display = 'block';
+                document.getElementById('loginBtn').style.display = 'block';
+                document.getElementById('otp').focus();
+                // Simulate OTP sent
+                alert('OTP Sent: 123456');
+            } else {
+                alert('Please enter a valid 10-digit number');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const otp = document.getElementById('otp').value;
+            if (otp === '123456') {
+                window.location.href = "{{ url_for('women_dashboard') }}";
+            } else {
+                alert('Invalid OTP');
+            }
+        }
+    </script>
+</body>
+</html>

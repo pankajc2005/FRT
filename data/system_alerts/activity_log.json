@@ -1,0 +1,154 @@
+[
+  {
+    "id": "52224648-ea9b-457a-9cf5-9a8c9a790938",
+    "timestamp": "2025-11-30T09:34:04.100560Z",
+    "timestamp_ist": "2025-11-30 15:04:04",
+    "action": "FACE_MATCH",
+    "target": "Pankaj",
+    "user": "admin",
+    "details": {
+      "person_id": "amit-rajegoankar-3bf84ae7",
+      "confidence": 100.0,
+      "db_type": "criminal",
+      "capture_file": "amit-rajegoankar-3bf84ae7_1764495244.jpg"
+    },
+    "status": "success",
+    "prev_hash": "GENESIS",
+    "hash": "6ed7f03bd494376970c1b23163eba449df4f8204a7dc95c2947999e45ce556f3"
+  },
+  {
+    "id": "e4898df9-9ef6-4b8d-aa77-d64df50ff066",
+    "timestamp": "2025-11-30T09:34:34.717266Z",
+    "timestamp_ist": "2025-11-30 15:04:34",
+    "action": "PERSON_DELETE",
+    "target": "Pankaj  Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "pankaj-disha-chavan-dd8ae26d",
+      "db_type": "criminal"
+    },
+    "status": "success",
+    "prev_hash": "6ed7f03bd494376970c1b23163eba449df4f8204a7dc95c2947999e45ce556f3",
+    "hash": "c29c8670b2080485cb5540887ccba32d98b37d80b0edca26b8330f2c4903b34d"
+  },
+  {
+    "id": "657d5688-864b-46a3-841f-515e8147e17b",
+    "timestamp": "2025-11-30T09:34:37.626952Z",
+    "timestamp_ist": "2025-11-30 15:04:37",
+    "action": "PERSON_DELETE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "wanted-pankaj-chavan-0b659bbb",
+      "db_type": "criminal"
+    },
+    "status": "success",
+    "prev_hash": "c29c8670b2080485cb5540887ccba32d98b37d80b0edca26b8330f2c4903b34d",
+    "hash": "9fea5b4185b13871feff8d95dcd3861f29accea10e794ebe90ab5fc7ca1f083e"
+  },
+  {
+    "id": "5c5094b1-effd-4c74-8e04-a1f1224eb15a",
+    "timestamp": "2025-11-30T09:34:40.093860Z",
+    "timestamp_ist": "2025-11-30 15:04:40",
+    "action": "PERSON_DELETE",
+    "target": "Pankaj",
+    "user": "admin",
+    "details": {
+      "person_id": "amit-rajegoankar-3bf84ae7",
+      "db_type": "criminal"
+    },
+    "status": "success",
+    "prev_hash": "9fea5b4185b13871feff8d95dcd3861f29accea10e794ebe90ab5fc7ca1f083e",
+    "hash": "a4cadd0abc4812d92dae8d18b7c1960b69c144b9970f2c75926aa1bc2e29e1d5"
+  },
+  {
+    "id": "193f8dd0-aaea-4d98-8114-5ca1a05ea47f",
+    "timestamp": "2025-11-30T09:34:55.027226Z",
+    "timestamp_ist": "2025-11-30 15:04:55",
+    "action": "PERSON_DELETE",
+    "target": "Harshwardhan Wayse",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-harshwardhan-wayse-83a291ea",
+      "db_type": "missing"
+    },
+    "status": "success",
+    "prev_hash": "a4cadd0abc4812d92dae8d18b7c1960b69c144b9970f2c75926aa1bc2e29e1d5",
+    "hash": "d2ccfe44d3e8df6aa4411be4d6f59bc45e0007a8dc0f07b6ad856253dc333bd1"
+  },
+  {
+    "id": "3d88ac13-7c07-4161-955c-34a50531e955",
+    "timestamp": "2025-11-30T09:34:57.503095Z",
+    "timestamp_ist": "2025-11-30 15:04:57",
+    "action": "PERSON_DELETE",
+    "target": "Vikram D",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-vikram-d-c070c0f5",
+      "db_type": "missing"
+    },
+    "status": "success",
+    "prev_hash": "d2ccfe44d3e8df6aa4411be4d6f59bc45e0007a8dc0f07b6ad856253dc333bd1",
+    "hash": "25f167f1ac1af90cd79bff021507560d53de0b82d61cf3b90bf431b46c7783a0"
+  },
+  {
+    "id": "76d505fb-6932-4ad6-86f3-2417192063ca",
+    "timestamp": "2025-11-30T09:35:44.998864Z",
+    "timestamp_ist": "2025-11-30 15:05:44",
+    "action": "ALERT_DELETE",
+    "target": "Jay Kumar",
+    "user": "admin",
+    "details": {
+      "person_id": "jay-kumar-6dabbd4c",
+      "detections_deleted": 1
+    },
+    "status": "success",
+    "prev_hash": "25f167f1ac1af90cd79bff021507560d53de0b82d61cf3b90bf431b46c7783a0",
+    "hash": "8f8d27eb8f91ea9ba6348accc244c8c543870d0e5f20e16cd7914ef6eee533f7"
+  },
+  {
+    "id": "e5754561-8bfe-4bfd-9984-f613838c099d",
+    "timestamp": "2025-11-30T09:35:49.713041Z",
+    "timestamp_ist": "2025-11-30 15:05:49",
+    "action": "ALERT_DELETE",
+    "target": "Pankaj",
+    "user": "admin",
+    "details": {
+      "person_id": "amit-rajegoankar-3bf84ae7",
+      "detections_deleted": 18
+    },
+    "status": "success",
+    "prev_hash": "8f8d27eb8f91ea9ba6348accc244c8c543870d0e5f20e16cd7914ef6eee533f7",
+    "hash": "17293b56f029e9a57767381643ee4f20cffc729d593c6e90d300ba8a3879e599"
+  },
+  {
+    "id": "7aab2261-e233-4452-994d-43094f7fd4a5",
+    "timestamp": "2025-11-30T09:35:54.084651Z",
+    "timestamp_ist": "2025-11-30 15:05:54",
+    "action": "ALERT_DELETE",
+    "target": "Vikram D",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-vikram-d-c070c0f5",
+      "detections_deleted": 19
+    },
+    "status": "success",
+    "prev_hash": "17293b56f029e9a57767381643ee4f20cffc729d593c6e90d300ba8a3879e599",
+    "hash": "c56da5cfa5f28d9e5da9c752772f89bcaa16794206016430cc59d3799675a858"
+  },
+  {
+    "id": "b7e3cef7-ed36-44e4-b08f-f20d0fe80012",
+    "timestamp": "2025-11-30T09:35:57.792055Z",
+    "timestamp_ist": "2025-11-30 15:05:57",
+    "action": "ALERT_DELETE",
+    "target": "Harshwardhan Wayse",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-harshwardhan-wayse-83a291ea",
+      "detections_deleted": 7
+    },
+    "status": "success",
+    "prev_hash": "c56da5cfa5f28d9e5da9c752772f89bcaa16794206016430cc59d3799675a858",
+    "hash": "86cf889c0cea0320fd64aa6e3c2798ccb1a032c47b3ab28bb9c880d58289ed8f"
+  }
+]

@@ -48,12 +48,46 @@
             </div>
 
             <div class="form-section">
-                <label class="section-label">Missing Aadhar No</label>
+                <label class="section-label">Aadhaar No <span style="color: #9ca3af; font-weight: normal;">(Optional)</span></label>
                 <div class="select-wrapper">
-                    <input type="text" name="missing_aadhaar" class="form-input" placeholder="Select an item...">
-                    <i class="fas fa-plus" style="right: 35px; font-size: 0.8em;"></i>
+                    <input type="text" name="missing_aadhaar" class="form-input" placeholder="Enter Aadhaar No (Optional)">
                     <i class="fas fa-chevron-down"></i>
                 </div>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Gender</label>
+                <div class="select-wrapper">
+                    <select name="gender" class="form-input">
+                        <option value="" disabled selected>Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Age</label>
+                <input type="number" name="age" class="form-input" placeholder="Enter Age" min="1" max="120">
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Search Priority</label>
+                <div class="select-wrapper">
+                    <select name="priority" class="form-input">
+                        <option value="1">🔴 Priority 1 - Critical (Child/Vulnerable)</option>
+                        <option value="2">🟠 Priority 2 - High (Recent Missing)</option>
+                        <option value="3" selected>🟡 Priority 3 - Medium (Standard)</option>
+                        <option value="4">🟢 Priority 4 - Low</option>
+                        <option value="5">⚪ Priority 5 - Minimal</option>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <small style="color: #666; margin-top: 5px; display: block;">
+                    Higher priority missing persons are matched first during surveillance.
+                </small>
             </div>
 
             <div class="form-section">
