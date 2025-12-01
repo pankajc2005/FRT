@@ -1,0 +1,744 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1 style="margin: 0; font-size: 1.75rem;"><i class="fas fa-cog"></i> Admin Settings</h1>
+            <p style="color: #6b7280; margin-top: 0.5rem;">Manage forms, fields, and officer accounts</p>
+        </div>
+        <a href="{{ url_for('index') }}" class="btn-circle-add" title="Back to Dashboard">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </div>
+
+    <!-- Tabs -->
+    <div style="border-bottom: 2px solid #e5e7eb; margin-bottom: 2rem;">
+        <div style="display: flex; gap: 0.5rem;">
+            <button class="settings-tab active" onclick="switchTab('features')">
+                <i class="fas fa-toggle-on"></i> System Features
+            </button>
+            <button class="settings-tab" onclick="switchTab('forms')">
+                <i class="fas fa-wpforms"></i> Form Configuration
+            </button>
+            <button class="settings-tab" onclick="switchTab('officers')">
+                <i class="fas fa-user-shield"></i> Officer Management
+            </button>
+            <button class="settings-tab" onclick="switchTab('activity')">
+                <i class="fas fa-history"></i> Officer Activity
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: System Features -->
+    <div id="features-tab" class="tab-content active">
+        <div style="background: white; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <h2 style="margin-top: 0;"><i class="fas fa-cogs"></i> Global System Features</h2>
+            <p style="color: #6b7280; margin-bottom: 2rem;">Enable or disable features across the entire system. Changes affect all forms and users.</p>
+            
+            <div id="features-container" style="display: grid; gap: 1.5rem;">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <button onclick="saveSystemFeatures()" style="margin-top: 2rem; padding: 0.75rem 2rem; background: #2563eb; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem;">
+                <i class="fas fa-save"></i> Save System Features
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: Form Configuration -->
+    <div id="forms-tab" class="tab-content">`
+        <div style="background: white; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <h2 style="margin-top: 0;"><i class="fas fa-edit"></i> Form Field Management</h2>
+            
+            <!-- Form Type Selector -->
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Select Form Type:</label>
+                <select id="form-type-select" onchange="loadFormFields()" style="padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; width: 300px;">
+                    <option value="criminal">Criminal Registration Form</option>
+                    <option value="missing">Missing Person Form</option>
+                    <option value="wanted">Wanted Criminal Form</option>
+                </select>
+            </div>
+
+            <!-- Sorting Instructions -->
+            <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <p style="margin: 0; color: #1e40af; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> <strong>Tip:</strong> Drag and drop fields using the <i class="fas fa-grip-vertical"></i> handle to reorder them. The order here determines the display order in the forms.
+                </p>
+            </div>
+
+            <!-- Aadhaar Disabled Notice -->
+            <div id="aadhaar-disabled-notice" style="display: none; background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <p style="margin: 0; color: #92400e; font-size: 0.9rem;">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>Notice:</strong> Aadhaar Number System is currently disabled. Aadhaar fields are hidden from all forms. Enable it in <strong>System Features</strong> tab to manage Aadhaar fields.
+                </p>
+            </div>
+
+            <!-- Fields List -->
+            <div id="fields-container" style="display: grid; gap: 1rem;">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <button onclick="saveFormConfig()" style="margin-top: 1.5rem; padding: 0.75rem 2rem; background: #2563eb; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem;">
+                <i class="fas fa-save"></i> Save Configuration
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: Officer Management -->
+    <div id="officers-tab" class="tab-content">
+        <div style="background: white; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="margin-top: 0;"><i class="fas fa-user-plus"></i> Add New Officer</h2>
+            
+            <form id="add-officer-form" onsubmit="addOfficer(event)" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; max-width: 800px;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Username *</label>
+                    <input type="text" name="username" required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Password *</label>
+                    <input type="password" name="password" required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Full Name</label>
+                    <input type="text" name="full_name" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Badge Number</label>
+                    <input type="text" name="badge_number" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+                </div>
+                <div style="grid-column: span 2;">
+                    <button type="submit" style="padding: 0.75rem 2rem; background: #059669; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                        <i class="fas fa-plus"></i> Add Officer
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Officers List -->
+        <div style="background: white; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <h2 style="margin-top: 0;"><i class="fas fa-users"></i> Existing Officers</h2>
+            
+            {% if officers %}
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
+                        <th style="padding: 0.75rem; text-align: left;">Username</th>
+                        <th style="padding: 0.75rem; text-align: left;">Full Name</th>
+                        <th style="padding: 0.75rem; text-align: left;">Badge Number</th>
+                        <th style="padding: 0.75rem; text-align: left;">Phone</th>
+                        <th style="padding: 0.75rem; text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="officers-list">
+                    {% for officer in officers %}
+                    <tr style="border-bottom: 1px solid #e5e7eb;" id="officer-{{ officer.id }}">
+                        <td style="padding: 0.75rem;">{{ officer.username }}</td>
+                        <td style="padding: 0.75rem;">{{ officer.full_name or '-' }}</td>
+                        <td style="padding: 0.75rem;">{{ officer.badge_number or '-' }}</td>
+                        <td style="padding: 0.75rem;">{{ officer.phone or '-' }}</td>
+                        <td style="padding: 0.75rem; text-align: center;">
+                            <button onclick="deleteOfficer('{{ officer.id }}', '{{ officer.username }}')" 
+                                    style="padding: 0.5rem 1rem; background: #dc2626; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="color: #6b7280; text-align: center; padding: 2rem;">No officers added yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tab Content: Officer Activity -->
+    <div id="activity-tab" class="tab-content">
+        <div style="background: white; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <h2 style="margin-top: 0;"><i class="fas fa-chart-line"></i> Officer Activity Logs</h2>
+            
+            {% if activity_logs %}
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
+                            <th style="padding: 0.75rem; text-align: left;">Timestamp</th>
+                            <th style="padding: 0.75rem; text-align: left;">Officer</th>
+                            <th style="padding: 0.75rem; text-align: left;">Action</th>
+                            <th style="padding: 0.75rem; text-align: left;">Target</th>
+                            <th style="padding: 0.75rem; text-align: center;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in activity_logs|reverse %}
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 0.75rem; font-size: 0.875rem;">{{ log.timestamp[:19].replace('T', ' ') }}</td>
+                            <td style="padding: 0.75rem; font-weight: 600;">{{ log.user }}</td>
+                            <td style="padding: 0.75rem;">
+                                <span style="background: #dbeafe; color: #1e40af; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;">
+                                    {{ log.action }}
+                                </span>
+                            </td>
+                            <td style="padding: 0.75rem;">{{ log.target }}</td>
+                            <td style="padding: 0.75rem; text-align: center;">
+                                {% if log.status == 'success' or not log.status %}
+                                <span style="color: #059669;">✓</span>
+                                {% else %}
+                                <span style="color: #dc2626;">✗</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p style="color: #6b7280; text-align: center; padding: 2rem;">No activity logs available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.settings-tab {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.settings-tab:hover {
+    background: #f3f4f6;
+}
+
+.settings-tab.active {
+    border-bottom-color: #2563eb;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.field-card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 40px 1fr 150px 150px 100px 80px;
+    gap: 1rem;
+    align-items: center;
+    cursor: move;
+    transition: all 0.2s;
+}
+
+.field-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-color: #3b82f6;
+}
+
+.field-card.dragging {
+    opacity: 0.5;
+    transform: scale(0.98);
+}
+
+.field-card.drag-over {
+    border-color: #3b82f6;
+    border-width: 2px;
+    background: #eff6ff;
+}
+
+.drag-handle {
+    font-size: 1.2rem;
+    color: #9ca3af;
+    cursor: grab;
+    text-align: center;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.field-card input, .field-card select {
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+}
+
+.field-card label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: block;
+    font-size: 0.875rem;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ef4444;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #10b981;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+</style>
+
+<script>
+// Form configuration state
+let formConfig = {{ form_config|tojson }};
+let systemFeatures = {{ system_config.features|tojson }};
+
+function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.settings-tab').forEach(el => el.classList.remove('active'));
+    
+    // Show selected tab
+    document.getElementById(tabName + '-tab').classList.add('active');
+    event.target.classList.add('active');
+}
+
+// Load system features on page load
+function loadSystemFeatures() {
+    const container = document.getElementById('features-container');
+    container.innerHTML = '';
+    
+    for (const [featureKey, featureData] of Object.entries(systemFeatures)) {
+        const card = document.createElement('div');
+        card.style.cssText = `
+            background: #f9fafb;
+            border: 2px solid ${featureData.enabled ? '#10b981' : '#ef4444'};
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        `;
+        
+        card.innerHTML = `
+            <div style="flex: 1;">
+                <h3 style="margin: 0 0 0.5rem 0; color: #1f2937; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas ${featureData.enabled ? 'fa-check-circle' : 'fa-times-circle'}" style="color: ${featureData.enabled ? '#10b981' : '#ef4444'};"></i>
+                    ${featureData.label}
+                </h3>
+                <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">${featureData.description}</p>
+                ${featureKey === 'aadhaar_system' ? `
+                    <div style="margin-top: 0.75rem; padding: 0.75rem; background: #fef3c7; border-left: 3px solid #f59e0b; border-radius: 0.375rem;">
+                        <strong style="color: #92400e; font-size: 0.85rem;">
+                            <i class="fas fa-exclamation-triangle"></i> Warning:
+                        </strong>
+                        <span style="color: #78350f; font-size: 0.85rem;">
+                            Disabling will hide Aadhaar fields from all forms (Criminal, Missing, Wanted) and disable Aadhaar validation.
+                        </span>
+                    </div>
+                ` : ''}
+            </div>
+            <div style="margin-left: 2rem;">
+                <label class="toggle-switch">
+                    <input type="checkbox" 
+                           ${featureData.enabled ? 'checked' : ''} 
+                           onchange="toggleFeature('${featureKey}', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        `;
+        
+        container.appendChild(card);
+    }
+}
+
+function toggleFeature(featureKey, enabled) {
+    systemFeatures[featureKey].enabled = enabled;
+    loadSystemFeatures(); // Reload to update UI
+    
+    // If Aadhaar feature toggled, reload form fields to show/hide Aadhaar fields
+    if (featureKey === 'aadhaar_system') {
+        loadFormFields();
+    }
+    
+    console.log(`Feature ${featureKey} set to: ${enabled}`);
+}
+
+function saveSystemFeatures() {
+    const saveBtn = event.target;
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    saveBtn.disabled = true;
+    
+    fetch('/admin/settings/save_system_features', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({features: systemFeatures})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+            saveBtn.style.background = '#10b981';
+            alert('✓ System features updated successfully! Changes will take effect immediately.');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            saveBtn.innerHTML = originalText;
+            saveBtn.disabled = false;
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(err => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+        alert('Error saving features: ' + err);
+        console.error('Save error:', err);
+    });
+}
+
+function loadFormFields() {
+    const formType = document.getElementById('form-type-select').value;
+    const fields = formConfig[formType];
+    const container = document.getElementById('fields-container');
+    
+    container.innerHTML = '';
+    
+    // Check if Aadhaar is disabled globally
+    const aadhaarEnabled = systemFeatures.aadhaar_system?.enabled !== false;
+    
+    // Show/hide notice
+    const notice = document.getElementById('aadhaar-disabled-notice');
+    if (notice) {
+        notice.style.display = aadhaarEnabled ? 'none' : 'block';
+    }
+    
+    for (const [fieldName, fieldData] of Object.entries(fields)) {
+        // Skip Aadhaar fields if globally disabled
+        const isAadhaarField = fieldName === 'aadhaar' || fieldName === 'missing_aadhaar';
+        if (isAadhaarField && !aadhaarEnabled) {
+            continue; // Skip rendering this field
+        }
+        
+        const card = document.createElement('div');
+        card.className = 'field-card';
+        card.draggable = true;
+        card.dataset.fieldName = fieldName;
+        card.dataset.formType = formType;
+        
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
+        card.addEventListener('dragover', handleDragOver);
+        card.addEventListener('dragleave', handleDragLeave);
+        card.addEventListener('drop', handleDrop);
+        
+        card.innerHTML = `
+            <div class="drag-handle">
+                <i class="fas fa-grip-vertical"></i>
+            </div>
+            <div>
+                <label>Field Label</label>
+                <input type="text" value="${fieldData.label}" 
+                       onchange="updateFieldLabel('${formType}', '${fieldName}', this.value)">
+            </div>
+            <div>
+                <label>Type</label>
+                <select onchange="updateFieldType('${formType}', '${fieldName}', this.value)">
+                    <option value="text" ${fieldData.type === 'text' ? 'selected' : ''}>Text</option>
+                    <option value="number" ${fieldData.type === 'number' ? 'selected' : ''}>Number</option>
+                    <option value="tel" ${fieldData.type === 'tel' ? 'selected' : ''}>Phone</option>
+                    <option value="date" ${fieldData.type === 'date' ? 'selected' : ''}>Date</option>
+                    <option value="textarea" ${fieldData.type === 'textarea' ? 'selected' : ''}>Textarea</option>
+                    <option value="select" ${fieldData.type === 'select' ? 'selected' : ''}>Select</option>
+                </select>
+            </div>
+            <div>
+                <label>Required</label>
+                <select onchange="updateFieldRequired('${formType}', '${fieldName}', this.value === 'true')">
+                    <option value="true" ${fieldData.required ? 'selected' : ''}>Yes</option>
+                    <option value="false" ${!fieldData.required ? 'selected' : ''}>No</option>
+                </select>
+            </div>
+            <div>
+                <label>Enabled</label>
+                <select onchange="updateFieldEnabled('${formType}', '${fieldName}', this.value === 'true')">
+                    <option value="true" ${fieldData.enabled ? 'selected' : ''}>Yes</option>
+                    <option value="false" ${!fieldData.enabled ? 'selected' : ''}>No</option>
+                </select>
+            </div>
+            <div>
+                <label>&nbsp;</label>
+                <button onclick="deleteField('${formType}', '${fieldName}')" 
+                        style="padding: 0.5rem; background: #dc2626; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(card);
+    }
+}
+
+// Drag and Drop functionality
+let draggedElement = null;
+
+function handleDragStart(e) {
+    draggedElement = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragEnd(e) {
+    this.classList.remove('dragging');
+    draggedElement = null;
+}
+
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+    
+    // Add visual feedback
+    if (this !== draggedElement) {
+        this.classList.add('drag-over');
+    }
+    
+    return false;
+}
+
+function handleDragLeave(e) {
+    this.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
+    
+    // Remove drag-over styling from all cards
+    document.querySelectorAll('.field-card').forEach(card => {
+        card.classList.remove('drag-over');
+    });
+    
+    if (draggedElement !== this) {
+        const formType = this.dataset.formType;
+        const draggedFieldName = draggedElement.dataset.fieldName;
+        const targetFieldName = this.dataset.fieldName;
+        
+        // Reorder in config
+        const fields = formConfig[formType];
+        const entries = Object.entries(fields);
+        const draggedIndex = entries.findIndex(([name]) => name === draggedFieldName);
+        const targetIndex = entries.findIndex(([name]) => name === targetFieldName);
+        
+        // Remove dragged item and insert at target position
+        const [draggedEntry] = entries.splice(draggedIndex, 1);
+        entries.splice(targetIndex, 0, draggedEntry);
+        
+        // Rebuild object with new order
+        formConfig[formType] = Object.fromEntries(entries);
+        
+        // Reload display
+        loadFormFields();
+        
+        // Show feedback
+        showReorderFeedback();
+        
+        console.log(`Reordered: ${draggedFieldName} moved to position of ${targetFieldName}`);
+    }
+    
+    return false;
+}
+
+function showReorderFeedback() {
+    const feedback = document.createElement('div');
+    feedback.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        animation: slideIn 0.3s ease-out;
+    `;
+    feedback.innerHTML = '<i class="fas fa-check-circle"></i> Fields reordered! Remember to save.';
+    document.body.appendChild(feedback);
+    
+    setTimeout(() => {
+        feedback.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => feedback.remove(), 300);
+    }, 2000);
+}
+
+function updateFieldLabel(formType, fieldName, value) {
+    formConfig[formType][fieldName].label = value;
+    console.log(`Updated ${formType}.${fieldName}.label to: ${value}`);
+}
+
+function updateFieldType(formType, fieldName, value) {
+    formConfig[formType][fieldName].type = value;
+    console.log(`Updated ${formType}.${fieldName}.type to: ${value}`);
+}
+
+function updateFieldRequired(formType, fieldName, value) {
+    formConfig[formType][fieldName].required = value;
+    console.log(`Updated ${formType}.${fieldName}.required to: ${value}`);
+}
+
+function updateFieldEnabled(formType, fieldName, value) {
+    formConfig[formType][fieldName].enabled = value;
+    console.log(`Updated ${formType}.${fieldName}.enabled to: ${value}`);
+}
+
+function deleteField(formType, fieldName) {
+    if (confirm(`Delete field "${fieldName}"?`)) {
+        delete formConfig[formType][fieldName];
+        console.log(`Deleted ${formType}.${fieldName}`);
+        loadFormFields();
+    }
+}
+
+function saveFormConfig() {
+    const saveBtn = event.target;
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    saveBtn.disabled = true;
+    
+    fetch('/admin/settings/save_form_config', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(formConfig)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+            saveBtn.style.background = '#10b981';
+            alert('✓ ' + data.message);
+            // Reload page to show updated configuration
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            saveBtn.innerHTML = originalText;
+            saveBtn.disabled = false;
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(err => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+        alert('Error saving configuration: ' + err);
+        console.error('Save error:', err);
+    });
+}
+
+function addOfficer(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    
+    fetch('/admin/settings/add_officer', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(err => alert('Error adding officer'));
+}
+
+function deleteOfficer(officerId, username) {
+    if (confirm(`Delete officer "${username}"? This action cannot be undone.`)) {
+        fetch(`/admin/settings/delete_officer/${officerId}`, {
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('officer-' + officerId).remove();
+                alert(data.message);
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(err => alert('Error deleting officer'));
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    loadSystemFeatures();
+    loadFormFields();
+});
+</script>
+{% endblock %}

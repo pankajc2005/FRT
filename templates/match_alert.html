@@ -24,7 +24,7 @@
                 <img src="{{ url_for('serve_image', filename=new_person.image_filename) }}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
             </div>
             <p><strong>Name:</strong> {{ new_person.name }}</p>
-            <p><strong>Aadhaar:</strong> {{ new_person.aadhaar }}</p>
+            {% if aadhaar_enabled %}<p><strong>Aadhaar:</strong> {{ new_person.aadhaar }}</p>{% endif %}
             <p><strong>Phone:</strong> {{ new_person.phone }}</p>
             <p><strong>Gender:</strong> {{ new_person.submitted_gender }}</p>
         </div>
@@ -36,7 +36,7 @@
                 <img src="{{ url_for('serve_image', filename=existing_person.image_filename) }}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
             </div>
             <p><strong>Name:</strong> {{ existing_person.name }}</p>
-            <p><strong>Aadhaar:</strong> {{ existing_person.aadhaar }}</p>
+            {% if aadhaar_enabled %}<p><strong>Aadhaar:</strong> {{ existing_person.aadhaar }}</p>{% endif %}
             <p><strong>Phone:</strong> {{ existing_person.phone }}</p>
             <p><strong>Gender:</strong> {{ existing_person.submitted_gender }}</p>
             <div style="margin-top: 10px; font-size: 0.9em; color: #666;">

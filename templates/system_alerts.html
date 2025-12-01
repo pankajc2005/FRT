@@ -234,10 +234,44 @@
                             </a>
                         </div>
                     </div>
+                    {% elif alert.type == 'SOS_EMERGENCY' %}
+                    {% set contacts_notified = alert.contacts_count %}
+                    {% if contacts_notified is none %}
+                        {% if alert.contacts is defined %}
+                            {% set contacts_notified = alert.contacts|length %}
+                        {% else %}
+                            {% set contacts_notified = 0 %}
+                        {% endif %}
+                    {% endif %}
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 8px; margin-bottom: 10px; font-size: 0.9rem;">
+                        <div style="margin-bottom: 6px;">
+                            <i class="fas fa-user" style="color: #b91c1c; width: 20px;"></i>
+                            <strong>Woman:</strong> {{ alert.woman_name or 'Anushka Sahu' }}
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <i class="fas fa-phone" style="color: #b91c1c; width: 20px;"></i>
+                            <strong>Contact:</strong> <a href="tel:{{ (alert.woman_phone or '9022442848')|replace(' ', '') }}" style="color: #b91c1c; text-decoration: none; font-weight: 600;">{{ alert.woman_phone or '9022442848' }}</a>
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <i class="fas fa-map-marker-alt" style="color: #b91c1c; width: 20px;"></i>
+                            <strong>Location:</strong> {{ alert.location or 'Location being determined...' }}
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <i class="fas fa-users" style="color: #b91c1c; width: 20px;"></i>
+                            <strong>Trusted Contacts Notified:</strong> {{ contacts_notified }}
+                        </div>
+                        {% if alert.map_link %}
+                        <div style="margin-top: 8px;">
+                            <a href="{{ alert.map_link }}" target="_blank" style="color: #dc2626; font-weight: 600; text-decoration: none;">
+                                <i class="fas fa-external-link-alt"></i> Open Map
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
                     {% endif %}
 
                     <span style="font-size: 0.8rem; color: #999;">
-                        <i class="far fa-clock"></i> {{ alert.timestamp }}
+                        <i class="far fa-clock"></i> {{ alert.timestamp_ist or alert.timestamp }}
                     </span>
                     
                     {% if alert.person_id %}

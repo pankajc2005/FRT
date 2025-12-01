@@ -1383,5 +1383,1459 @@
     "status": "success",
     "prev_hash": "e14baafb9ddaa3cfaccdde2e331a4ddbf6e6a529d2a2cf5a9b24c476f70953d5",
     "hash": "cf602981409b6dcafd5dd1daf9943b322db50eb9f7b3b24f37c09f49bd4f9cef"
+  },
+  {
+    "id": "45c45eac-5f70-403d-9321-5cae8a34ba2f",
+    "timestamp": "2025-12-01T10:41:59.378589Z",
+    "timestamp_ist": "2025-12-01 16:11:59",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "cf602981409b6dcafd5dd1daf9943b322db50eb9f7b3b24f37c09f49bd4f9cef",
+    "hash": "4146b471f95f9bd512db95b919f35bd99ccfa41b95f4de89add3c9454b88ce33"
+  },
+  {
+    "id": "9624d662-9d31-44e3-8882-975aa399f09c",
+    "timestamp": "2025-12-01T10:42:23.410713Z",
+    "timestamp_ist": "2025-12-01 16:12:23",
+    "action": "ALERT_DELETE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "detections_deleted": 2
+    },
+    "status": "success",
+    "prev_hash": "4146b471f95f9bd512db95b919f35bd99ccfa41b95f4de89add3c9454b88ce33",
+    "hash": "66fa278121e5a8b77e1b13175ee7296727453f4df403511c79e620adbdee59ee"
+  },
+  {
+    "id": "1fc609a1-66a6-4454-8229-30a62d0e904a",
+    "timestamp": "2025-12-01T10:42:34.650877Z",
+    "timestamp_ist": "2025-12-01 16:12:34",
+    "action": "ALERT_DELETE",
+    "target": "WOMAN IN DISTRESS - SOS",
+    "user": "admin",
+    "details": {
+      "person_id": "sos-397d2e02",
+      "detections_deleted": 0
+    },
+    "status": "success",
+    "prev_hash": "66fa278121e5a8b77e1b13175ee7296727453f4df403511c79e620adbdee59ee",
+    "hash": "3ce1d92bf712657059c0d7ecdcd0c202d9a928b4404a0000a7f1744aff8d9446"
+  },
+  {
+    "id": "cfcaf6d5-e3ad-405b-a4b7-6d64cc48f56d",
+    "timestamp": "2025-12-01T10:42:40.061884Z",
+    "timestamp_ist": "2025-12-01 16:12:40",
+    "action": "ALERT_DELETE",
+    "target": "WOMAN IN DISTRESS - SOS",
+    "user": "admin",
+    "details": {
+      "person_id": "sos-75614de9",
+      "detections_deleted": 0
+    },
+    "status": "success",
+    "prev_hash": "3ce1d92bf712657059c0d7ecdcd0c202d9a928b4404a0000a7f1744aff8d9446",
+    "hash": "626f6c188fa8474f43104b97e8b0279a730d0842f9e32c71ebc6ee992d2cda99"
+  },
+  {
+    "id": "c3118551-f92d-4ac0-a193-2f98816bad08",
+    "timestamp": "2025-12-01T10:42:44.297241Z",
+    "timestamp_ist": "2025-12-01 16:12:44",
+    "action": "ALERT_DELETE",
+    "target": "WOMAN IN DISTRESS - SOS",
+    "user": "admin",
+    "details": {
+      "person_id": "sos-96793a39",
+      "detections_deleted": 0
+    },
+    "status": "success",
+    "prev_hash": "626f6c188fa8474f43104b97e8b0279a730d0842f9e32c71ebc6ee992d2cda99",
+    "hash": "c03f5c55d2f1b57a4cfb4945dcee718d424a24b5473a1f6bcbe30deebfa92ae5"
+  },
+  {
+    "id": "4c0cd1cd-9e8e-45ba-9ae2-4dcced54dac3",
+    "timestamp": "2025-12-01T10:42:48.207577Z",
+    "timestamp_ist": "2025-12-01 16:12:48",
+    "action": "ALERT_DELETE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "wanted-pankaj-chavan-ef116f44",
+      "detections_deleted": 2
+    },
+    "status": "success",
+    "prev_hash": "c03f5c55d2f1b57a4cfb4945dcee718d424a24b5473a1f6bcbe30deebfa92ae5",
+    "hash": "6be738ba53fffc896b8cb2dc5661e743b767388384d3e3bb3188be7c4abf90b2"
+  },
+  {
+    "id": "cce1d967-908e-4752-abd5-4989612ab9ab",
+    "timestamp": "2025-12-01T10:42:52.560568Z",
+    "timestamp_ist": "2025-12-01 16:12:52",
+    "action": "ALERT_DELETE",
+    "target": "INCIDENT: HARASSMENT",
+    "user": "admin",
+    "details": {
+      "person_id": "incident-63085352",
+      "detections_deleted": 0
+    },
+    "status": "success",
+    "prev_hash": "6be738ba53fffc896b8cb2dc5661e743b767388384d3e3bb3188be7c4abf90b2",
+    "hash": "98cbf5cf3a7d9b51d658d779b7028881414a360234f5eaf0e19209318a740ac4"
+  },
+  {
+    "id": "779ee603-4ee1-4c9f-b45a-1b552d2a077c",
+    "timestamp": "2025-12-01T10:42:56.504428Z",
+    "timestamp_ist": "2025-12-01 16:12:56",
+    "action": "ALERT_DELETE",
+    "target": "Harshwardhan Wayse",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-harshwardhan-wayse-a9ef0f0c",
+      "detections_deleted": 1
+    },
+    "status": "success",
+    "prev_hash": "98cbf5cf3a7d9b51d658d779b7028881414a360234f5eaf0e19209318a740ac4",
+    "hash": "479ae7caf697271461bab08c57fd77102cda97c9f111d2aeee74878e9acebfcb"
+  },
+  {
+    "id": "2517c66b-2f35-4c56-b044-728f7dd0fb13",
+    "timestamp": "2025-12-01T10:43:02.989410Z",
+    "timestamp_ist": "2025-12-01 16:13:02",
+    "action": "ALERT_DELETE",
+    "target": "Amit Rajegoankar",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-amit-rajegoankar-7d9e9daa",
+      "detections_deleted": 0
+    },
+    "status": "success",
+    "prev_hash": "479ae7caf697271461bab08c57fd77102cda97c9f111d2aeee74878e9acebfcb",
+    "hash": "6650334d5196fab30d076cd7105885b4cb08e5a13fc670cabad0b4c6005f2b2d"
+  },
+  {
+    "id": "a8892b53-e323-4286-8868-443cbc2cde2e",
+    "timestamp": "2025-12-01T10:43:34.446093Z",
+    "timestamp_ist": "2025-12-01 16:13:34",
+    "action": "PERSON_DELETE",
+    "target": "Amit Rajegoankar",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-amit-rajegoankar-7d9e9daa",
+      "db_type": "missing"
+    },
+    "status": "success",
+    "prev_hash": "6650334d5196fab30d076cd7105885b4cb08e5a13fc670cabad0b4c6005f2b2d",
+    "hash": "824fb955570aa4a0373c176de3485abfa751cc5f198fdfd58715ed9e358b87ad"
+  },
+  {
+    "id": "6811a8f8-b127-4c22-a451-ce9761d4e60b",
+    "timestamp": "2025-12-01T10:47:33.799742Z",
+    "timestamp_ist": "2025-12-01 16:17:33",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "officer",
+    "details": {
+      "status": "success",
+      "role": "officer"
+    },
+    "status": "success",
+    "prev_hash": "824fb955570aa4a0373c176de3485abfa751cc5f198fdfd58715ed9e358b87ad",
+    "hash": "f4830ef9f0b07e16fe6ab79c04fade156afd55ac68003ca48dfd9e74652150fa"
+  },
+  {
+    "id": "06f95821-65d1-42e3-98e5-d839d2387fba",
+    "timestamp": "2025-12-01T10:50:41.670280Z",
+    "timestamp_ist": "2025-12-01 16:20:41",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "officer",
+    "details": {
+      "status": "success",
+      "role": "officer"
+    },
+    "status": "success",
+    "prev_hash": "f4830ef9f0b07e16fe6ab79c04fade156afd55ac68003ca48dfd9e74652150fa",
+    "hash": "45cfaa25d8e6937bd547e1e3d02cf7c09a4a630586b44abd47913943b477ac88"
+  },
+  {
+    "id": "4e362105-6565-48f9-a17c-337626a9175c",
+    "timestamp": "2025-12-01T10:58:35.886987Z",
+    "timestamp_ist": "2025-12-01 16:28:35",
+    "action": "OFFICER_VIEW_ALERTS",
+    "target": "1 alerts",
+    "user": "officer",
+    "details": {},
+    "status": "success",
+    "prev_hash": "45cfaa25d8e6937bd547e1e3d02cf7c09a4a630586b44abd47913943b477ac88",
+    "hash": "3fd871042b6218396825931dcdec16dee4b6219b3093050867160239f5027348"
+  },
+  {
+    "id": "b627dab5-e0d1-46af-85c4-5e22fa864edd",
+    "timestamp": "2025-12-01T10:58:36.469368Z",
+    "timestamp_ist": "2025-12-01 16:28:36",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "3fd871042b6218396825931dcdec16dee4b6219b3093050867160239f5027348",
+    "hash": "aae49ed3f2074038fbf63dbeae07ac9e3b913d3453681638cff57bf12bed35a9"
+  },
+  {
+    "id": "def9e6e7-aa99-44e7-a10d-0d2b3f0d33f9",
+    "timestamp": "2025-12-01T11:43:03.241856Z",
+    "timestamp_ist": "2025-12-01 17:13:03",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "failed"
+    },
+    "status": "failed",
+    "prev_hash": "aae49ed3f2074038fbf63dbeae07ac9e3b913d3453681638cff57bf12bed35a9",
+    "hash": "f38d8512fb9671b81057fd02ee235a9e1892262a24186275070ed7a0b25c76e9"
+  },
+  {
+    "id": "a67dc808-9711-414c-b1dd-a43730975b37",
+    "timestamp": "2025-12-01T11:43:14.452013Z",
+    "timestamp_ist": "2025-12-01 17:13:14",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "f38d8512fb9671b81057fd02ee235a9e1892262a24186275070ed7a0b25c76e9",
+    "hash": "72bffb5a97f718686ce58c6510bd259ac53ee0395b10d691c918f3531e8d49c0"
+  },
+  {
+    "id": "f31de628-cca5-4fdf-b4b1-fb6ea98a619c",
+    "timestamp": "2025-12-01T12:07:49.637013Z",
+    "timestamp_ist": "2025-12-01 17:37:49",
+    "action": "SURVEILLANCE_DEACTIVATE",
+    "target": "pankaj-chavan-16b6f1a3",
+    "user": "admin",
+    "details": {
+      "status": "failed",
+      "reason": "Invalid password",
+      "db_type": "criminal"
+    },
+    "status": "failed",
+    "prev_hash": "72bffb5a97f718686ce58c6510bd259ac53ee0395b10d691c918f3531e8d49c0",
+    "hash": "99ed587d53636bf29936357606b0f55c5c7d307873b2e44b4ad1e1275e5df295"
+  },
+  {
+    "id": "4d27e579-e7d3-45cc-8d74-d73593fe48fe",
+    "timestamp": "2025-12-01T12:08:03.665739Z",
+    "timestamp_ist": "2025-12-01 17:38:03",
+    "action": "SURVEILLANCE_DEACTIVATE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "db_type": "criminal",
+      "reason": "The criminal is cought.",
+      "status": "deactivated",
+      "authorized_by": "admin",
+      "duration": "20h 5m",
+      "activated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "99ed587d53636bf29936357606b0f55c5c7d307873b2e44b4ad1e1275e5df295",
+    "hash": "43545d79c55ef185ba426ce301c9ca957ed76f43e6dbd64ff5ebfd0e6e55b4de"
+  },
+  {
+    "id": "15a1835b-9208-4655-a3ae-10b60315bbe3",
+    "timestamp": "2025-12-01T12:08:19.429959Z",
+    "timestamp_ist": "2025-12-01 17:38:19",
+    "action": "SURVEILLANCE_DEACTIVATE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "wanted-pankaj-chavan-ef116f44",
+      "db_type": "criminal",
+      "reason": "T",
+      "status": "deactivated",
+      "authorized_by": "admin",
+      "duration": "Unknown",
+      "activated_by": "Unknown"
+    },
+    "status": "success",
+    "prev_hash": "43545d79c55ef185ba426ce301c9ca957ed76f43e6dbd64ff5ebfd0e6e55b4de",
+    "hash": "d0f782e001fc58a0542365a2ea8cff44875937bf9c25d5999b3d716565e7d528"
+  },
+  {
+    "id": "7a91b423-398e-4a39-946e-23dc73ee1320",
+    "timestamp": "2025-12-01T12:09:08.033107Z",
+    "timestamp_ist": "2025-12-01 17:39:08",
+    "action": "SURVEILLANCE_ACTIVATE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "db_type": "criminal",
+      "reason": "He is done seriuos crime.",
+      "status": "activated",
+      "authorized_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "d0f782e001fc58a0542365a2ea8cff44875937bf9c25d5999b3d716565e7d528",
+    "hash": "38fb344dc6be250506e4473ffb3c7533416883218ea50aab0163b546cc6487ee"
+  },
+  {
+    "id": "62d30019-883c-44fe-8ebf-11b2cc252109",
+    "timestamp": "2025-12-01T12:13:28.321403Z",
+    "timestamp_ist": "2025-12-01 17:43:28",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "38fb344dc6be250506e4473ffb3c7533416883218ea50aab0163b546cc6487ee",
+    "hash": "eecd8d773efffe912ad40adb3d86eaa070adb1c2251b2b58546524faacb17b9f"
+  },
+  {
+    "id": "ddb158b3-1c9d-48cf-b2e9-f67e8d0ba603",
+    "timestamp": "2025-12-01T12:33:05.961102Z",
+    "timestamp_ist": "2025-12-01 18:03:05",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "eecd8d773efffe912ad40adb3d86eaa070adb1c2251b2b58546524faacb17b9f",
+    "hash": "9328db4707675c97e70ad303198286965d8cdc5ca96312d8ace1ea6c1e3ae4ec"
+  },
+  {
+    "id": "7449c4be-5492-4a87-8437-dec8ffce0227",
+    "timestamp": "2025-12-01T12:40:01.374868Z",
+    "timestamp_ist": "2025-12-01 18:10:01",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "9328db4707675c97e70ad303198286965d8cdc5ca96312d8ace1ea6c1e3ae4ec",
+    "hash": "fb529fb068a98e090c0695e5eb69fdc28671176e5b4210732f97efa251ea2ca7"
+  },
+  {
+    "id": "a14f1a65-7a3a-4b3b-bed3-2c673ece2162",
+    "timestamp": "2025-12-01T12:46:05.816127Z",
+    "timestamp_ist": "2025-12-01 18:16:05",
+    "action": "SURVEILLANCE_DEACTIVATE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "db_type": "criminal",
+      "reason": "HI",
+      "status": "deactivated",
+      "authorized_by": "admin",
+      "duration": "0h 36m",
+      "activated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "fb529fb068a98e090c0695e5eb69fdc28671176e5b4210732f97efa251ea2ca7",
+    "hash": "fab989d5c62873dda6698d243884284a08738d305a9c030dae53b621aa95b8ae"
+  },
+  {
+    "id": "c8f2f528-d1c2-46fe-8e1d-72d154f52daf",
+    "timestamp": "2025-12-01T12:46:29.610631Z",
+    "timestamp_ist": "2025-12-01 18:16:29",
+    "action": "SURVEILLANCE_ACTIVATE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "wanted-pankaj-chavan-ef116f44",
+      "db_type": "criminal",
+      "reason": "This is wanted",
+      "status": "activated",
+      "authorized_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "fab989d5c62873dda6698d243884284a08738d305a9c030dae53b621aa95b8ae",
+    "hash": "d3230b8402c91cc5c13f8305fd288ee2c7f0996471b9eaf689b1dab039a5faed"
+  },
+  {
+    "id": "627e81e4-34eb-4550-ac2c-d5417e2d976c",
+    "timestamp": "2025-12-01T12:52:03.237254Z",
+    "timestamp_ist": "2025-12-01 18:22:03",
+    "action": "PERSON_ADD",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-pankaj-chavan-b5c52033",
+      "db_type": "missing",
+      "priority": 3
+    },
+    "status": "success",
+    "prev_hash": "d3230b8402c91cc5c13f8305fd288ee2c7f0996471b9eaf689b1dab039a5faed",
+    "hash": "7e592c31a9925812f04c5a25e4b856f92e41c8fe80a5c37de0899d8331b53bb0"
+  },
+  {
+    "id": "7aa30f04-a9d7-49e8-8e6a-5027d9369f71",
+    "timestamp": "2025-12-01T12:52:14.467836Z",
+    "timestamp_ist": "2025-12-01 18:22:14",
+    "action": "SURVEILLANCE_DEACTIVATE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "wanted-pankaj-chavan-ef116f44",
+      "db_type": "criminal",
+      "reason": "h",
+      "status": "deactivated",
+      "authorized_by": "admin",
+      "duration": "0h 5m",
+      "activated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "7e592c31a9925812f04c5a25e4b856f92e41c8fe80a5c37de0899d8331b53bb0",
+    "hash": "90cfee31513d121ea404a67caf93f8a4f8218f8b3a08f2491fb36c15a227d81f"
+  },
+  {
+    "id": "02daf834-0868-4b1d-b2d4-8dc45bfc42e6",
+    "timestamp": "2025-12-01T12:52:42.582605Z",
+    "timestamp_ist": "2025-12-01 18:22:42",
+    "action": "SURVEILLANCE_ACTIVATE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-pankaj-chavan-b5c52033",
+      "db_type": "missing",
+      "reason": "hi",
+      "status": "activated",
+      "authorized_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "90cfee31513d121ea404a67caf93f8a4f8218f8b3a08f2491fb36c15a227d81f",
+    "hash": "0db8ac21bbbe11a2562d4eac46fa67ff9ab1132c188cd06509f8a59b08e80f9a"
+  },
+  {
+    "id": "808cb8ee-2701-41fe-9029-a6e2237dc631",
+    "timestamp": "2025-12-01T12:54:51.765505Z",
+    "timestamp_ist": "2025-12-01 18:24:51",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "officer",
+    "details": {
+      "status": "success",
+      "role": "officer"
+    },
+    "status": "success",
+    "prev_hash": "0db8ac21bbbe11a2562d4eac46fa67ff9ab1132c188cd06509f8a59b08e80f9a",
+    "hash": "4eb0eab50d96391c81ed8e0fbd96283cae354dc9950851f559f88500d76879cd"
+  },
+  {
+    "id": "8e858f86-e7d7-4abd-8c05-fea617aa3d28",
+    "timestamp": "2025-12-01T12:55:15.649212Z",
+    "timestamp_ist": "2025-12-01 18:25:15",
+    "action": "OFFICER_SEARCH",
+    "target": "Pankaj Chavan",
+    "user": "officer",
+    "details": {
+      "camera": "camera",
+      "db_searched": "criminal",
+      "match_found": true,
+      "confidence": 100.0,
+      "device": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWeb"
+    },
+    "status": "success",
+    "prev_hash": "4eb0eab50d96391c81ed8e0fbd96283cae354dc9950851f559f88500d76879cd",
+    "hash": "091d796a4351cce30567351e448512a55feacea57ff28327fbf260fe71071b42"
+  },
+  {
+    "id": "3b8dfd01-ca6b-4a14-b0e3-474432f2b9d2",
+    "timestamp": "2025-12-01T12:56:06.462897Z",
+    "timestamp_ist": "2025-12-01 18:26:06",
+    "action": "OFFICER_REPORT",
+    "target": "Pankaj Chavan",
+    "user": "officer",
+    "details": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+      "urgency": "medium",
+      "report_id": "159884f4-8fef-4c7d-947b-bf7773fc1530"
+    },
+    "status": "success",
+    "prev_hash": "091d796a4351cce30567351e448512a55feacea57ff28327fbf260fe71071b42",
+    "hash": "341e2686241dd7f140ca6ed1bf6351f73c04b00edc3180d3452037208ff79693"
+  },
+  {
+    "id": "78195a3c-7ab4-4323-ba73-01e007329cc4",
+    "timestamp": "2025-12-01T12:56:24.579150Z",
+    "timestamp_ist": "2025-12-01 18:26:24",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "341e2686241dd7f140ca6ed1bf6351f73c04b00edc3180d3452037208ff79693",
+    "hash": "8509907dc69053343137094c170d1521d5432af5eac0706b6f303a40308627a5"
+  },
+  {
+    "id": "b69e8944-78e5-499b-80c6-a4c304fc4c09",
+    "timestamp": "2025-12-01T12:57:01.101146Z",
+    "timestamp_ist": "2025-12-01 18:27:01",
+    "action": "OFFICER_VIEW_ALERTS",
+    "target": "3 alerts",
+    "user": "admin",
+    "details": {},
+    "status": "success",
+    "prev_hash": "8509907dc69053343137094c170d1521d5432af5eac0706b6f303a40308627a5",
+    "hash": "8f055a4be360fa8ed7d46c954ccfcd704801524289d19b286f698fb74ea1d53f"
+  },
+  {
+    "id": "a0686cf3-13a0-4709-9ae6-bbf39dec11a6",
+    "timestamp": "2025-12-01T12:57:16.765294Z",
+    "timestamp_ist": "2025-12-01 18:27:16",
+    "action": "OFFICER_VIEW_ALERTS",
+    "target": "3 alerts",
+    "user": "admin",
+    "details": {},
+    "status": "success",
+    "prev_hash": "8f055a4be360fa8ed7d46c954ccfcd704801524289d19b286f698fb74ea1d53f",
+    "hash": "30558cc0e6d104d78f14b204969466eeb1be7383326e858f5a9907e1c14683c6"
+  },
+  {
+    "id": "f1810edd-008b-4779-811c-ecbdee871a8f",
+    "timestamp": "2025-12-01T12:58:43.981101Z",
+    "timestamp_ist": "2025-12-01 18:28:43",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "30558cc0e6d104d78f14b204969466eeb1be7383326e858f5a9907e1c14683c6",
+    "hash": "f39420c10bdd641e034a7a43bf145ae745370a239e53a40d668c2b54e302cbfa"
+  },
+  {
+    "id": "9dae4137-3eea-4b1a-9aaf-fe89357504fd",
+    "timestamp": "2025-12-01T13:00:52.385884Z",
+    "timestamp_ist": "2025-12-01 18:30:52",
+    "action": "SURVEILLANCE_ACTIVATE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "db_type": "criminal",
+      "reason": "hi",
+      "status": "activated",
+      "authorized_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "f39420c10bdd641e034a7a43bf145ae745370a239e53a40d668c2b54e302cbfa",
+    "hash": "0b69aed2821e66f7c186611b2c23e4648bebe7eb158a1d03ca942eed67ecba1c"
+  },
+  {
+    "id": "835fbeec-c804-4fb0-81d5-1b29443aa04b",
+    "timestamp": "2025-12-01T13:02:20.501073Z",
+    "timestamp_ist": "2025-12-01 18:32:20",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "officer",
+    "details": {
+      "status": "success",
+      "role": "officer"
+    },
+    "status": "success",
+    "prev_hash": "0b69aed2821e66f7c186611b2c23e4648bebe7eb158a1d03ca942eed67ecba1c",
+    "hash": "bef1d4afc5334f0f4cb8801ebfc0bab0c10738d8c3758a66766d675132582bd5"
+  },
+  {
+    "id": "8a5f031a-feeb-4530-a4e9-b232ea0dd285",
+    "timestamp": "2025-12-01T13:02:29.848065Z",
+    "timestamp_ist": "2025-12-01 18:32:29",
+    "action": "OFFICER_SEARCH",
+    "target": "Pankaj Chavan",
+    "user": "officer",
+    "details": {
+      "camera": "camera",
+      "db_searched": "criminal",
+      "match_found": true,
+      "confidence": 100.0,
+      "device": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWeb"
+    },
+    "status": "success",
+    "prev_hash": "bef1d4afc5334f0f4cb8801ebfc0bab0c10738d8c3758a66766d675132582bd5",
+    "hash": "df21dd8b16d61c2702532edce87f695cb877b3c965cb995610085493290a6a9e"
+  },
+  {
+    "id": "5159166b-74ad-4332-b5f9-436eca7b9f96",
+    "timestamp": "2025-12-01T13:02:41.810640Z",
+    "timestamp_ist": "2025-12-01 18:32:41",
+    "action": "OFFICER_VIEW_ALERTS",
+    "target": "3 alerts",
+    "user": "officer",
+    "details": {},
+    "status": "success",
+    "prev_hash": "df21dd8b16d61c2702532edce87f695cb877b3c965cb995610085493290a6a9e",
+    "hash": "3e65ade59ba599b19d89b1a4a343c204d24b94a1b5a9cd882e81618ef8f54495"
+  },
+  {
+    "id": "32a3b535-9299-41c0-a138-ee342eb33e8d",
+    "timestamp": "2025-12-01T15:31:49.225407Z",
+    "timestamp_ist": "2025-12-01 21:01:49",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "3e65ade59ba599b19d89b1a4a343c204d24b94a1b5a9cd882e81618ef8f54495",
+    "hash": "d1dcc3b0bcd84dee153db5ce41c34bdbc756da8bbd00475ebccd92dfb14c5302"
+  },
+  {
+    "id": "0d18c457-3874-4a71-82e5-1840d32c1cbf",
+    "timestamp": "2025-12-01T15:47:32.264543Z",
+    "timestamp_ist": "2025-12-01 21:17:32",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "d1dcc3b0bcd84dee153db5ce41c34bdbc756da8bbd00475ebccd92dfb14c5302",
+    "hash": "ccaebf91e139bef2587486419819b13d3c19d45a851296f216edb0a520d29962"
+  },
+  {
+    "id": "96a58aca-831f-43af-8731-9609f957ae59",
+    "timestamp": "2025-12-01T15:50:36.990271Z",
+    "timestamp_ist": "2025-12-01 21:20:36",
+    "action": "SURVEILLANCE_ACTIVATE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "wanted-pankaj-chavan-ef116f44",
+      "db_type": "criminal",
+      "reason": "Hi",
+      "status": "activated",
+      "authorized_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "ccaebf91e139bef2587486419819b13d3c19d45a851296f216edb0a520d29962",
+    "hash": "ff91d50d36973c5b12900285196d4599d1a32a320e1e29a9815f12aec7320320"
+  },
+  {
+    "id": "baa62f74-8571-4c4b-8e3d-ab2c3eb21a3c",
+    "timestamp": "2025-12-01T16:16:22.375597Z",
+    "timestamp_ist": "2025-12-01 21:46:22",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "officer",
+    "details": {
+      "status": "success",
+      "role": "officer"
+    },
+    "status": "success",
+    "prev_hash": "ff91d50d36973c5b12900285196d4599d1a32a320e1e29a9815f12aec7320320",
+    "hash": "57a524ffb8117091d941cb7c8f5f9b6b21d579a0ae51d0f753a6c2e25144adc0"
+  },
+  {
+    "id": "913e949b-f319-487c-b581-04ef404d8f60",
+    "timestamp": "2025-12-01T16:18:18.564061Z",
+    "timestamp_ist": "2025-12-01 21:48:18",
+    "action": "OFFICER_VIEW_ALERTS",
+    "target": "3 alerts",
+    "user": "officer",
+    "details": {},
+    "status": "success",
+    "prev_hash": "57a524ffb8117091d941cb7c8f5f9b6b21d579a0ae51d0f753a6c2e25144adc0",
+    "hash": "d4d993b3ef770e20805dc24ec07e28cbccf8edbd51d0681689967f7be2a54966"
+  },
+  {
+    "id": "703e5666-8854-447e-b62d-2b7d9180ecd8",
+    "timestamp": "2025-12-01T16:18:42.660154Z",
+    "timestamp_ist": "2025-12-01 21:48:42",
+    "action": "OFFICER_SEARCH",
+    "target": "Pankaj Chavan",
+    "user": "officer",
+    "details": {
+      "camera": "camera",
+      "db_searched": "criminal",
+      "match_found": true,
+      "confidence": 100.0,
+      "device": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWeb"
+    },
+    "status": "success",
+    "prev_hash": "d4d993b3ef770e20805dc24ec07e28cbccf8edbd51d0681689967f7be2a54966",
+    "hash": "756029f3d9174c4cf4b42aa0f6ed071f31b0420da6b734e7e82fca40257b6c74"
+  },
+  {
+    "id": "27402aab-5968-436e-83aa-0188e2c6915f",
+    "timestamp": "2025-12-01T16:19:00.831232Z",
+    "timestamp_ist": "2025-12-01 21:49:00",
+    "action": "OFFICER_REPORT",
+    "target": "Pankaj Chavan",
+    "user": "officer",
+    "details": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+      "urgency": "medium",
+      "report_id": "7b59c3d3-ed28-4055-a1ed-e93e20f71c66"
+    },
+    "status": "success",
+    "prev_hash": "756029f3d9174c4cf4b42aa0f6ed071f31b0420da6b734e7e82fca40257b6c74",
+    "hash": "57ffdb03fbd2320ea0a9465f8d837f4721b9e4a01259a030324f50617567df7f"
+  },
+  {
+    "id": "a122a38f-631a-42ff-898d-368f7af52965",
+    "timestamp": "2025-12-01T16:19:06.683056Z",
+    "timestamp_ist": "2025-12-01 21:49:06",
+    "action": "OFFICER_VIEW_ALERTS",
+    "target": "3 alerts",
+    "user": "officer",
+    "details": {},
+    "status": "success",
+    "prev_hash": "57ffdb03fbd2320ea0a9465f8d837f4721b9e4a01259a030324f50617567df7f",
+    "hash": "5ba18ef9699c44904ddba2d3cc9abeb5f2fc26a01de9e829ddef7ed5747db174"
+  },
+  {
+    "id": "489657c9-147a-48b1-9f66-487d07b6cf23",
+    "timestamp": "2025-12-01T17:05:10.619900Z",
+    "timestamp_ist": "2025-12-01 22:35:10",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "5ba18ef9699c44904ddba2d3cc9abeb5f2fc26a01de9e829ddef7ed5747db174",
+    "hash": "f04e5824e5a9737167d1224e812038f558f8c19c564c0ccf75f35ccb91623d63"
+  },
+  {
+    "id": "7dfd62c9-bb5f-4736-bfc6-9d4faad6b5da",
+    "timestamp": "2025-12-01T17:26:04.103928Z",
+    "timestamp_ist": "2025-12-01 22:56:04",
+    "action": "ALERT_DELETE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "wanted-pankaj-chavan-ef116f44",
+      "detections_deleted": 11
+    },
+    "status": "success",
+    "prev_hash": "f04e5824e5a9737167d1224e812038f558f8c19c564c0ccf75f35ccb91623d63",
+    "hash": "8548d5c9d9c5d3988c4957b34339db3ffe53c937946d1dc8ced8684dbbdea643"
+  },
+  {
+    "id": "c5797ada-88dd-4f17-b237-6b515f83837d",
+    "timestamp": "2025-12-01T17:26:10.872245Z",
+    "timestamp_ist": "2025-12-01 22:56:10",
+    "action": "ALERT_DELETE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "detections_deleted": 8
+    },
+    "status": "success",
+    "prev_hash": "8548d5c9d9c5d3988c4957b34339db3ffe53c937946d1dc8ced8684dbbdea643",
+    "hash": "4f14ce0ff8970264ea8058d312b269f7a87e795ad86688efcd430575ad2f59e2"
+  },
+  {
+    "id": "72273e92-f764-475c-a775-7b20c9b6700d",
+    "timestamp": "2025-12-01T17:26:16.936547Z",
+    "timestamp_ist": "2025-12-01 22:56:16",
+    "action": "ALERT_DELETE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-pankaj-chavan-b5c52033",
+      "detections_deleted": 50
+    },
+    "status": "success",
+    "prev_hash": "4f14ce0ff8970264ea8058d312b269f7a87e795ad86688efcd430575ad2f59e2",
+    "hash": "d2de0ebba2baf326ca42e28b5d0a5ddcf197e480bfd9ebaa864b23f4beb39c12"
+  },
+  {
+    "id": "53a576c9-90ff-4019-995f-0f4dd02b6233",
+    "timestamp": "2025-12-01T17:44:04.706790Z",
+    "timestamp_ist": "2025-12-01 23:14:04",
+    "action": "FORM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "d2de0ebba2baf326ca42e28b5d0a5ddcf197e480bfd9ebaa864b23f4beb39c12",
+    "hash": "585dd5e5bd343934f8c21a8322b333320f2a99de67b87b63dd1df8f0a490b467"
+  },
+  {
+    "id": "bf591eaa-7823-42c2-9724-e1e2c6c19a39",
+    "timestamp": "2025-12-01T17:45:12.175933Z",
+    "timestamp_ist": "2025-12-01 23:15:12",
+    "action": "FORM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "585dd5e5bd343934f8c21a8322b333320f2a99de67b87b63dd1df8f0a490b467",
+    "hash": "623636cad3baae0139afa3f322dcc417602fa6c584026cccdbf302443a3dbcd2"
+  },
+  {
+    "id": "95c0663f-3fde-43fc-9138-c25d1e55afe1",
+    "timestamp": "2025-12-01T17:45:41.287473Z",
+    "timestamp_ist": "2025-12-01 23:15:41",
+    "action": "FORM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "623636cad3baae0139afa3f322dcc417602fa6c584026cccdbf302443a3dbcd2",
+    "hash": "01a02e248274bf870bc54187873b5c3204abf22a322077939c1b898f7c7a3984"
+  },
+  {
+    "id": "94d07974-b930-44bb-9860-815a4e7a9f30",
+    "timestamp": "2025-12-01T17:47:33.560037Z",
+    "timestamp_ist": "2025-12-01 23:17:33",
+    "action": "FORM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "01a02e248274bf870bc54187873b5c3204abf22a322077939c1b898f7c7a3984",
+    "hash": "692e5f414735bec030a1f6c8be2bac2f16ef923395d881dad3c74307a55e9048"
+  },
+  {
+    "id": "95ea10cc-9e92-423e-9187-a0822e19cf10",
+    "timestamp": "2025-12-01T17:47:53.519419Z",
+    "timestamp_ist": "2025-12-01 23:17:53",
+    "action": "FORM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "692e5f414735bec030a1f6c8be2bac2f16ef923395d881dad3c74307a55e9048",
+    "hash": "e6605557fd1da3052bd120b553fb4505d3ee0e9e61637b8b408786c6bb1bb5b1"
+  },
+  {
+    "id": "d077d9ea-2d62-477d-aa90-5330d96b9028",
+    "timestamp": "2025-12-01T17:55:44.675080Z",
+    "timestamp_ist": "2025-12-01 23:25:44",
+    "action": "FORM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "e6605557fd1da3052bd120b553fb4505d3ee0e9e61637b8b408786c6bb1bb5b1",
+    "hash": "c273c27df36a158083db7f3cec01de791a180280abbb7ca3842cc6513109441b"
+  },
+  {
+    "id": "728cb0e8-3091-48da-9f7d-c48d7ee98dc0",
+    "timestamp": "2025-12-01T17:56:09.277433Z",
+    "timestamp_ist": "2025-12-01 23:26:09",
+    "action": "FORM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "c273c27df36a158083db7f3cec01de791a180280abbb7ca3842cc6513109441b",
+    "hash": "027a3272e21707f9ca4a57ac819be99c0e774a73c63000a91dd6e50091000d4f"
+  },
+  {
+    "id": "e9461329-f111-406d-95ef-5e024b923c90",
+    "timestamp": "2025-12-01T18:02:23.053667Z",
+    "timestamp_ist": "2025-12-01 23:32:23",
+    "action": "FORM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "027a3272e21707f9ca4a57ac819be99c0e774a73c63000a91dd6e50091000d4f",
+    "hash": "b7f627ef7af404ef9bc2d1e563e18484559325e033ff4f2c2752bf5c28aa8a84"
+  },
+  {
+    "id": "97c5cea9-4414-45e6-a0d0-1792994fe20f",
+    "timestamp": "2025-12-01T18:02:43.428554Z",
+    "timestamp_ist": "2025-12-01 23:32:43",
+    "action": "FORM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "b7f627ef7af404ef9bc2d1e563e18484559325e033ff4f2c2752bf5c28aa8a84",
+    "hash": "243d4199ada7aceca4d40752e4f23dc5b920fac11073076557157ee5a069303a"
+  },
+  {
+    "id": "1e74938f-4d1c-4c1e-8535-caf8f2798895",
+    "timestamp": "2025-12-01T18:04:23.875928Z",
+    "timestamp_ist": "2025-12-01 23:34:23",
+    "action": "FORM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "243d4199ada7aceca4d40752e4f23dc5b920fac11073076557157ee5a069303a",
+    "hash": "9148275ed9f2c85bc18a4685a0a04329c580cebd156a2b77fe7f368665f4b8bc"
+  },
+  {
+    "id": "f2ec29c6-a775-4cbb-a63a-5f36a9223d50",
+    "timestamp": "2025-12-01T18:17:20.433191Z",
+    "timestamp_ist": "2025-12-01 23:47:20",
+    "action": "SYSTEM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "9148275ed9f2c85bc18a4685a0a04329c580cebd156a2b77fe7f368665f4b8bc",
+    "hash": "aa724a441c70f5bf2989ff388f1ba8c890ec9c4b35ed68798a6381a7b8bca4e6"
+  },
+  {
+    "id": "d25d4f55-7560-4ada-a9a3-a60ab62a2ac6",
+    "timestamp": "2025-12-01T18:22:55.580547Z",
+    "timestamp_ist": "2025-12-01 23:52:55",
+    "action": "SYSTEM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "aa724a441c70f5bf2989ff388f1ba8c890ec9c4b35ed68798a6381a7b8bca4e6",
+    "hash": "590bfcfa48882c1fc59150e5439916c91d0983e3e5676db6d10f38de16f0ad94"
+  },
+  {
+    "id": "16e8f60a-f5b4-4fba-bdc2-3807960fb0b8",
+    "timestamp": "2025-12-01T18:23:08.298435Z",
+    "timestamp_ist": "2025-12-01 23:53:08",
+    "action": "SYSTEM_CONFIG_UPDATE",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "updated_by": "admin"
+    },
+    "status": "success",
+    "prev_hash": "590bfcfa48882c1fc59150e5439916c91d0983e3e5676db6d10f38de16f0ad94",
+    "hash": "b74948bca46526a1b25223d4337a97795fe6cf1ebe8bbfaa7cb62ea5cc7f093c"
+  },
+  {
+    "id": "21bf8948-b706-4db2-9857-9666f047ccbf",
+    "timestamp": "2025-12-01T18:35:32.640331Z",
+    "timestamp_ist": "2025-12-02 00:05:32",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "officer",
+    "details": {
+      "status": "success",
+      "role": "officer"
+    },
+    "status": "success",
+    "prev_hash": "b74948bca46526a1b25223d4337a97795fe6cf1ebe8bbfaa7cb62ea5cc7f093c",
+    "hash": "59560f9b5adbbbfc0315c38e99926106e636423e39816474a9511450acb0de57"
+  },
+  {
+    "id": "30effb07-f700-4e95-bb20-045c9e9fb94e",
+    "timestamp": "2025-12-01T18:37:02.464962Z",
+    "timestamp_ist": "2025-12-02 00:07:02",
+    "action": "NEW_PERSON_SURVEILLANCE_REQUEST",
+    "target": "Pankaj Chavan",
+    "user": "officer",
+    "details": {
+      "person_type": "criminal",
+      "priority": 1,
+      "reason": "hij"
+    },
+    "status": "success",
+    "prev_hash": "59560f9b5adbbbfc0315c38e99926106e636423e39816474a9511450acb0de57",
+    "hash": "ad2ec43dda869773eea40b56c9d58980b61c314fd75ebacc0f6be22398e9ba8e"
+  },
+  {
+    "id": "e37a4fea-8909-4cb5-b909-1cf5ccddd27e",
+    "timestamp": "2025-12-01T18:37:16.048057Z",
+    "timestamp_ist": "2025-12-02 00:07:16",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "ad2ec43dda869773eea40b56c9d58980b61c314fd75ebacc0f6be22398e9ba8e",
+    "hash": "226b2c7e32403782cac5252eaa8a0475ab9185a837c4296ed6e6295976339ba8"
+  },
+  {
+    "id": "3b90144e-6aa8-458e-9113-c8fce3bf3276",
+    "timestamp": "2025-12-01T18:41:34.247064Z",
+    "timestamp_ist": "2025-12-02 00:11:34",
+    "action": "SURVEILLANCE_REQUEST",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "db_type": "criminal",
+      "priority": 3,
+      "reason": "hi"
+    },
+    "status": "success",
+    "prev_hash": "226b2c7e32403782cac5252eaa8a0475ab9185a837c4296ed6e6295976339ba8",
+    "hash": "317589c66b782f88900dede4ac41f502c148300ee82a234f066142628bbf3d00"
+  },
+  {
+    "id": "d9e280ef-55b5-4841-871d-66a10a929b1f",
+    "timestamp": "2025-12-01T18:41:56.000294Z",
+    "timestamp_ist": "2025-12-02 00:11:56",
+    "action": "SURVEILLANCE_REJECTED",
+    "target": "pending-criminal-2bf4fcba",
+    "user": "admin",
+    "details": {
+      "rejected_by": "admin",
+      "requested_by": "officer",
+      "reason": ""
+    },
+    "status": "success",
+    "prev_hash": "317589c66b782f88900dede4ac41f502c148300ee82a234f066142628bbf3d00",
+    "hash": "177fdb526373546469983660f8456ef13ff6f1f8c370aec5104efa9e467472a9"
+  },
+  {
+    "id": "8a763c90-a8f4-4485-9aae-f930bd2cf222",
+    "timestamp": "2025-12-01T18:42:09.771053Z",
+    "timestamp_ist": "2025-12-02 00:12:09",
+    "action": "SURVEILLANCE_REJECTED",
+    "target": "pankaj-chavan-16b6f1a3",
+    "user": "admin",
+    "details": {
+      "rejected_by": "admin",
+      "requested_by": "admin",
+      "reason": ""
+    },
+    "status": "success",
+    "prev_hash": "177fdb526373546469983660f8456ef13ff6f1f8c370aec5104efa9e467472a9",
+    "hash": "b58471eb90b3460518380f6729f73ea418020fb0895d5c25ad1d9ef66d060058"
+  },
+  {
+    "id": "d3a83027-2d28-44f1-b98a-2198c7d32548",
+    "timestamp": "2025-12-01T18:52:12.413163Z",
+    "timestamp_ist": "2025-12-02 00:22:12",
+    "action": "NEW_PERSON_SURVEILLANCE_REQUEST",
+    "target": "Pankaj",
+    "user": "admin",
+    "details": {
+      "person_type": "criminal",
+      "priority": 3,
+      "reason": "ji"
+    },
+    "status": "success",
+    "prev_hash": "b58471eb90b3460518380f6729f73ea418020fb0895d5c25ad1d9ef66d060058",
+    "hash": "640c19b4c6f6f508f61c65036bf4d41c61cadce93fffbb759dd761b907cf6832"
+  },
+  {
+    "id": "28830eb9-4f29-4a83-99a5-25c870f7e0b9",
+    "timestamp": "2025-12-01T19:06:35.984680Z",
+    "timestamp_ist": "2025-12-02 00:36:35",
+    "action": "SURVEILLANCE_REJECTED",
+    "target": "pending-criminal-b2f83e86",
+    "user": "admin",
+    "details": {
+      "rejected_by": "admin",
+      "requested_by": "admin",
+      "reason": ""
+    },
+    "status": "success",
+    "prev_hash": "640c19b4c6f6f508f61c65036bf4d41c61cadce93fffbb759dd761b907cf6832",
+    "hash": "6faf6a9215ae76bcd238e8dc87345c4e6adce6f09b67aa78ae745d860dc91365"
+  },
+  {
+    "id": "7214292d-1243-4f78-98d2-49b7efe4c1a1",
+    "timestamp": "2025-12-01T19:08:01.868533Z",
+    "timestamp_ist": "2025-12-02 00:38:01",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "officer",
+    "details": {
+      "status": "success",
+      "role": "officer"
+    },
+    "status": "success",
+    "prev_hash": "6faf6a9215ae76bcd238e8dc87345c4e6adce6f09b67aa78ae745d860dc91365",
+    "hash": "e1de9d65c615c5b59e521e86ba6caf5fdab5f8971e21a55ee2f4316dac104551"
+  },
+  {
+    "id": "f9a55730-bbd2-407c-bc3f-56faa2cdfd8b",
+    "timestamp": "2025-12-01T19:08:32.650080Z",
+    "timestamp_ist": "2025-12-02 00:38:32",
+    "action": "NEW_PERSON_SURVEILLANCE_REQUEST",
+    "target": "Pankaj Chavan",
+    "user": "officer",
+    "details": {
+      "person_type": "criminal",
+      "priority": 3,
+      "reason": "/admin/surveillance_requests"
+    },
+    "status": "success",
+    "prev_hash": "e1de9d65c615c5b59e521e86ba6caf5fdab5f8971e21a55ee2f4316dac104551",
+    "hash": "acd0b5290dbe5fd57441e117ea0856591154ea60e5ac55a7246e23b577eb1c24"
+  },
+  {
+    "id": "24fbd27c-e14a-4edf-a8e4-f0e61d4aebe9",
+    "timestamp": "2025-12-01T19:08:42.591768Z",
+    "timestamp_ist": "2025-12-02 00:38:42",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "acd0b5290dbe5fd57441e117ea0856591154ea60e5ac55a7246e23b577eb1c24",
+    "hash": "7e1a1719228823a35140f8b7a9f3d66532db6a39d6441b7a8f3fc11408456cb9"
+  },
+  {
+    "id": "6da5eee4-9ede-46e1-8790-552aaff6118e",
+    "timestamp": "2025-12-01T19:09:39.761776Z",
+    "timestamp_ist": "2025-12-02 00:39:39",
+    "action": "SURVEILLANCE_REJECTED",
+    "target": "pending-criminal-560498fb",
+    "user": "admin",
+    "details": {
+      "rejected_by": "admin",
+      "requested_by": "officer",
+      "reason": ""
+    },
+    "status": "success",
+    "prev_hash": "7e1a1719228823a35140f8b7a9f3d66532db6a39d6441b7a8f3fc11408456cb9",
+    "hash": "c84100eb602f7b1eb41016e56ae2ea9269541ad95b56f2fb7dee77a746b66b4d"
+  },
+  {
+    "id": "aad48c76-4bd8-43d9-9053-e1444c745a05",
+    "timestamp": "2025-12-01T19:11:34.809247Z",
+    "timestamp_ist": "2025-12-02 00:41:34",
+    "action": "NEW_PERSON_SURVEILLANCE_REQUEST",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_type": "criminal",
+      "priority": 3,
+      "reason": "Murder"
+    },
+    "status": "success",
+    "prev_hash": "c84100eb602f7b1eb41016e56ae2ea9269541ad95b56f2fb7dee77a746b66b4d",
+    "hash": "e5d890f67e9d5f677c793557f57b88e4d5687ea5321784489bb2a4784ed513dc"
+  },
+  {
+    "id": "fe922922-e3df-4161-bd4a-0786121a4969",
+    "timestamp": "2025-12-01T19:11:50.814850Z",
+    "timestamp_ist": "2025-12-02 00:41:50",
+    "action": "SURVEILLANCE_APPROVED",
+    "target": "pending-criminal-2b9ca83e",
+    "user": "admin",
+    "details": {
+      "approved_by": "admin",
+      "requested_by": "admin",
+      "priority": 3
+    },
+    "status": "success",
+    "prev_hash": "e5d890f67e9d5f677c793557f57b88e4d5687ea5321784489bb2a4784ed513dc",
+    "hash": "71179c9a9c82270874ba0f4e50513bdaa3e358e6261acc3e7dfcf742e8bfe45c"
+  },
+  {
+    "id": "4e8c77c5-08f7-4829-a468-047de2e72c5c",
+    "timestamp": "2025-12-01T19:12:46.930380Z",
+    "timestamp_ist": "2025-12-02 00:42:46",
+    "action": "NEW_PERSON_SURVEILLANCE_REQUEST",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_type": "missing",
+      "priority": 3,
+      "reason": "hi"
+    },
+    "status": "success",
+    "prev_hash": "71179c9a9c82270874ba0f4e50513bdaa3e358e6261acc3e7dfcf742e8bfe45c",
+    "hash": "23ae3b970261d57b1f4ea4f8d9cdcfa4b67e61b50050acfd973cf1e6d2a8603e"
+  },
+  {
+    "id": "03549017-efe9-44f2-8ad2-e03c7fa416f2",
+    "timestamp": "2025-12-01T19:13:01.912934Z",
+    "timestamp_ist": "2025-12-02 00:43:01",
+    "action": "SURVEILLANCE_APPROVED",
+    "target": "pending-missing-074356ea",
+    "user": "admin",
+    "details": {
+      "approved_by": "admin",
+      "requested_by": "admin",
+      "priority": 3
+    },
+    "status": "success",
+    "prev_hash": "23ae3b970261d57b1f4ea4f8d9cdcfa4b67e61b50050acfd973cf1e6d2a8603e",
+    "hash": "0cefc0e768d27e31e65619f9f52855441f550bfabe12970c09218dc90c82a96a"
+  },
+  {
+    "id": "5612b40a-e11f-4234-8e61-2e821125cb97",
+    "timestamp": "2025-12-01T22:08:15.664594Z",
+    "timestamp_ist": "2025-12-02 03:38:15",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "women",
+    "details": {
+      "status": "success",
+      "role": "women"
+    },
+    "status": "success",
+    "prev_hash": "0cefc0e768d27e31e65619f9f52855441f550bfabe12970c09218dc90c82a96a",
+    "hash": "f29e0426943195c8466edb693a230b3e3e02242e1f32f6d92d84ba004630d61f"
+  },
+  {
+    "id": "8342d8c5-0574-4118-8ddf-250bc8e60c9c",
+    "timestamp": "2025-12-01T22:08:28.661168Z",
+    "timestamp_ist": "2025-12-02 03:38:28",
+    "action": "SOS_EMERGENCY",
+    "target": "SOS Alert triggered at Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+    "user": "women_portal",
+    "details": {},
+    "status": "success",
+    "prev_hash": "f29e0426943195c8466edb693a230b3e3e02242e1f32f6d92d84ba004630d61f",
+    "hash": "cd6687b22aa537c666d0f074b58d11f0963b1a1efe8e03107f541cd848076034"
+  },
+  {
+    "id": "a1a8172a-e169-4022-993a-aba5231ef541",
+    "timestamp": "2025-12-01T22:12:25.825388Z",
+    "timestamp_ist": "2025-12-02 03:42:25",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "women",
+    "details": {
+      "status": "success",
+      "role": "women"
+    },
+    "status": "success",
+    "prev_hash": "cd6687b22aa537c666d0f074b58d11f0963b1a1efe8e03107f541cd848076034",
+    "hash": "005bf48fff01fdc741ebdf440c25260fb17a46184ce14496c18d612127d14a3c"
+  },
+  {
+    "id": "8f47954b-d739-4f38-a2ef-867d32cea6d7",
+    "timestamp": "2025-12-01T22:15:54.456863Z",
+    "timestamp_ist": "2025-12-02 03:45:54",
+    "action": "SOS_EMERGENCY",
+    "target": "SOS Alert triggered at Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+    "user": "women_portal",
+    "details": {
+      "name": "Anushka Sahu",
+      "phone": "9022442848",
+      "contacts_notified": 0
+    },
+    "status": "success",
+    "prev_hash": "005bf48fff01fdc741ebdf440c25260fb17a46184ce14496c18d612127d14a3c",
+    "hash": "256383f656f418ab85c521d1f1ed3feb73f841ab0b84f163d45b07950628b40c"
+  },
+  {
+    "id": "fe7a7e0b-3f75-4d83-9a27-36aa0c34647d",
+    "timestamp": "2025-12-01T22:17:00.981937Z",
+    "timestamp_ist": "2025-12-02 03:47:00",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "officer",
+    "details": {
+      "status": "success",
+      "role": "officer"
+    },
+    "status": "success",
+    "prev_hash": "256383f656f418ab85c521d1f1ed3feb73f841ab0b84f163d45b07950628b40c",
+    "hash": "a73bf27aaad0eb37c751a0fae124f2a0bd10b2dc0afbc03502edbcf6ea0cd35e"
+  },
+  {
+    "id": "b97a432f-76cd-4c3b-a960-5211fa2f6116",
+    "timestamp": "2025-12-01T22:17:05.298376Z",
+    "timestamp_ist": "2025-12-02 03:47:05",
+    "action": "OFFICER_VIEW_ALERTS",
+    "target": "3 alerts",
+    "user": "officer",
+    "details": {},
+    "status": "success",
+    "prev_hash": "a73bf27aaad0eb37c751a0fae124f2a0bd10b2dc0afbc03502edbcf6ea0cd35e",
+    "hash": "74109d1f019858847f028cf0707f3bacaa09f8ffd01d1884e2c50f4d0a286df5"
+  },
+  {
+    "id": "60119ba8-5ce6-44df-b0ac-f9c8e74d8e28",
+    "timestamp": "2025-12-01T22:21:57.537943Z",
+    "timestamp_ist": "2025-12-02 03:51:57",
+    "action": "LOGIN",
+    "target": "System",
+    "user": "admin",
+    "details": {
+      "status": "success",
+      "role": "admin"
+    },
+    "status": "success",
+    "prev_hash": "74109d1f019858847f028cf0707f3bacaa09f8ffd01d1884e2c50f4d0a286df5",
+    "hash": "9447b5aa9ce18cac21df144019f48777be4d42666df40cb6b2ddd6d0d32ad9cb"
+  },
+  {
+    "id": "194d82e2-9fe5-42ee-9f96-3c28e313ab8c",
+    "timestamp": "2025-12-01T22:23:20.372407Z",
+    "timestamp_ist": "2025-12-02 03:53:20",
+    "action": "ALERT_DELETE",
+    "target": "Anushka Sahu - SOS Alert",
+    "user": "admin",
+    "details": {
+      "person_id": "sos-5a425cfe",
+      "detections_deleted": 0
+    },
+    "status": "success",
+    "prev_hash": "9447b5aa9ce18cac21df144019f48777be4d42666df40cb6b2ddd6d0d32ad9cb",
+    "hash": "102ee95894c01a481eefc02805301cf596b83390e053cf8f68569d721dc9fd42"
+  },
+  {
+    "id": "3a36566f-c556-42a9-abb4-114cb5a28460",
+    "timestamp": "2025-12-01T22:23:25.786903Z",
+    "timestamp_ist": "2025-12-02 03:53:25",
+    "action": "ALERT_DELETE",
+    "target": "WOMAN IN DISTRESS - SOS",
+    "user": "admin",
+    "details": {
+      "person_id": "sos-7b6748e8",
+      "detections_deleted": 0
+    },
+    "status": "success",
+    "prev_hash": "102ee95894c01a481eefc02805301cf596b83390e053cf8f68569d721dc9fd42",
+    "hash": "c836809a36446bf4197588b0d3cdf93ce377bb6cd5e4537e0e0a7b29846ba28a"
+  },
+  {
+    "id": "328a6ae6-7f14-4691-a147-7901f5f0814a",
+    "timestamp": "2025-12-01T22:23:30.097443Z",
+    "timestamp_ist": "2025-12-02 03:53:30",
+    "action": "ALERT_DELETE",
+    "target": "WOMAN IN DISTRESS - SOS",
+    "user": "admin",
+    "details": {
+      "person_id": "sos-bcbd3b5b",
+      "detections_deleted": 0
+    },
+    "status": "success",
+    "prev_hash": "c836809a36446bf4197588b0d3cdf93ce377bb6cd5e4537e0e0a7b29846ba28a",
+    "hash": "350bd7d954320a8cdda86a320ebfedd0b596527ef303b274af314894778696c8"
+  },
+  {
+    "id": "45819309-8376-4e2c-9e29-09393bccfbe2",
+    "timestamp": "2025-12-01T22:23:33.629859Z",
+    "timestamp_ist": "2025-12-02 03:53:33",
+    "action": "ALERT_DELETE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-pankaj-chavan-b5c52033",
+      "detections_deleted": 1
+    },
+    "status": "success",
+    "prev_hash": "350bd7d954320a8cdda86a320ebfedd0b596527ef303b274af314894778696c8",
+    "hash": "8a70c8b51fc1d4bf3cd00cc985878c3f925077477fd8ae861da896c4a401b73a"
+  },
+  {
+    "id": "8a5d6c21-a158-455a-9933-fea186c331e3",
+    "timestamp": "2025-12-01T22:26:12.761143Z",
+    "timestamp_ist": "2025-12-02 03:56:12",
+    "action": "OFFICER_VIEW_ALERTS",
+    "target": "1 alerts",
+    "user": "admin",
+    "details": {},
+    "status": "success",
+    "prev_hash": "8a70c8b51fc1d4bf3cd00cc985878c3f925077477fd8ae861da896c4a401b73a",
+    "hash": "33adde21523cd7d39aaf55893ecebb267fc688bbe2acdefd75fc7c0fe6561ac3"
+  },
+  {
+    "id": "2b86816d-7540-4da9-99e7-854c41b68d99",
+    "timestamp": "2025-12-01T22:26:19.037915Z",
+    "timestamp_ist": "2025-12-02 03:56:19",
+    "action": "OFFICER_VIEW_ALERTS",
+    "target": "1 alerts",
+    "user": "admin",
+    "details": {},
+    "status": "success",
+    "prev_hash": "33adde21523cd7d39aaf55893ecebb267fc688bbe2acdefd75fc7c0fe6561ac3",
+    "hash": "9a329e20f756601ef659830cad5372639425ceb9512a7f754c6aa7c343102baa"
+  },
+  {
+    "id": "20879cd1-274d-4253-8310-fac3271e1a98",
+    "timestamp": "2025-12-01T22:26:24.868707Z",
+    "timestamp_ist": "2025-12-02 03:56:24",
+    "action": "OFFICER_VIEW_ALERTS",
+    "target": "1 alerts",
+    "user": "admin",
+    "details": {},
+    "status": "success",
+    "prev_hash": "9a329e20f756601ef659830cad5372639425ceb9512a7f754c6aa7c343102baa",
+    "hash": "3730e0c6ce063a92a7a22c29abed984b6148fa7e4ad232c342e2b64f5b962228"
+  },
+  {
+    "id": "98f63961-544e-457e-9904-4400de423199",
+    "timestamp": "2025-12-01T22:26:26.013317Z",
+    "timestamp_ist": "2025-12-02 03:56:26",
+    "action": "OFFICER_VIEW_ALERTS",
+    "target": "1 alerts",
+    "user": "admin",
+    "details": {},
+    "status": "success",
+    "prev_hash": "3730e0c6ce063a92a7a22c29abed984b6148fa7e4ad232c342e2b64f5b962228",
+    "hash": "f7763481ba5fab9a5e95623b20deb025aa5d6134c40d9b6048ffa626363fe198"
+  },
+  {
+    "id": "17736c7e-6385-414d-91d6-2c0b87774c2d",
+    "timestamp": "2025-12-01T22:26:45.299204Z",
+    "timestamp_ist": "2025-12-02 03:56:45",
+    "action": "ALERT_DELETE",
+    "target": "Pankaj Chavan",
+    "user": "admin",
+    "details": {
+      "person_id": "missing-pankaj-chavan-b5c52033",
+      "detections_deleted": 2
+    },
+    "status": "success",
+    "prev_hash": "f7763481ba5fab9a5e95623b20deb025aa5d6134c40d9b6048ffa626363fe198",
+    "hash": "83230018ca6e9a6f86c21f60ed2e5ee44b4a9e8b8b3d63f46a27bd5de0c7b925"
   }
 ]

@@ -1,0 +1,26 @@
+{
+  "id": "missing-pankaj-chavan-b5c52033",
+  "name": "Pankaj Chavan",
+  "db_type": "missing",
+  "priority": 3,
+  "image_filename": "missing-pankaj-chavan-b5c52033.jpg",
+  "phone": null,
+  "aadhaar": null,
+  "guardian_phone": "902244288",
+  "missing_aadhaar": "",
+  "submitted_gender": "Male",
+  "predicted_gender": null,
+  "predicted_age": null,
+  "detections": [
+    {
+      "timestamp": "2025-12-01T22:26:52.087472Z",
+      "match_percentage": 69.31,
+      "capture_frame": "missing-pankaj-chavan-b5c52033_1764628012.jpg"
+    },
+    {
+      "timestamp": "2025-12-01T22:27:04.898728Z",
+      "match_percentage": 58.84,
+      "capture_frame": "missing-pankaj-chavan-b5c52033_1764628024.jpg"
+    }
+  ]
+}

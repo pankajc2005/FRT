@@ -48,7 +48,9 @@
                 <span>Indian Police<br>Department</span>
             </div>
             <nav class="sidebar-nav">
-                {% set user_role = current_user.role if current_user.is_authenticated and current_user.role is defined else 'admin' %}
+                {% set raw_role = current_user.role if current_user.is_authenticated and current_user.role is defined else 'admin' %}
+                {% set officer_endpoints = ['officer_dashboard', 'officer_search_persons', 'officer_request_surveillance', 'officer_request_new_person_surveillance'] %}
+                {% set user_role = 'officer' if request.endpoint in officer_endpoints else raw_role %}
                 
                 {% if user_role == 'officer' %}
                 <!-- Officer Portal Navigation - Limited Access -->
@@ -100,7 +102,7 @@
                     <i class="fas fa-video"></i>
                     <span>Surveillance</span>
                 </a>
-                <a href="{{ url_for('alerts_dashboard') }}" class="nav-item {% if 'alerts' in request.endpoint %}active{% endif %}">
+                <a href="{{ url_for('alerts_dashboard') }}" class="nav-item {% if request.endpoint == 'alerts_dashboard' %}active{% endif %}">
                     <i class="fas fa-bell"></i>
                     <span>Alert DB</span>
                 </a>
@@ -108,10 +110,19 @@
                     <i class="fas fa-list-alt"></i>
                     <span>Activity Log</span>
                 </a>
+                <a href="{{ url_for('surveillance_requests_page') }}" class="nav-item {% if request.endpoint == 'surveillance_requests_page' %}active{% endif %}" style="position: relative;">
+                    <i class="fas fa-video"></i>
+                    <span>Surveillance Requests</span>
+                    {% if surveillance_request_count and surveillance_request_count > 0 %}
+                    <span class="badge-count">{{ surveillance_request_count }}</span>
+                    {% endif %}
+                </a>
+                {% if aadhaar_enabled %}
                 <a href="#" class="nav-item">
                     <i class="fas fa-database"></i>
                     <span>Aadhaar DB</span>
                 </a>
+                {% endif %}
                 {% endif %}
             </nav>
             <div class="sidebar-footer">
@@ -140,11 +151,11 @@
                 </div>
                 <div class="top-actions">
                     {% block header_actions %}{% endblock %}
-                    <div class="user-info">
+                    <a href="{% if user_role == 'admin' %}{{ url_for('admin_settings') }}{% else %}#{% endif %}" class="user-info" style="text-decoration: none; cursor: pointer;" title="{% if user_role == 'admin' %}Admin Settings{% else %}Profile{% endif %}">
                         <i class="fas fa-user-circle" style="font-size: 1.3rem; color: #666;"></i>
                         <span class="username">{{ current_user.username }}</span>
                         <span class="role-badge {{ user_role }}">{{ user_role }}</span>
-                    </div>
+                    </a>
                 </div>
             </header>
             

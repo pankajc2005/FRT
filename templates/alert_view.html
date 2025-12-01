@@ -257,6 +257,8 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 8px;
     }
     
     .match-percentage {
@@ -481,19 +483,23 @@
                         </span>
                     </div>
                     {% if alert.db_type == 'criminal' %}
-                    <div class="info-row">
+                    {% if aadhaar_enabled %}
+                    <div class="info-item">
                         <span class="info-label">Aadhaar</span>
                         <span class="info-value">{{ alert.aadhaar or 'Not Available' }}</span>
                     </div>
+                    {% endif %}
                     <div class="info-row">
                         <span class="info-label">Phone</span>
                         <span class="info-value">{{ alert.phone or 'Not Available' }}</span>
                     </div>
                     {% else %}
-                    <div class="info-row">
+                    {% if aadhaar_enabled %}
+                    <div class="info-item">
                         <span class="info-label">Aadhaar</span>
                         <span class="info-value">{{ alert.missing_aadhaar or 'Not Available' }}</span>
                     </div>
+                    {% endif %}
                     <div class="info-row">
                         <span class="info-label">Guardian Phone</span>
                         <span class="info-value">{{ alert.guardian_phone or 'Not Available' }}</span>
@@ -622,6 +628,10 @@
                                     <span class="timestamp">
                                         <i class="fas fa-clock"></i> 
                                         {{ detection.timestamp|utc_to_ist }}
+                                    </span>
+                                    <span class="camera-location" style="color: #374151; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-video" style="color: #1e40af;"></i>
+                                        {{ detection.camera_location or alert.camera_location or 'Own system webcam' }}
                                     </span>
                                 </div>
                                 

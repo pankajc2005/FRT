@@ -2,10 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 import os
 import json
 import uuid
+import shutil
 import time
 import cv2
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -33,6 +34,8 @@ import threading
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
 logger = logging.getLogger("TriNetra")
+
+IST = timezone(timedelta(hours=5, minutes=30))
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey_fallback_change_in_prod')
@@ -91,7 +94,7 @@ def send_email_alert(subject, body, recipients, alert_type='general', attachment
                             {body}
                         </div>
                         <p style="color: #666; font-size: 12px; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
-                            ⏰ Alert Time: {(datetime.utcnow() + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M:%S')} IST<br>
+                            ⏰ Alert Time: {datetime.now(timezone.utc).astimezone(IST).strftime('%Y-%m-%d %H:%M:%S')} IST<br>
                             📍 This is an automated alert from TRI-NETRA Surveillance System.<br>
                             🔒 Please treat this information as confidential.
                         </p>
@@ -170,8 +173,8 @@ def send_criminal_match_email(person_name, confidence, db_type, location='Dashbo
                          alert_type='critical',
                          attachment_path=capture_path)
 
-def send_sos_email(location, coordinates, address):
-    """Send email for women SOS emergency - goes to officers"""
+def send_sos_email(location, coordinates, address, woman_name, woman_phone, contacts_count):
+    """Send email for women SOS emergency - notifies admins and officers"""
     logger.info(f"📧 Preparing SOS email - Location: {address}, Coords: {coordinates}")
     
     subject = "🆘 EMERGENCY SOS ALERT - WOMAN IN DISTRESS"
@@ -184,6 +187,12 @@ def send_sos_email(location, coordinates, address):
     
     body = f"""
     <p style="color: #dc2626; font-size: 18px; font-weight: bold;">⚠️ IMMEDIATE RESPONSE REQUIRED!</p>
+    <p><strong>👩 Woman Details:</strong></p>
+    <ul style="list-style: none; padding-left: 0;">
+        <li>👤 <strong>Name:</strong> {woman_name}</li>
+        <li>📞 <strong>Phone:</strong> <a href="tel:{woman_phone}" style="color: #dc2626; text-decoration: none;">{woman_phone}</a></li>
+        <li>👥 <strong>Trusted Contacts Notified:</strong> {contacts_count}</li>
+    </ul>
     <p><strong>📍 Location Details:</strong></p>
     <ul style="list-style: none; padding-left: 0;">
         <li>🗺️ <strong>Address:</strong> {address or 'Address not available'}</li>
@@ -351,6 +360,7 @@ app.config['ALERTS_FOLDER'] = 'data/alerts'
 app.config['SYSTEM_ALERTS_FOLDER'] = 'data/system_alerts'
 app.config['SYSTEM_ALERTS_FILE'] = 'data/system_alerts/alerts.json'
 app.config['ACTIVITY_LOG_FILE'] = 'data/system_alerts/activity_log.json'
+app.config['USERS_FILE'] = 'data/users.json'
 
 # Ensure directories exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -371,7 +381,34 @@ def inject_alert_count():
                 alerts = json.load(f)
                 count = len([a for a in alerts if not a.get('read', False)])
         except: pass
-    return dict(system_alert_count=count)
+    
+    # Count pending surveillance requests
+    surveillance_count = 0
+    surveillance_file = 'data/surveillance_requests.json'
+    if os.path.exists(surveillance_file):
+        try:
+            with open(surveillance_file, 'r') as f:
+                requests = json.load(f)
+                surveillance_count = len([r for r in requests if r.get('status') == 'pending'])
+        except: pass
+    
+    # Load system configuration for all templates
+    system_config = {}
+    system_config_file = 'data/system_config.json'
+    if os.path.exists(system_config_file):
+        try:
+            with open(system_config_file, 'r') as f:
+                system_config = json.load(f)
+        except: pass
+    
+    aadhaar_enabled = system_config.get('features', {}).get('aadhaar_system', {}).get('enabled', True)
+    
+    return dict(
+        system_alert_count=count,
+        surveillance_request_count=surveillance_count,
+        aadhaar_enabled=aadhaar_enabled,
+        system_config=system_config
+    )
 
 import hashlib
 
@@ -392,13 +429,12 @@ def log_activity(action, target, user=None, details=None, status='success'):
             activities = []
     
     # Create activity entry with timestamp
-    ist_offset = timedelta(hours=5, minutes=30)
-    utc_now = datetime.utcnow()
-    ist_now = utc_now + ist_offset
+    utc_now = datetime.now(timezone.utc)
+    ist_now = utc_now.astimezone(IST)
     
     entry = {
         'id': str(uuid.uuid4()),
-        'timestamp': utc_now.isoformat() + 'Z',
+        'timestamp': utc_now.isoformat().replace('+00:00', 'Z'),
         'timestamp_ist': ist_now.strftime('%Y-%m-%d %H:%M:%S'),
         'action': action,
         'target': target,
@@ -425,6 +461,7 @@ def log_activity(action, target, user=None, details=None, status='success'):
 
 def create_officer_alert(person_id, name, image_filename, db_type, priority=3, is_wanted=False):
     """Create an alert for officers when admin adds a new person to database"""
+    utc_now = datetime.now(timezone.utc)
     alert_data = {
         'id': person_id,
         'name': name,
@@ -432,9 +469,10 @@ def create_officer_alert(person_id, name, image_filename, db_type, priority=3, i
         'db_type': db_type,  # 'criminal', 'missing', 'wanted'
         'priority': priority,
         'is_wanted': is_wanted,
-        'created_at': datetime.utcnow().isoformat() + 'Z',
-        'created_at_ist': (datetime.utcnow() + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M:%S'),
+        'created_at': utc_now.isoformat().replace('+00:00', 'Z'),
+        'created_at_ist': utc_now.astimezone(IST).strftime('%Y-%m-%d %H:%M:%S'),
         'status': 'active',
+        'camera_location': 'Own system webcam',
         'detections': []
     }
     
@@ -563,6 +601,549 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/admin/settings')
+@login_required
+def admin_settings():
+    """Admin settings page - manage forms, fields, and officers"""
+    # Load form configurations
+    form_config_file = 'data/form_config.json'
+    if os.path.exists(form_config_file):
+        with open(form_config_file, 'r') as f:
+            form_config = json.load(f)
+    else:
+        # Default form configuration
+        form_config = {
+            'criminal': {
+                'name': {'label': 'Suspect Name', 'type': 'text', 'required': True, 'enabled': True},
+                'aadhaar': {'label': 'Aadhaar Number', 'type': 'text', 'required': False, 'enabled': True},
+                'phone': {'label': 'Phone Number', 'type': 'tel', 'required': True, 'enabled': True},
+                'gender': {'label': 'Gender', 'type': 'select', 'required': True, 'enabled': True, 'options': ['Male', 'Female', 'Other']},
+                'age': {'label': 'Age', 'type': 'number', 'required': False, 'enabled': True},
+                'priority': {'label': 'Surveillance Priority', 'type': 'select', 'required': True, 'enabled': True},
+                'crime_details': {'label': 'Crime Details', 'type': 'textarea', 'required': False, 'enabled': True}
+            },
+            'missing': {
+                'name': {'label': 'Missing Person Name', 'type': 'text', 'required': True, 'enabled': True},
+                'missing_aadhaar': {'label': 'Aadhaar Number', 'type': 'text', 'required': False, 'enabled': True},
+                'guardian_phone': {'label': 'Guardian Phone', 'type': 'tel', 'required': True, 'enabled': True},
+                'gender': {'label': 'Gender', 'type': 'select', 'required': True, 'enabled': True, 'options': ['Male', 'Female', 'Other']},
+                'age': {'label': 'Age', 'type': 'number', 'required': False, 'enabled': True},
+                'last_seen': {'label': 'Last Seen Location', 'type': 'text', 'required': False, 'enabled': True},
+                'missing_since': {'label': 'Missing Since', 'type': 'date', 'required': False, 'enabled': True},
+                'description': {'label': 'Description', 'type': 'textarea', 'required': False, 'enabled': True}
+            },
+            'wanted': {
+                'name': {'label': 'Suspect Name', 'type': 'text', 'required': True, 'enabled': True},
+                'aadhaar': {'label': 'Aadhaar Number', 'type': 'text', 'required': False, 'enabled': True},
+                'phone': {'label': 'Phone Number', 'type': 'tel', 'required': False, 'enabled': True},
+                'gender': {'label': 'Gender', 'type': 'select', 'required': True, 'enabled': True, 'options': ['Male', 'Female', 'Other']},
+                'age': {'label': 'Age', 'type': 'number', 'required': False, 'enabled': True},
+                'crime_details': {'label': 'Crime Details', 'type': 'textarea', 'required': False, 'enabled': True}
+            }
+        }
+    
+    # Load officers data
+    officers = []
+    if os.path.exists(app.config['USERS_FILE']):
+        with open(app.config['USERS_FILE'], 'r') as f:
+            users_data = json.load(f)
+            # Handle both dict format (old) and list format (new)
+            if isinstance(users_data, dict):
+                for username, user_info in users_data.items():
+                    if user_info.get('role') == 'officer':
+                        user_info['id'] = username
+                        user_info['username'] = username
+                        officers.append(user_info)
+            elif isinstance(users_data, list):
+                officers = [u for u in users_data if u.get('role') == 'officer']
+    
+    # Load officer activity logs
+    activity_logs = []
+    activity_log_file = 'data/system_alerts/activity_log.json'
+    if os.path.exists(activity_log_file):
+        try:
+            with open(activity_log_file, 'r') as f:
+                all_logs = json.load(f)
+                # Filter officer-specific activities
+                activity_logs = [log for log in all_logs if log.get('user') and log.get('user') != 'admin'][-50:]  # Last 50
+        except:
+            pass
+    
+    # Load system configuration
+    system_config = {}
+    system_config_file = 'data/system_config.json'
+    if os.path.exists(system_config_file):
+        with open(system_config_file, 'r') as f:
+            system_config = json.load(f)
+    
+    return render_template('admin_settings.html', 
+                         form_config=form_config, 
+                         officers=officers,
+                         activity_logs=activity_logs,
+                         system_config=system_config)
+
+@app.route('/admin/settings/save_form_config', methods=['POST'])
+@login_required
+def save_form_config():
+    """Save form field configuration"""
+    try:
+        data = request.json
+        form_config_file = 'data/form_config.json'
+        
+        # Validate data structure
+        if not data or not isinstance(data, dict):
+            return jsonify({'status': 'error', 'message': 'Invalid configuration data'}), 400
+        
+        # Save with pretty formatting
+        with open(form_config_file, 'w') as f:
+            json.dump(data, f, indent=2)
+        
+        # Verify the save
+        with open(form_config_file, 'r') as f:
+            saved_data = json.load(f)
+        
+        print(f"[DEBUG] Form config saved successfully. Keys: {list(saved_data.keys())}")
+        
+        log_activity('FORM_CONFIG_UPDATE', 'System', details={'updated_by': current_user.id})
+        return jsonify({'status': 'success', 'message': 'Form configuration saved successfully!'})
+    except Exception as e:
+        print(f"[ERROR] Failed to save form config: {str(e)}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/admin/settings/save_system_features', methods=['POST'])
+@login_required
+def save_system_features():
+    """Save system-wide feature toggles"""
+    try:
+        data = request.json
+        system_config_file = 'data/system_config.json'
+        
+        # Validate data structure
+        if not data or 'features' not in data:
+            return jsonify({'status': 'error', 'message': 'Invalid configuration data'}), 400
+        
+        # Load existing config
+        system_config = {}
+        if os.path.exists(system_config_file):
+            with open(system_config_file, 'r') as f:
+                system_config = json.load(f)
+        
+        # Update features
+        system_config['features'] = data['features']
+        
+        # Save with pretty formatting
+        with open(system_config_file, 'w') as f:
+            json.dump(system_config, f, indent=2)
+        
+        print(f"[DEBUG] System features saved. Aadhaar enabled: {data['features'].get('aadhaar_system', {}).get('enabled', False)}")
+        
+        log_activity('SYSTEM_CONFIG_UPDATE', 'System', details={'updated_by': current_user.id})
+        return jsonify({'status': 'success', 'message': 'System features updated successfully!'})
+    except Exception as e:
+        print(f"[ERROR] Failed to save system features: {str(e)}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/admin/settings/add_officer', methods=['POST'])
+@login_required
+def add_officer():
+    """Add new officer account"""
+    try:
+        username = request.form.get('username')
+        password = request.form.get('password')
+        full_name = request.form.get('full_name', username)
+        badge_number = request.form.get('badge_number', '')
+        
+        if not username or not password:
+            return jsonify({'status': 'error', 'message': 'Username and password required'}), 400
+        
+        # Load existing users
+        users_data = {}
+        if os.path.exists(app.config['USERS_FILE']):
+            with open(app.config['USERS_FILE'], 'r') as f:
+                users_data = json.load(f)
+        
+        # Check if username exists (handle both dict and list format)
+        if isinstance(users_data, dict):
+            if username in users_data:
+                return jsonify({'status': 'error', 'message': 'Username already exists'}), 400
+        elif isinstance(users_data, list):
+            if any(u['username'] == username for u in users_data):
+                return jsonify({'status': 'error', 'message': 'Username already exists'}), 400
+        
+        # Add new officer (using dict format to match existing structure)
+        new_officer = {
+            'username': username,
+            'password_hash': generate_password_hash(password),
+            'role': 'officer',
+            'full_name': full_name,
+            'phone': '',
+            'badge_number': badge_number
+        }
+        
+        # Ensure dict format
+        if isinstance(users_data, list):
+            # Convert list to dict
+            users_dict = {}
+            for u in users_data:
+                uname = u.get('username') or u.get('id')
+                users_dict[uname] = u
+            users_data = users_dict
+        
+        users_data[username] = new_officer
+        
+        with open(app.config['USERS_FILE'], 'w') as f:
+            json.dump(users_data, f, indent=2)
+        
+        log_activity('OFFICER_ADD', username, details={'badge': badge_number, 'added_by': current_user.id})
+        return jsonify({'status': 'success', 'message': f'Officer {username} added successfully'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/admin/settings/delete_officer/<officer_id>', methods=['DELETE'])
+@login_required
+def delete_officer(officer_id):
+    """Delete officer account"""
+    try:
+        if os.path.exists(app.config['USERS_FILE']):
+            with open(app.config['USERS_FILE'], 'r') as f:
+                users_data = json.load(f)
+            
+            officer_name = None
+            
+            # Handle dict format
+            if isinstance(users_data, dict):
+                if officer_id in users_data and users_data[officer_id].get('role') == 'officer':
+                    officer_name = officer_id
+                    del users_data[officer_id]
+            # Handle list format
+            elif isinstance(users_data, list):
+                users_filtered = []
+                for u in users_data:
+                    if u.get('id') == officer_id and u.get('role') == 'officer':
+                        officer_name = u.get('username')
+                    else:
+                        users_filtered.append(u)
+                users_data = users_filtered
+            
+            if officer_name:
+                with open(app.config['USERS_FILE'], 'w') as f:
+                    json.dump(users_data, f, indent=2)
+                
+                log_activity('OFFICER_DELETE', officer_name, details={'deleted_by': current_user.id})
+                return jsonify({'status': 'success', 'message': f'Officer {officer_name} deleted'})
+            else:
+                return jsonify({'status': 'error', 'message': 'Officer not found'}), 404
+        
+        return jsonify({'status': 'error', 'message': 'Users file not found'}), 404
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/admin/settings/surveillance_requests')
+@login_required
+def get_surveillance_requests():
+    """Get all pending surveillance requests"""
+    try:
+        requests_file = 'data/surveillance_requests.json'
+        if os.path.exists(requests_file):
+            with open(requests_file, 'r') as f:
+                all_requests = json.load(f)
+            
+            # Filter for pending requests
+            pending_requests = [r for r in all_requests if r.get('status') == 'pending']
+            
+            # Enrich with person details
+            for req in pending_requests:
+                # Skip enrichment for brand-new persons. Their payload already
+                # carries the requested information and the image lives in the
+                # pending_requests folder.
+                if req.get('type') == 'new_person':
+                    # Normalise path separators for the front-end just in case
+                    if req.get('image_filename') and '\\' in req.get('image_filename'):
+                        req['image_filename'] = req['image_filename'].replace('\\', '/')
+                    continue
+
+                person_id = req.get('person_id')
+                db_type = req.get('db_type')
+
+                if not person_id or not db_type:
+                    req.setdefault('person_name', 'Unknown')
+                    req.setdefault('image_filename', '')
+                    continue
+                
+                # Load person data to get name and image
+                if db_type == 'criminal':
+                    person_file = f'data/persons/{person_id}.json'
+                else:  # missing
+                    person_file = f'data/missing_persons/{person_id}.json'
+                
+                if os.path.exists(person_file):
+                    with open(person_file, 'r') as f:
+                        person_data = json.load(f)
+                        req['person_name'] = person_data.get('name', 'Unknown')
+                        req['image_filename'] = person_data.get('image_filename', '')
+                else:
+                    req.setdefault('person_name', 'Unknown')
+                    req.setdefault('image_filename', '')
+            
+            return jsonify({'status': 'success', 'requests': pending_requests})
+        else:
+            return jsonify({'status': 'success', 'requests': []})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/admin/surveillance_requests')
+@login_required
+@role_required('admin')
+def surveillance_requests_page():
+    """Surveillance requests page - separate from admin settings"""
+    return render_template('surveillance_requests.html')
+
+
+def _convert_new_person_request(req_data):
+    """Promote a new-person surveillance request into the main database."""
+    person_type = (req_data.get('person_type') or 'criminal').lower()
+    name = req_data.get('name') or 'Unknown'
+    priority = req_data.get('priority', 3)
+    try:
+        priority = int(priority)
+    except Exception:
+        priority = 3
+    priority = max(1, min(5, priority))
+
+    phone = req_data.get('phone') or ''
+    gender = req_data.get('gender') or ''
+    age = req_data.get('age') or ''
+    details = req_data.get('details') or req_data.get('reason') or ''
+
+    pending_filename = req_data.get('image_filename')
+    if not pending_filename and req_data.get('image_path'):
+        pending_filename = os.path.basename(req_data['image_path'])
+
+    pending_path = None
+    if pending_filename:
+        explicit_path = req_data.get('image_path')
+        if explicit_path and os.path.exists(explicit_path):
+            pending_path = explicit_path
+        else:
+            candidate = os.path.join(app.root_path, 'data', 'pending_requests', 'images', pending_filename)
+            if os.path.exists(candidate):
+                pending_path = candidate
+
+    if not pending_path or not os.path.exists(pending_path):
+        return {
+            'status': 'error',
+            'message': 'Pending request image could not be found. Please ask the officer to resubmit with a valid photo.'
+        }
+
+    file_ext = os.path.splitext(pending_path)[1] or '.jpg'
+    safe_name = secure_filename(name).lower().replace('_', '-').strip('-')
+    if not safe_name:
+        safe_name = f'{person_type}-subject'
+
+    unique_suffix = str(uuid.uuid4())[:8]
+    final_person_id = f"{safe_name}-{unique_suffix}"
+    final_filename = f"{final_person_id}{file_ext}"
+
+    dest_path = os.path.join(app.config['UPLOAD_FOLDER'], final_filename)
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    shutil.copy2(pending_path, dest_path)
+
+    embeddings = face_utils.get_embeddings(dest_path)
+    if embeddings.get('dlib') is None and embeddings.get('arcface') is None:
+        os.remove(dest_path)
+        return {
+            'status': 'error',
+            'message': 'Face data could not be processed from the uploaded image. Please use a clearer face photo.'
+        }
+
+    created_at = datetime.utcnow().isoformat() + 'Z'
+
+    if person_type == 'missing':
+        folder = app.config['MISSING_FOLDER']
+        db_type = 'missing'
+        record = {
+            'id': final_person_id,
+            'name': name,
+            'guardian_phone': phone,
+            'missing_aadhaar': '',
+            'submitted_gender': gender,
+            'age': age,
+            'image_filename': final_filename,
+            'created_at': created_at,
+            'priority': priority,
+            'description': details,
+            'last_seen': req_data.get('last_seen', ''),
+            'missing_since': req_data.get('missing_since', ''),
+            'surveillance': True,
+            'source': 'officer_surveillance_request',
+            'request_reason': req_data.get('reason', ''),
+            'request_id': req_data.get('id'),
+            'embeddings': embeddings
+        }
+    else:
+        folder = app.config['PERSONS_FOLDER']
+        db_type = 'criminal'
+        record = {
+            'id': final_person_id,
+            'name': name,
+            'aadhaar': '',
+            'phone': phone,
+            'submitted_gender': gender,
+            'age': age,
+            'image_filename': final_filename,
+            'created_at': created_at,
+            'priority': priority,
+            'crime_details': details or 'Added via officer surveillance request',
+            'surveillance': True,
+            'source': 'officer_surveillance_request',
+            'request_reason': req_data.get('reason', ''),
+            'request_id': req_data.get('id'),
+            'embeddings': embeddings
+        }
+
+    os.makedirs(folder, exist_ok=True)
+    json_path = os.path.join(folder, f"{final_person_id}.json")
+    with open(json_path, 'w') as f:
+        json.dump(record, f, indent=2)
+
+    # Clean up pending asset now that it is promoted
+    try:
+        os.remove(pending_path)
+    except OSError:
+        pass
+
+    return {
+        'status': 'success',
+        'person_id': final_person_id,
+        'image_filename': final_filename,
+        'db_type': db_type,
+        'name': name,
+        'priority': priority,
+        'image_path': f"data/images/{final_filename}"
+    }
+
+@app.route('/admin/settings/review_surveillance_request', methods=['POST'])
+@login_required
+def review_surveillance_request():
+    """Approve or reject surveillance request"""
+    try:
+        data = request.json
+        request_id = data.get('request_id')
+        action = data.get('action')  # 'approve' or 'reject'
+        admin_notes = data.get('admin_notes', '')
+        
+        requests_file = 'data/surveillance_requests.json'
+        if not os.path.exists(requests_file):
+            return jsonify({'status': 'error', 'message': 'No requests found'}), 404
+        
+        with open(requests_file, 'r') as f:
+            all_requests = json.load(f)
+        
+        # Find the request
+        req_index = None
+        req_data = None
+        for i, req in enumerate(all_requests):
+            if req.get('id') == request_id:
+                req_index = i
+                req_data = req
+                break
+        
+        if req_index is None:
+            return jsonify({'status': 'error', 'message': 'Request not found'}), 404
+        
+        # If approving a brand-new person, promote them into the main database first
+        if action == 'approve' and req_data.get('type') == 'new_person':
+            promotion = _convert_new_person_request(req_data)
+            if promotion['status'] != 'success':
+                return jsonify({'status': 'error', 'message': promotion['message']}), 400
+            # Update request payload with the newly created record details
+            req_data['person_id'] = promotion['person_id']
+            req_data['person_name'] = promotion['name']
+            req_data['db_type'] = promotion['db_type']
+            req_data['image_filename'] = promotion['image_filename']
+            req_data['priority'] = promotion['priority']
+            req_data['converted_at'] = datetime.utcnow().isoformat() + 'Z'
+            req_data['image_path'] = promotion['image_path']
+        
+        # Update request status
+        all_requests[req_index]['status'] = 'approved' if action == 'approve' else 'rejected'
+        all_requests[req_index]['reviewed_by'] = current_user.id
+        all_requests[req_index]['reviewed_at'] = datetime.now().isoformat()
+        all_requests[req_index]['admin_notes'] = admin_notes
+        
+        # Save updated requests
+        with open(requests_file, 'w') as f:
+            json.dump(all_requests, f, indent=2)
+        
+        # If approved, activate surveillance
+        if action == 'approve':
+            person_id = req_data.get('person_id')
+            db_type = req_data.get('db_type')
+            priority = req_data.get('priority', 'medium')
+            
+            # Update person's surveillance status
+            if db_type == 'criminal':
+                person_file = f'data/persons/{person_id}.json'
+            else:  # missing
+                person_file = f'data/missing_persons/{person_id}.json'
+            
+            if os.path.exists(person_file):
+                with open(person_file, 'r') as f:
+                    person_data = json.load(f)
+                
+                person_data['surveillance'] = True
+                person_data['priority'] = priority
+                
+                with open(person_file, 'w') as f:
+                    json.dump(person_data, f, indent=2)
+            
+            # Add to active surveillance targets
+            targets_file = 'data/active_surveillance_targets.json'
+            if os.path.exists(targets_file):
+                with open(targets_file, 'r') as f:
+                    targets = json.load(f)
+            else:
+                targets = []
+            
+            # Add if not already in active targets
+            if not any(t.get('person_id') == person_id for t in targets):
+                targets.append({
+                    'person_id': person_id,
+                    'db_type': db_type,
+                    'priority': priority,
+                    'activated_at': datetime.now().isoformat(),
+                    'activated_by': current_user.id,
+                    'reason': req_data.get('reason', '')
+                })
+                
+                with open(targets_file, 'w') as f:
+                    json.dump(targets, f, indent=2)
+            
+            log_activity('SURVEILLANCE_APPROVED', person_id, details={
+                'approved_by': current_user.id,
+                'requested_by': req_data.get('requested_by'),
+                'priority': priority
+            })
+            
+            return jsonify({
+                'status': 'success',
+                'message': f'Surveillance request approved and activated for {req_data.get("person_id")}'
+            })
+        else:
+            log_activity('SURVEILLANCE_REJECTED', req_data.get('person_id'), details={
+                'rejected_by': current_user.id,
+                'requested_by': req_data.get('requested_by'),
+                'reason': admin_notes
+            })
+            
+            return jsonify({
+                'status': 'success',
+                'message': f'Surveillance request rejected'
+            })
+    
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
 @app.route('/')
 @login_required
 def index():
@@ -591,7 +1172,236 @@ def index():
 @login_required
 @role_required('officer', 'admin')
 def officer_dashboard():
-    return render_template('officer_dashboard.html')
+    # Load form configurations for dynamic forms
+    form_config_file = 'data/form_config.json'
+    if os.path.exists(form_config_file):
+        with open(form_config_file, 'r') as f:
+            form_config = json.load(f)
+    else:
+        form_config = {
+            'criminal': {},
+            'missing': {},
+            'wanted': {}
+        }
+    
+    # Load system config for feature toggles
+    system_config_file = 'data/system_config.json'
+    if os.path.exists(system_config_file):
+        with open(system_config_file, 'r') as f:
+            system_config = json.load(f)
+    else:
+        system_config = {'features': {}}
+    
+    # Filter out Aadhaar fields if disabled
+    aadhaar_enabled = system_config.get('features', {}).get('aadhaar_system', {}).get('enabled', True)
+    
+    if not aadhaar_enabled:
+        # Remove Aadhaar fields from form configs
+        if 'aadhaar' in form_config.get('criminal', {}):
+            del form_config['criminal']['aadhaar']
+        if 'aadhaar' in form_config.get('wanted', {}):
+            del form_config['wanted']['aadhaar']
+        if 'missing_aadhaar' in form_config.get('missing', {}):
+            del form_config['missing']['missing_aadhaar']
+    
+    return render_template('officer_dashboard.html', 
+                         form_config=form_config,
+                         system_config=system_config,
+                         aadhaar_enabled=aadhaar_enabled)
+
+# Officer Search Persons for Surveillance Request
+@app.route('/officer/search_persons')
+@login_required
+@role_required('officer', 'admin')
+def officer_search_persons():
+    query = request.args.get('q', '').lower().strip()
+    
+    if len(query) < 2:
+        return jsonify({'results': []})
+    
+    results = []
+    
+    # Search in criminal database
+    if os.path.exists(app.config['PERSONS_FOLDER']):
+        for filename in os.listdir(app.config['PERSONS_FOLDER']):
+            if filename.endswith('.json'):
+                try:
+                    with open(os.path.join(app.config['PERSONS_FOLDER'], filename), 'r') as f:
+                        person = json.load(f)
+                        if query in person.get('name', '').lower():
+                            results.append({
+                                'id': person.get('id'),
+                                'name': person.get('name'),
+                                'db_type': 'criminal',
+                                'image_filename': person.get('image_filename'),
+                                'priority': person.get('priority', 3),
+                                'is_wanted': person.get('id', '').startswith('wanted-')
+                            })
+                except: pass
+    
+    # Search in missing database
+    if os.path.exists(app.config['MISSING_FOLDER']):
+        for filename in os.listdir(app.config['MISSING_FOLDER']):
+            if filename.endswith('.json'):
+                try:
+                    with open(os.path.join(app.config['MISSING_FOLDER'], filename), 'r') as f:
+                        person = json.load(f)
+                        if query in person.get('name', '').lower():
+                            results.append({
+                                'id': person.get('id'),
+                                'name': person.get('name'),
+                                'db_type': 'missing',
+                                'image_filename': person.get('image_filename'),
+                                'priority': person.get('priority', 3),
+                                'is_wanted': False
+                            })
+                except: pass
+    
+    # Limit results
+    return jsonify({'results': results[:10]})
+
+# Officer Submit Surveillance Request
+@app.route('/officer/request_surveillance', methods=['POST'])
+@login_required
+@role_required('officer', 'admin')
+def officer_request_surveillance():
+    try:
+        data = request.json
+        
+        request_id = str(uuid.uuid4())
+        surveillance_request = {
+            'id': request_id,
+            'person_id': data['person_id'],
+            'person_name': data['person_name'],
+            'db_type': data['db_type'],
+            'image_filename': data['image_filename'],
+            'reason': data['reason'],
+            'priority': data['priority'],
+            'requested_by': current_user.username,
+            'requested_at': datetime.utcnow().isoformat() + "Z",
+            'status': 'pending',  # pending, approved, rejected
+            'reviewed_by': None,
+            'reviewed_at': None,
+            'admin_notes': None
+        }
+        
+        # Load existing requests
+        requests_file = 'data/surveillance_requests.json'
+        requests = []
+        if os.path.exists(requests_file):
+            with open(requests_file, 'r') as f:
+                requests = json.load(f)
+        
+        requests.append(surveillance_request)
+        
+        # Save requests
+        with open(requests_file, 'w') as f:
+            json.dump(requests, f, indent=2)
+        
+        # Log activity
+        log_activity('SURVEILLANCE_REQUEST', data['person_name'], 
+                    user=current_user.username,
+                    details={
+                        'person_id': data['person_id'],
+                        'db_type': data['db_type'],
+                        'priority': data['priority'],
+                        'reason': data['reason']
+                    })
+        
+        return jsonify({'status': 'success', 'message': 'Surveillance request submitted'})
+    except Exception as e:
+        print(f"[ERROR] Surveillance request failed: {str(e)}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+# Officer Submit New Person Surveillance Request
+@app.route('/officer/request_new_person_surveillance', methods=['POST'])
+@login_required
+@role_required('officer', 'admin')
+def officer_request_new_person_surveillance():
+    try:
+        # Get form data
+        person_type = request.form.get('person_type')  # 'criminal' or 'missing'
+        name = request.form.get('name')
+        gender = request.form.get('gender')
+        age = request.form.get('age')
+        phone = request.form.get('phone')
+        priority = request.form.get('priority')  # 'high', 'medium', 'low'
+        reason = request.form.get('reason')
+        details = request.form.get('details', '')
+        
+        # Handle image upload
+        if 'image' not in request.files:
+            return jsonify({'status': 'error', 'message': 'No image file provided'}), 400
+        
+        image_file = request.files['image']
+        if image_file.filename == '':
+            return jsonify({'status': 'error', 'message': 'No image file selected'}), 400
+        
+        # Generate unique ID and filename
+        person_id = f"pending-{person_type}-{str(uuid.uuid4())[:8]}"
+        file_ext = os.path.splitext(image_file.filename)[1]
+        image_filename = f"{person_id}{file_ext}"
+        
+        # Save image temporarily in pending folder
+        pending_images_folder = 'data/pending_requests/images'
+        os.makedirs(pending_images_folder, exist_ok=True)
+        image_path = os.path.join(pending_images_folder, image_filename)
+        image_file.save(image_path)
+        
+        # Convert priority text to numeric
+        priority_map = {'high': 1, 'medium': 3, 'low': 5}
+        priority_numeric = priority_map.get(priority, 3)
+        
+        # Create request object
+        request_id = str(uuid.uuid4())
+        new_person_request = {
+            'id': request_id,
+            'type': 'new_person',
+            'person_type': person_type,  # criminal or missing
+            'person_id': person_id,
+            'name': name,
+            'gender': gender,
+            'age': age if age else None,
+            'phone': phone if phone else None,
+            'priority': priority_numeric,
+            'reason': reason,
+            'details': details,
+            'image_filename': image_filename,
+            'image_path': image_path,
+            'requested_by': current_user.username,
+            'requested_at': datetime.utcnow().isoformat() + "Z",
+            'status': 'pending',
+            'reviewed_by': None,
+            'reviewed_at': None,
+            'admin_notes': None
+        }
+        
+        # Load existing requests
+        requests_file = 'data/surveillance_requests.json'
+        requests = []
+        if os.path.exists(requests_file):
+            with open(requests_file, 'r') as f:
+                requests = json.load(f)
+        
+        requests.append(new_person_request)
+        
+        # Save requests
+        with open(requests_file, 'w') as f:
+            json.dump(requests, f, indent=2)
+        
+        # Log activity
+        log_activity('NEW_PERSON_SURVEILLANCE_REQUEST', name, 
+                    user=current_user.username,
+                    details={
+                        'person_type': person_type,
+                        'priority': priority_numeric,
+                        'reason': reason
+                    })
+        
+        return jsonify({'status': 'success', 'message': 'New person surveillance request submitted'})
+    except Exception as e:
+        print(f"[ERROR] New person surveillance request failed: {str(e)}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 # Officer Photo Search API - logs all searches
 @app.route('/api/officer/photo_search', methods=['POST'])
@@ -1533,8 +2343,17 @@ def confirm_add_person():
 def check_metadata_duplicate(aadhaar, phone, folder):
     if not os.path.exists(folder):
         return None, None
+    
+    # Load system configuration to check if Aadhaar is enabled
+    system_config = {}
+    system_config_file = 'data/system_config.json'
+    if os.path.exists(system_config_file):
+        with open(system_config_file, 'r') as f:
+            system_config = json.load(f)
+    
+    aadhaar_enabled = system_config.get('features', {}).get('aadhaar_system', {}).get('enabled', True)
         
-    target_aadhaar = str(aadhaar).strip() if aadhaar else ""
+    target_aadhaar = str(aadhaar).strip() if (aadhaar and aadhaar_enabled) else ""
     target_phone = str(phone).strip() if phone else ""
     
     if not target_aadhaar and not target_phone:
@@ -1546,10 +2365,11 @@ def check_metadata_duplicate(aadhaar, phone, folder):
                 with open(os.path.join(folder, filename), 'r') as f:
                     data = json.load(f)
                     
-                    # Check Aadhaar
-                    curr_aadhaar = str(data.get('aadhaar', '')).strip()
-                    if target_aadhaar and curr_aadhaar == target_aadhaar:
-                        return data, 'Aadhaar Number'
+                    # Check Aadhaar only if enabled
+                    if aadhaar_enabled:
+                        curr_aadhaar = str(data.get('aadhaar', '')).strip()
+                        if target_aadhaar and curr_aadhaar == target_aadhaar:
+                            return data, 'Aadhaar Number'
                     
                     # Check Phone
                     curr_phone = str(data.get('phone', '')).strip()
@@ -1571,6 +2391,7 @@ def add_person():
         gender = request.form.get('gender')
         aadhaar = request.form.get('aadhaar')
         phone = request.form.get('phone')
+        crime_details = request.form.get('crime_details', '')
 
         # Check for metadata duplicates
         dup_person, dup_field = check_metadata_duplicate(aadhaar, phone, app.config['PERSONS_FOLDER'])
@@ -1613,6 +2434,17 @@ def add_person():
                         priority = 3
                 except:
                     priority = 3
+                
+                # Set default crime details based on priority if not provided
+                if not crime_details or crime_details.strip() == '':
+                    default_crimes = {
+                        1: "Armed and dangerous suspect - violent crimes, weapons offenses",
+                        2: "Serious criminal activity - assault, theft, fraud",
+                        3: "Standard criminal record - moderate offenses",
+                        4: "Minor criminal offenses - petty crimes",
+                        5: "Person of interest - under investigation"
+                    }
+                    crime_details = default_crimes.get(priority, "Criminal activity under investigation")
                     
                 person_data = {
                     "id": person_id,
@@ -1624,6 +2456,7 @@ def add_person():
                     "image_filename": new_filename,
                     "created_at": datetime.utcnow().isoformat() + "Z",
                     "priority": priority,
+                    "crime_details": crime_details,
                     "embeddings": {
                         "dlib": analysis_results.get('dlib'),
                         "arcface": analysis_results.get('arcface')
@@ -1666,7 +2499,26 @@ def add_person():
             except Exception as e:
                 return redirect(request.url)
 
-    return render_template('add_person.html')
+    # Load form configuration
+    form_config = {}
+    form_config_file = 'data/form_config.json'
+    if os.path.exists(form_config_file):
+        with open(form_config_file, 'r') as f:
+            form_config = json.load(f)
+    
+    # Load system configuration and filter based on features
+    system_config = {}
+    system_config_file = 'data/system_config.json'
+    if os.path.exists(system_config_file):
+        with open(system_config_file, 'r') as f:
+            system_config = json.load(f)
+    
+    # Filter Aadhaar field if disabled
+    criminal_config = form_config.get('criminal', {})
+    if not system_config.get('features', {}).get('aadhaar_system', {}).get('enabled', True):
+        criminal_config = {k: v for k, v in criminal_config.items() if k != 'aadhaar'}
+    
+    return render_template('add_person.html', form_config=criminal_config)
 
 @app.route('/person/<person_id>')
 @login_required
@@ -1774,6 +2626,28 @@ def search_api():
 @app.route('/add_missing', methods=['GET', 'POST'])
 @login_required
 def add_missing_person():
+    if request.method == 'GET':
+        # Load form configuration
+        form_config = {}
+        form_config_file = 'data/form_config.json'
+        if os.path.exists(form_config_file):
+            with open(form_config_file, 'r') as f:
+                form_config = json.load(f)
+        
+        # Load system configuration and filter based on features
+        system_config = {}
+        system_config_file = 'data/system_config.json'
+        if os.path.exists(system_config_file):
+            with open(system_config_file, 'r') as f:
+                system_config = json.load(f)
+        
+        # Filter Aadhaar field if disabled
+        missing_config = form_config.get('missing', {})
+        if not system_config.get('features', {}).get('aadhaar_system', {}).get('enabled', True):
+            missing_config = {k: v for k, v in missing_config.items() if k != 'missing_aadhaar'}
+        
+        return render_template('add_missing.html', form_config=missing_config)
+    
     if request.method == 'POST':
         if 'image' not in request.files:
             return redirect(request.url)
@@ -1855,7 +2729,14 @@ def add_missing_person():
             except Exception as e:
                 return redirect(request.url)
 
-    return render_template('add_missing.html')
+    # Load form configuration for GET request
+    form_config = {}
+    form_config_file = 'data/form_config.json'
+    if os.path.exists(form_config_file):
+        with open(form_config_file, 'r') as f:
+            form_config = json.load(f)
+    
+    return render_template('add_missing.html', form_config=form_config.get('missing', {}))
 
 
 # --- WANTED CRIMINAL DETECTION (Priority 1 - Auto Surveillance) ---
@@ -1863,6 +2744,28 @@ def add_missing_person():
 @login_required
 def add_wanted_criminal():
     """Add wanted criminal with highest priority (1) and auto-enable surveillance"""
+    if request.method == 'GET':
+        # Load form configuration
+        form_config = {}
+        form_config_file = 'data/form_config.json'
+        if os.path.exists(form_config_file):
+            with open(form_config_file, 'r') as f:
+                form_config = json.load(f)
+        
+        # Load system configuration and filter based on features
+        system_config = {}
+        system_config_file = 'data/system_config.json'
+        if os.path.exists(system_config_file):
+            with open(system_config_file, 'r') as f:
+                system_config = json.load(f)
+        
+        # Filter Aadhaar field if disabled
+        wanted_config = form_config.get('wanted', {})
+        if not system_config.get('features', {}).get('aadhaar_system', {}).get('enabled', True):
+            wanted_config = {k: v for k, v in wanted_config.items() if k != 'aadhaar'}
+        
+        return render_template('add_wanted.html', form_config=wanted_config)
+    
     if request.method == 'POST':
         if 'image' not in request.files:
             flash('No image uploaded', 'error')
@@ -1899,6 +2802,10 @@ def add_wanted_criminal():
                     os.remove(file_path)
                     flash('No face detected in image', 'error')
                     return redirect(request.url)
+
+                # Set default crime details for wanted criminals if not provided
+                if not crime_details or crime_details.strip() == '':
+                    crime_details = "Wanted criminal - armed and extremely dangerous. Approach with extreme caution."
 
                 # Create person data with HIGHEST PRIORITY (1) and AUTO SURVEILLANCE
                 person_data = {
@@ -1968,7 +2875,14 @@ def add_wanted_criminal():
                 flash(f'Error processing image: {str(e)}', 'error')
                 return redirect(request.url)
 
-    return render_template('add_wanted.html')
+    # Load form configuration for GET request
+    form_config = {}
+    form_config_file = 'data/form_config.json'
+    if os.path.exists(form_config_file):
+        with open(form_config_file, 'r') as f:
+            form_config = json.load(f)
+    
+    return render_template('add_wanted.html', form_config=form_config.get('wanted', {}))
 
 
 @app.route('/image/<filename>')
@@ -1982,6 +2896,15 @@ from flask import send_from_directory
 @login_required
 def serve_image(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/data/pending_requests/images/<path:filename>')
+@login_required
+def serve_pending_image(filename):
+    """Serve images submitted with new-person surveillance requests."""
+    pending_folder = os.path.join(app.root_path, 'data', 'pending_requests', 'images')
+    # Strip any directory traversal attempts and serve only plain filenames.
+    safe_filename = os.path.basename(filename)
+    return send_from_directory(pending_folder, safe_filename)
 
 @app.route('/data/alerts/images/<filename>')
 @login_required
@@ -2741,16 +3664,18 @@ def api_face_search():
                 alert_file = os.path.join(app.config['ALERTS_FOLDER'], f"{match['id']}.json")
                 
                 detection_entry = {
-                    'timestamp': datetime.utcnow().isoformat() + 'Z',
+                    'timestamp': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
                     'match_percentage': round(confidence, 1),
                     'capture_frame': capture_filename,
                     'source': 'Dashboard Capture',
-                    'officer': current_user.username
+                    'officer': current_user.username,
+                    'camera_location': 'Own system webcam'
                 }
                 
                 if os.path.exists(alert_file):
                     with open(alert_file, 'r') as f:
                         alert_data = json.load(f)
+                    alert_data['camera_location'] = alert_data.get('camera_location', 'Own system webcam')
                     alert_data['detections'].append(detection_entry)
                 else:
                     # Determine db_type
@@ -2765,6 +3690,7 @@ def api_face_search():
                         'priority': match.get('priority', 3),
                         'is_wanted': match.get('is_wanted', False),
                         'image_filename': match.get('image_filename'),
+                        'camera_location': 'Own system webcam',
                         'detections': [detection_entry]
                     }
                 
@@ -2986,7 +3912,8 @@ def api_surveillance_results():
                             'time': time_str,
                             'date': date_str,
                             'timestamp': detection['timestamp'],
-                            'source': 'Surveillance'
+                            'source': 'Surveillance',
+                            'camera_location': detection.get('camera_location') or alert_data.get('camera_location', 'Own system webcam')
                         })
                 except Exception as e:
                     print(f"Error reading alert {filename}: {e}")
@@ -3055,15 +3982,22 @@ def women_nearby():
 def api_women_sos():
     """Handle SOS emergency alerts from women portal - notifies both admin and officers"""
     try:
-        data = request.json
+        data = request.json or {}
         coords = data.get('coords', {})
         lat = data.get('latitude') or coords.get('lat')
         lng = data.get('longitude') or coords.get('lng')
         address = data.get('address', 'Location being determined...')
+        woman_name = data.get('name') or 'Anushka Sahu'
+        woman_phone = data.get('phone') or '9022442848'
+        contacts = data.get('contacts') or []
+        if not isinstance(contacts, list):
+            contacts = []
+        contacts_count = len(contacts)
         
         alert_id = str(uuid.uuid4())[:8]
-        timestamp = datetime.utcnow().isoformat() + "Z"
-        timestamp_ist = (datetime.utcnow() + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M:%S IST')
+        utc_now = datetime.now(timezone.utc)
+        timestamp = utc_now.isoformat().replace('+00:00', 'Z')
+        timestamp_ist = utc_now.astimezone(IST).strftime('%Y-%m-%d %H:%M:%S IST')
         
         # Create alert for admin (system alerts)
         admin_alert = {
@@ -3071,8 +4005,8 @@ def api_women_sos():
             'timestamp': timestamp,
             'timestamp_ist': timestamp_ist,
             'type': 'SOS_EMERGENCY',
-            'title': '🚨 SOS EMERGENCY - WOMAN IN DISTRESS',
-            'message': f"Emergency SOS triggered. Immediate response required!",
+            'title': f'🚨 SOS ALERT: {woman_name}',
+            'message': f"Emergency SOS triggered by {woman_name}. Immediate response required!",
             'location': address,
             'coordinates': {'lat': lat, 'lng': lng},
             'map_link': f"https://www.google.com/maps?q={lat},{lng}" if lat and lng else None,
@@ -3080,7 +4014,11 @@ def api_women_sos():
             'severity': 'critical',
             'priority': 1,
             'source': 'women_portal',
-            'status': 'ACTIVE'
+            'status': 'ACTIVE',
+            'woman_name': woman_name,
+            'woman_phone': woman_phone,
+            'contacts_count': contacts_count,
+            'contacts': contacts
         }
         
         # Save to system alerts for admin dashboard
@@ -3102,8 +4040,8 @@ def api_women_sos():
             'timestamp': timestamp,
             'timestamp_ist': timestamp_ist,
             'type': 'SOS_EMERGENCY',
-            'name': 'WOMAN IN DISTRESS - SOS',
-            'description': f"Emergency SOS Alert! A woman has triggered distress signal. Location: {address}",
+            'name': f'{woman_name} - SOS Alert',
+            'description': f"Emergency SOS Alert for {woman_name} ({woman_phone}). Location: {address}",
             'location': address,
             'coordinates': {'lat': lat, 'lng': lng},
             'map_link': f"https://www.google.com/maps?q={lat},{lng}" if lat and lng else None,
@@ -3112,7 +4050,11 @@ def api_women_sos():
             'db_type': 'sos_alert',
             'image': '/static/sos_icon.png',
             'status': 'ACTIVE',
-            'requires_immediate_response': True
+            'requires_immediate_response': True,
+            'woman_name': woman_name,
+            'woman_phone': woman_phone,
+            'contacts_count': contacts_count,
+            'contacts': contacts
         }
         
         # Save officer alert
@@ -3124,14 +4066,27 @@ def api_women_sos():
         send_sos_email(
             location=address,
             coordinates={'lat': lat, 'lng': lng},
-            address=address
+            address=address,
+            woman_name=woman_name,
+            woman_phone=woman_phone,
+            contacts_count=contacts_count
         )
         
         # Log activity
-        log_activity('SOS_EMERGENCY', f'SOS Alert triggered at {address}', user='women_portal')
+        log_activity(
+            'SOS_EMERGENCY',
+            f'SOS Alert triggered at {address}',
+            user='women_portal',
+            details={
+                'name': woman_name,
+                'phone': woman_phone,
+                'contacts_notified': contacts_count
+            }
+        )
             
         return jsonify({'status': 'success', 'alert_id': alert_id, 'message': 'Alert sent to all officers'})
     except Exception as e:
+        logger.exception("Failed to process SOS alert")
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/women/report', methods=['POST'])

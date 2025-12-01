@@ -1,16 +1,13 @@
 {
-  "id": "wanted-pankaj-chavan-ef116f44",
+  "id": "missing-pankaj-chavan-b5c52033",
   "name": "Pankaj Chavan",
-  "aadhaar": "1234567799",
-  "phone": "9022442848",
+  "guardian_phone": "902244288",
+  "missing_aadhaar": "",
   "submitted_gender": "Male",
   "age": "23",
-  "image_filename": "wanted-pankaj-chavan-ef116f44.jpg",
-  "created_at": "2025-11-30T11:15:56.303442Z",
-  "priority": 1,
-  "is_wanted": true,
-  "crime_details": "Robbery",
-  "surveillance": true,
+  "image_filename": "missing-pankaj-chavan-b5c52033.jpg",
+  "created_at": "2025-12-01T12:52:03.201632Z",
+  "priority": 3,
   "embeddings": {
     "dlib": [
       -0.13712961971759796,
@@ -657,10 +654,8 @@
       1.0836706161499023
     ]
   },
-  "surveillance_deactivated_at": "2025-12-01T12:52:14.429932Z",
-  "surveillance_deactivated_by": "admin",
-  "surveillance_deactivation_reason": "h",
-  "surveillance_activated_at": "2025-12-01T15:50:36.946190Z",
+  "surveillance": true,
+  "surveillance_activated_at": "2025-12-01T12:52:42.541916Z",
   "surveillance_activated_by": "admin",
-  "surveillance_activation_reason": "Hi"
+  "surveillance_activation_reason": "hi"
 }

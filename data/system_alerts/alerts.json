@@ -1,5 +1,138 @@
 [
   {
+    "id": "5a425cfe",
+    "timestamp": "2025-12-01T22:15:54.442859Z",
+    "timestamp_ist": "2025-12-02 03:45:54 IST",
+    "type": "SOS_EMERGENCY",
+    "title": "\ud83d\udea8 SOS ALERT: Anushka Sahu",
+    "message": "Emergency SOS triggered by Anushka Sahu. Immediate response required!",
+    "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+    "coordinates": {
+      "lat": 18.79598869068212,
+      "lng": 73.28435647722557
+    },
+    "map_link": "https://www.google.com/maps?q=18.79598869068212,73.28435647722557",
+    "read": true,
+    "severity": "critical",
+    "priority": 1,
+    "source": "women_portal",
+    "status": "ACTIVE",
+    "woman_name": "Anushka Sahu",
+    "woman_phone": "9022442848",
+    "contacts_count": 0,
+    "contacts": []
+  },
+  {
+    "id": "7b6748e8",
+    "timestamp": "2025-12-01T22:12:46.828168Z",
+    "timestamp_ist": "2025-12-02 03:42:46 IST",
+    "type": "SOS_EMERGENCY",
+    "title": "\ud83d\udea8 SOS EMERGENCY - WOMAN IN DISTRESS",
+    "message": "Emergency SOS triggered. Immediate response required!",
+    "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+    "coordinates": {
+      "lat": 18.79591215145552,
+      "lng": 73.28438197422939
+    },
+    "map_link": "https://www.google.com/maps?q=18.79591215145552,73.28438197422939",
+    "read": true,
+    "severity": "critical",
+    "priority": 1,
+    "source": "women_portal",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "bcbd3b5b",
+    "timestamp": "2025-12-01T22:08:28.532455Z",
+    "timestamp_ist": "2025-12-02 03:38:28 IST",
+    "type": "SOS_EMERGENCY",
+    "title": "\ud83d\udea8 SOS EMERGENCY - WOMAN IN DISTRESS",
+    "message": "Emergency SOS triggered. Immediate response required!",
+    "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+    "coordinates": {
+      "lat": 18.79582096332131,
+      "lng": 73.28426924355705
+    },
+    "map_link": "https://www.google.com/maps?q=18.79582096332131,73.28426924355705",
+    "read": true,
+    "severity": "critical",
+    "priority": 1,
+    "source": "women_portal",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "7b59c3d3-ed28-4055-a1ed-e93e20f71c66",
+    "type": "OFFICER_FIELD_REPORT",
+    "report_subtype": "PHOTO_MATCH",
+    "timestamp": "2025-12-01T16:19:00.799101Z",
+    "timestamp_ist": "2025-12-01 21:49:00",
+    "officer": {
+      "username": "officer",
+      "role": "officer",
+      "phone": "9876543210",
+      "badge_number": "OFR-101",
+      "full_name": "Officer Patrol"
+    },
+    "subject": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "name": "Pankaj Chavan",
+      "database_image": "pankaj-chavan-16b6f1a3.jpg",
+      "captured_image": "officer_capture_102b5c18-1fa4-433d-bd67-d0227dc10029.jpg",
+      "db_type": "criminal",
+      "confidence": 100,
+      "is_wanted": false,
+      "priority": 1
+    },
+    "match_details": {
+      "search_timestamp": "2025-12-01T16:18:42.675Z",
+      "confidence_score": 100,
+      "identification_type": "Photo Match"
+    },
+    "report": {
+      "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+      "details": "hiio",
+      "urgency": "medium"
+    },
+    "status": "pending",
+    "read": true
+  },
+  {
+    "id": "159884f4-8fef-4c7d-947b-bf7773fc1530",
+    "type": "OFFICER_FIELD_REPORT",
+    "report_subtype": "PHOTO_MATCH",
+    "timestamp": "2025-12-01T12:56:06.446552Z",
+    "timestamp_ist": "2025-12-01 18:26:06",
+    "officer": {
+      "username": "officer",
+      "role": "officer",
+      "phone": "9876543210",
+      "badge_number": "OFR-101",
+      "full_name": "Officer Patrol"
+    },
+    "subject": {
+      "person_id": "pankaj-chavan-16b6f1a3",
+      "name": "Pankaj Chavan",
+      "database_image": "pankaj-chavan-16b6f1a3.jpg",
+      "captured_image": "officer_capture_aaa9d429-1c17-4ebe-90dc-36bbaf064440.jpg",
+      "db_type": "criminal",
+      "confidence": 100,
+      "is_wanted": false,
+      "priority": 1
+    },
+    "match_details": {
+      "search_timestamp": "2025-12-01T12:55:15.661Z",
+      "confidence_score": 100,
+      "identification_type": "Photo Match"
+    },
+    "report": {
+      "location": "Indiabulls Golf City, Savroli, Khalapur Taluka, Raigad, Maharashtra, 410202, India",
+      "details": "hi",
+      "urgency": "medium"
+    },
+    "status": "pending",
+    "read": true
+  },
+  {
     "id": "397d2e02",
     "timestamp": "2025-11-30T19:38:27.367816Z",
     "timestamp_ist": "2025-12-01 01:08:27 IST",
@@ -12,7 +145,7 @@
       "lng": 73.3434982
     },
     "map_link": "https://www.google.com/maps?q=18.7796163,73.3434982",
-    "read": false,
+    "read": true,
     "severity": "critical",
     "priority": 1,
     "source": "women_portal",
@@ -31,7 +164,7 @@
       "lng": null
     },
     "map_link": null,
-    "read": false,
+    "read": true,
     "severity": "critical",
     "priority": 1,
     "source": "women_portal",
@@ -51,7 +184,7 @@
     "severity": 3,
     "priority": 2,
     "anonymous": false,
-    "read": false,
+    "read": true,
     "source": "women_portal",
     "status": "PENDING_REVIEW"
   },
@@ -68,7 +201,7 @@
       "lng": 73.284771
     },
     "map_link": "https://www.google.com/maps?q=18.7956564,73.284771",
-    "read": false,
+    "read": true,
     "severity": "critical",
     "priority": 1,
     "source": "women_portal",
@@ -108,7 +241,7 @@
       "urgency": "medium"
     },
     "status": "pending",
-    "read": false
+    "read": true
   },
   {
     "id": "f17ed7aa-cac6-445c-b2da-b2076c9be32d",
@@ -1310,7 +1443,7 @@
       "lat": 18.7956544,
       "lng": 73.2847715
     },
-    "read": false,
+    "read": true,
     "severity": "critical",
     "source": "women_portal"
   },
@@ -1323,7 +1456,7 @@
     "person_id": "wanted-pankaj-chavan-ef116f44",
     "priority": 1,
     "confidence": 87.8,
-    "read": false,
+    "read": true,
     "severity": "critical"
   },
   {
@@ -1335,7 +1468,235 @@
     "person_id": "wanted-pankaj-chavan-ef116f44",
     "priority": 1,
     "confidence": 87.8,
-    "read": false,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764585898916",
+    "timestamp": "2025-12-01T10:44:58.916461Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.0% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 88.0,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764585904852",
+    "timestamp": "2025-12-01T10:45:04.852223Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.3% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 88.3,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764585907245",
+    "timestamp": "2025-12-01T10:45:07.245916Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.6% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 88.6,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764585912029",
+    "timestamp": "2025-12-01T10:45:12.029519Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.7% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 88.7,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764591007830",
+    "timestamp": "2025-12-01T12:10:07.830777Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.4% confidence.",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "priority": 1,
+    "confidence": 88.4,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764591014112",
+    "timestamp": "2025-12-01T12:10:14.112455Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 87.9% confidence.",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "priority": 1,
+    "confidence": 87.9,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764591016076",
+    "timestamp": "2025-12-01T12:10:16.076314Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.2% confidence.",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "priority": 1,
+    "confidence": 88.2,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764591021771",
+    "timestamp": "2025-12-01T12:10:21.771386Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 87.8% confidence.",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "priority": 1,
+    "confidence": 87.8,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764591029168",
+    "timestamp": "2025-12-01T12:10:29.168949Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.4% confidence.",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "priority": 1,
+    "confidence": 88.4,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764591036362",
+    "timestamp": "2025-12-01T12:10:36.362664Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.4% confidence.",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "priority": 1,
+    "confidence": 88.4,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764591043660",
+    "timestamp": "2025-12-01T12:10:43.660111Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.7% confidence.",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "priority": 1,
+    "confidence": 88.7,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764591050901",
+    "timestamp": "2025-12-01T12:10:50.901523Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.6% confidence.",
+    "person_id": "pankaj-chavan-16b6f1a3",
+    "priority": 1,
+    "confidence": 88.6,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764593273728",
+    "timestamp": "2025-12-01T12:47:53.728386Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.1% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 88.1,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764593280621",
+    "timestamp": "2025-12-01T12:48:00.621920Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 87.9% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 87.9,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764593287670",
+    "timestamp": "2025-12-01T12:48:07.670189Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 88.2% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 88.2,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764593295110",
+    "timestamp": "2025-12-01T12:48:15.110783Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 87.8% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 87.8,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764593302228",
+    "timestamp": "2025-12-01T12:48:22.229235Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 87.8% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 87.8,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764593309275",
+    "timestamp": "2025-12-01T12:48:29.275592Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 87.8% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 87.8,
+    "read": true,
+    "severity": "critical"
+  },
+  {
+    "id": "1764593317703",
+    "timestamp": "2025-12-01T12:48:37.703361Z",
+    "type": "priority_detection",
+    "title": "\ud83d\udd34 CRITICAL: SUSPECT DETECTED!",
+    "message": "Priority 1 suspect 'Pankaj Chavan' detected with 87.8% confidence.",
+    "person_id": "wanted-pankaj-chavan-ef116f44",
+    "priority": 1,
+    "confidence": 87.8,
+    "read": true,
     "severity": "critical"
   }
 ]

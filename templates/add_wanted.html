@@ -44,47 +44,40 @@
                 </div>
             </div>
 
+            {% for field_name, field_config in form_config.items() if field_config.enabled %}
             <div class="form-section">
-                <label class="section-label">Suspect Name <span style="color: #D32F2F;">*</span></label>
-                <input type="text" name="name" class="form-input" placeholder="Enter Wanted Criminal Name" required 
-                       style="border-color: #D32F2F;">
-            </div>
-
-            <div class="form-section">
-                <label class="section-label">Crime Details / Reason</label>
-                <textarea name="crime_details" class="form-input" placeholder="Describe the crime or reason for wanted status..." 
-                          rows="3" style="resize: vertical;"></textarea>
-            </div>
-
-            <div class="form-section">
-                <label class="section-label">Aadhaar No (if known)</label>
-                <input type="text" name="aadhaar" class="form-input" placeholder="Enter Aadhaar No">
-            </div>
-
-            <div class="form-section">
-                <label class="section-label">Phone No (if known)</label>
-                <input type="text" name="phone" class="form-input" placeholder="Enter Phone No">
-            </div>
-            
-            <div class="form-section">
-                <label class="section-label">Gender</label>
+                <label class="section-label">
+                    {{ field_config.label }}
+                    {% if field_config.required %}<span style="color: #D32F2F;">*</span>{% endif %}
+                </label>
+                
+                {% if field_config.type == 'select' %}
                 <div class="select-wrapper">
-                    <select name="gender" class="form-input">
-                        <option value="" disabled selected>Select Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
+                    <select name="{{ field_name }}" class="form-input" {% if field_config.required %}required{% endif %}>
+                        <option value="" disabled selected>Select {{ field_config.label }}</option>
+                        {% for option in field_config.options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
                     </select>
                     <i class="fas fa-chevron-down"></i>
                 </div>
+                {% elif field_config.type == 'textarea' %}
+                <textarea name="{{ field_name }}" class="form-input" 
+                          placeholder="Enter {{ field_config.label }}" 
+                          rows="3" style="resize: vertical; min-height: 80px;"
+                          {% if field_config.required %}required{% endif %}></textarea>
+                {% else %}
+                <input type="{{ field_config.type }}" 
+                       name="{{ field_name }}" 
+                       class="form-input" 
+                       placeholder="Enter {{ field_config.label }}"
+                       {% if field_config.required %}required{% endif %}
+                       {% if field_config.type == 'number' %}min="1" max="120"{% endif %}>
+                {% endif %}
             </div>
+            {% endfor %}
 
-            <div class="form-section">
-                <label class="section-label">Age</label>
-                <input type="number" name="age" class="form-input" placeholder="Enter Age" min="1" max="120">
-            </div>
-
-            <!-- Priority Display (Fixed at 1) -->
+            <!-- Priority Display (Fixed at 1 for wanted criminals) -->
             <div class="form-section">
                 <label class="section-label">Surveillance Priority</label>
                 <div style="display: flex; align-items: center; gap: 10px; padding: 12px 15px; background: #FFEBEE; border-radius: 8px; border: 2px solid #D32F2F;">

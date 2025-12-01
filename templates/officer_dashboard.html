@@ -566,6 +566,11 @@
             <h3>View Alerts</h3>
             <p>Active alerts</p>
         </div>
+        <div class="action-card surveillance" onclick="showSection('surveillance')" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white;">
+            <i class="fas fa-video"></i>
+            <h3>Surveillance Request</h3>
+            <!-- <p>Request tracking</p> -->
+        </div>
     </div>
     
     <!-- Photo Search Section -->
@@ -615,6 +620,123 @@
             </div>
         </div>
     </div>
+
+    <!-- Surveillance Request Section -->
+    <div id="surveillance-section" class="search-section">
+        <div class="section-title">
+            <i class="fas fa-video"></i> Request Surveillance
+        </div>
+        
+        <p style="color: #666; font-size: 0.85rem; margin-bottom: 20px; text-align: center;">
+            Search for an existing person or add a new person to request surveillance
+        </p>
+
+        <!-- Toggle Buttons -->
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button onclick="toggleSurveillanceMode('existing')" id="btn-existing" 
+                    style="flex: 1; padding: 12px; background: linear-gradient(135deg, #059669, #047857); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                <i class="fas fa-search"></i> Search Existing
+            </button>
+            <button onclick="toggleSurveillanceMode('new')" id="btn-new" 
+                    style="flex: 1; padding: 12px; background: #e5e7eb; color: #6b7280; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                <i class="fas fa-user-plus"></i> Add New Person
+            </button>
+        </div>
+
+        <!-- Existing Person Search -->
+        <!-- Existing Person Search -->
+        <div id="existing-person-search">
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Search Person</label>
+                <input type="text" id="surveillance-search" placeholder="Enter name to search..." 
+                       oninput="searchPersons(this.value)"
+                       style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem;">
+                
+                <div id="search-results" style="margin-top: 15px; max-height: 300px; overflow-y: auto;">
+                    <!-- Search results will appear here -->
+                </div>
+            </div>
+
+            <!-- Request Form (hidden until person selected) -->
+            <div id="request-form" style="display: none; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 15px 0; color: #059669;">
+                    <i class="fas fa-user-check"></i> Selected Person
+                </h3>
+                <div id="selected-person-info" style="margin-bottom: 20px;">
+                    <!-- Selected person details -->
+                </div>
+                
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Reason for Surveillance *</label>
+                <textarea id="surveillance-reason" placeholder="Explain why surveillance is needed..." 
+                          style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; min-height: 100px; resize: vertical;"></textarea>
+                
+                <label style="display: block; margin: 15px 0 8px 0; font-weight: 600; color: #333;">Priority Level</label>
+                <select id="surveillance-priority" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem;">
+                    <option value="1">🔴 Priority 1 - Critical</option>
+                    <option value="2">🟠 Priority 2 - High</option>
+                    <option value="3" selected>🟡 Priority 3 - Medium</option>
+                    <option value="4">🟢 Priority 4 - Low</option>
+                    <option value="5">⚪ Priority 5 - Minimal</option>
+                </select>
+
+                <button onclick="submitSurveillanceRequest()" 
+                        style="width: 100%; margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-paper-plane"></i> Submit Request
+                </button>
+            </div>
+        </div>
+
+        <!-- Add New Person Form -->
+        <div id="new-person-form" style="display: none;">
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 15px 0; color: #059669;">
+                    <i class="fas fa-user-plus"></i> Add New Person for Surveillance
+                </h3>
+                
+                <form id="new-surveillance-form" onsubmit="submitNewPersonSurveillance(event)">
+                    <!-- Person Type Selector -->
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Person Type *</label>
+                    <select id="person-type-selector" name="person_type" required onchange="updateFormFields()" 
+                            style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; margin-bottom: 15px;">
+                        <option value="criminal">Criminal</option>
+                        <option value="missing">Missing Person</option>
+                    </select>
+
+                    <!-- Photo Upload -->
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Photo *</label>
+                    <input type="file" name="image" accept="image/*" required 
+                           style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; margin-bottom: 15px;">
+
+                    <!-- Dynamic Form Fields Container -->
+                    <div id="dynamic-form-fields">
+                        <!-- Fields will be generated here based on form_config -->
+                    </div>
+
+                    <!-- Dynamic Form Fields Container -->
+                    <div id="dynamic-form-fields">
+                        <!-- Fields will be generated here based on form_config -->
+                    </div>
+
+                    <!-- Priority and Reason Section -->
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Priority Level *</label>
+                    <select name="priority" required style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; margin-bottom: 15px;">
+                        <option value="high">🔴 High - Critical</option>
+                        <option value="medium" selected>🟡 Medium - Moderate</option>
+                        <option value="low">🟢 Low - Routine</option>
+                    </select>
+
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Reason for Surveillance *</label>
+                    <textarea name="reason" required rows="3" placeholder="Explain why surveillance is needed..." 
+                              style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; margin-bottom: 15px;"></textarea>
+
+                    <button type="submit" 
+                            style="width: 100%; padding: 15px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                        <i class="fas fa-paper-plane"></i> Submit Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal Container -->
@@ -623,6 +745,10 @@
 <script>
 let selectedDB = 'criminal';
 let lastMatchData = null;
+let selectedPersonForSurveillance = null;
+const formConfig = {{ form_config|tojson }};
+const systemConfig = {{ system_config|tojson }};
+const aadhaarEnabled = {{ aadhaar_enabled|tojson }};
 
 function showSection(section) {
     document.querySelectorAll('.action-card').forEach(c => c.classList.remove('active'));
@@ -630,9 +756,16 @@ function showSection(section) {
     
     document.getElementById('search-section').classList.toggle('show', section === 'search');
     document.getElementById('alerts-section').classList.toggle('show', section === 'alerts');
+    document.getElementById('surveillance-section').classList.toggle('show', section === 'surveillance');
     
     if (section === 'alerts') {
         loadAlerts();
+    } else if (section === 'surveillance') {
+        // Reset form
+        document.getElementById('surveillance-search').value = '';
+        document.getElementById('search-results').innerHTML = '';
+        document.getElementById('request-form').style.display = 'none';
+        selectedPersonForSurveillance = null;
     }
 }
 
@@ -994,14 +1127,24 @@ async function loadAlerts() {
                 
                 // SOS Emergency Alert
                 if (alertType === 'SOS_EMERGENCY') {
+                    const displayName = alert.woman_name || 'Anushka Sahu';
+                    const displayPhone = alert.woman_phone || '9022442848';
+                    const contactsCount = Number(alert.contacts_count ?? (Array.isArray(alert.contacts) ? alert.contacts.length : 0)) || 0;
+                    const locationPreview = alert.location ? (alert.location.length > 40 ? alert.location.substring(0, 40) + '...' : alert.location) : 'Location available';
+                    const safeLocation = (alert.location || '').replace(/'/g, "\\'");
+                    const safeMapLink = (alert.map_link || '').replace(/'/g, "\\'");
+                    const safeTimestamp = ((alert.timestamp_ist || alert.timestamp || '') + '').replace(/'/g, "\\'");
+                    const safeName = displayName.replace(/'/g, "\\'");
+                    const safePhone = displayPhone.replace(/'/g, "\\'");
                     html += `
-                        <div class="alert-card" style="cursor: pointer; border-left: 4px solid #dc2626; background: #fef2f2;" onclick="showSOSDetails('${alert.id}', '${alert.location || ''}', '${alert.map_link || ''}', '${alert.timestamp_ist || ''}')">
+                        <div class="alert-card" style="cursor: pointer; border-left: 4px solid #dc2626; background: #fef2f2;" onclick="showSOSDetails('${alert.id}', '${safeLocation}', '${safeMapLink}', '${safeTimestamp}', '${safeName}', '${safePhone}', ${contactsCount})">
                             <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #b91c1c); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-exclamation-triangle" style="color: white; font-size: 1.5rem;"></i>
                             </div>
                             <div class="alert-info">
                                 <h4 style="color: #dc2626;">🚨 SOS EMERGENCY</h4>
-                                <p style="font-size: 0.75rem;">${alert.location ? alert.location.substring(0, 40) + '...' : 'Location available'}</p>
+                                <p style="font-size: 0.75rem; color: #991b1b;">${displayName} • ${displayPhone}</p>
+                                <p style="font-size: 0.75rem;">${locationPreview}</p>
                             </div>
                             <span class="alert-priority priority-1">🔴 Critical</span>
                         </div>
@@ -1069,7 +1212,14 @@ async function loadAlerts() {
 }
 
 // Show SOS Emergency Details
-function showSOSDetails(id, location, mapLink, timestamp) {
+function showSOSDetails(id, location, mapLink, timestamp, womanName, womanPhone, contactsCount) {
+    const displayName = womanName && womanName !== 'undefined' ? womanName : 'Anushka Sahu';
+    const displayPhone = womanPhone && womanPhone !== 'undefined' ? womanPhone : '9022442848';
+    const phoneLink = displayPhone.replace(/\s+/g, '');
+    const safeLocation = location && location !== 'undefined' ? location : 'Location being determined...';
+    const displayTimestamp = timestamp && timestamp !== 'undefined' ? timestamp : 'Just now';
+    const notifiedCount = (typeof contactsCount === 'number' && !Number.isNaN(contactsCount)) ? contactsCount : (parseInt(contactsCount, 10) || 0);
+    const hasMapLink = mapLink && mapLink !== 'undefined' && mapLink !== 'null';
     document.getElementById('modal-container').innerHTML = `
         <div class="modal-overlay">
             <div class="modal-content result-modal">
@@ -1082,19 +1232,31 @@ function showSOSDetails(id, location, mapLink, timestamp) {
                         <h4 style="color: #dc2626; margin: 0 0 10px 0;"><i class="fas fa-female"></i> Woman in Distress</h4>
                         <p style="margin: 0; color: #7f1d1d; font-size: 0.9rem;">Immediate response required!</p>
                     </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="fas fa-user"></i> Woman Details:</label>
+                        <p style="margin: 8px 0 0; padding: 10px; background: #fee2e2; border-radius: 8px; font-size: 0.9rem; color: #991b1b;">
+                            👤 <strong>${displayName}</strong>
+                        </p>
+                        <p style="margin: 8px 0 0; padding: 10px; background: #fef2f2; border-radius: 8px; font-size: 0.9rem; color: #b91c1c;">
+                            📞 <strong><a href="tel:${phoneLink}" style="color: inherit; text-decoration: none;">${displayPhone}</a></strong>
+                        </p>
+                        <p style="margin: 8px 0 0; padding: 10px; background: #fffbeb; border-radius: 8px; font-size: 0.9rem; color: #92400e;">
+                            👥 Trusted Contacts Notified: <strong>${notifiedCount}</strong>
+                        </p>
+                    </div>
                     
                     <div style="margin-bottom: 15px;">
                         <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="fas fa-map-marker-alt"></i> Location:</label>
-                        <p style="margin: 5px 0; padding: 12px; background: #f3f4f6; border-radius: 8px; font-size: 0.9rem;">${location || 'Location being determined...'}</p>
+                        <p style="margin: 5px 0; padding: 12px; background: #f3f4f6; border-radius: 8px; font-size: 0.9rem;">${safeLocation}</p>
                     </div>
                     
                     <div style="margin-bottom: 15px;">
                         <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="fas fa-clock"></i> Reported At:</label>
-                        <p style="margin: 5px 0; padding: 12px; background: #f3f4f6; border-radius: 8px; font-size: 0.9rem;">${timestamp || 'Just now'}</p>
+                        <p style="margin: 5px 0; padding: 12px; background: #f3f4f6; border-radius: 8px; font-size: 0.9rem;">${displayTimestamp}</p>
                     </div>
                     
                     <div class="modal-actions" style="display: flex; flex-direction: column; gap: 10px;">
-                        ${mapLink ? `<a href="${mapLink}" target="_blank" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #16a34a, #15803d); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
+                        ${hasMapLink ? `<a href="${mapLink}" target="_blank" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #16a34a, #15803d); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
                             <i class="fas fa-directions"></i> Open in Maps
                         </a>` : ''}
                         <button onclick="acknowledgeAlert('${id}')" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #1e40af, #1e3a8a); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
@@ -1268,6 +1430,238 @@ function reportAlertSighting(personId, name, image, dbType, priority, isWanted) 
     };
     
     showReportForm();
+}
+
+// Surveillance Request Functions
+let searchTimeout = null;
+
+function searchPersons(query) {
+    clearTimeout(searchTimeout);
+    
+    if (!query || query.trim().length < 2) {
+        document.getElementById('search-results').innerHTML = '';
+        return;
+    }
+    
+    searchTimeout = setTimeout(() => {
+        fetch(`/officer/search_persons?q=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('search-results');
+                
+                if (data.results && data.results.length > 0) {
+                    resultsDiv.innerHTML = data.results.map(person => `
+                        <div onclick="selectPerson('${person.id}', '${person.name}', '${person.db_type}', '${person.image_filename}')" 
+                             style="display: flex; align-items: center; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s;"
+                             onmouseover="this.style.borderColor='#059669'; this.style.background='#f0fdf4';"
+                             onmouseout="this.style.borderColor='#e5e7eb'; this.style.background='white';">
+                            <img src="/images/${person.image_filename}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin-right: 12px;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: #1f2937;">${person.name}</div>
+                                <div style="font-size: 0.8rem; color: #6b7280; text-transform: capitalize;">${person.db_type} DB</div>
+                            </div>
+                            <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                        </div>
+                    `).join('');
+                } else {
+                    resultsDiv.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">No persons found</p>';
+                }
+            })
+            .catch(err => {
+                console.error('Search error:', err);
+                document.getElementById('search-results').innerHTML = '<p style="text-align: center; color: #ef4444; padding: 20px;">Error searching database</p>';
+            });
+    }, 300);
+}
+
+function selectPerson(id, name, dbType, image) {
+    selectedPersonForSurveillance = { id, name, db_type: dbType, image_filename: image };
+    
+    document.getElementById('selected-person-info').innerHTML = `
+        <div style="display: flex; align-items: center; padding: 15px; background: #f0fdf4; border: 2px solid #059669; border-radius: 8px;">
+            <img src="/images/${image}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; margin-right: 15px;">
+            <div>
+                <div style="font-weight: 600; color: #1f2937; font-size: 1.1rem;">${name}</div>
+                <div style="font-size: 0.85rem; color: #047857; text-transform: capitalize; margin-top: 4px;">
+                    <i class="fas fa-database"></i> ${dbType} Database
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('request-form').style.display = 'block';
+    document.getElementById('search-results').innerHTML = '';
+    document.getElementById('surveillance-search').value = name;
+}
+
+function submitSurveillanceRequest() {
+    if (!selectedPersonForSurveillance) {
+        alert('Please select a person first');
+        return;
+    }
+    
+    const reason = document.getElementById('surveillance-reason').value.trim();
+    if (!reason) {
+        alert('Please provide a reason for surveillance');
+        return;
+    }
+    
+    const priority = document.getElementById('surveillance-priority').value;
+    
+    const requestData = {
+        person_id: selectedPersonForSurveillance.id,
+        person_name: selectedPersonForSurveillance.name,
+        db_type: selectedPersonForSurveillance.db_type,
+        image_filename: selectedPersonForSurveillance.image_filename,
+        reason: reason,
+        priority: parseInt(priority)
+    };
+    
+    fetch('/officer/request_surveillance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('✓ Surveillance request submitted successfully!\n\nYour request will be reviewed by admin.');
+            
+            // Reset form
+            document.getElementById('surveillance-reason').value = '';
+            document.getElementById('surveillance-priority').value = '3';
+            document.getElementById('request-form').style.display = 'none';
+            document.getElementById('surveillance-search').value = '';
+            selectedPersonForSurveillance = null;
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(err => {
+        console.error('Request error:', err);
+        alert('Error submitting request. Please try again.');
+    });
+}
+
+function toggleSurveillanceMode(mode) {
+    const btnExisting = document.getElementById('btn-existing');
+    const btnNew = document.getElementById('btn-new');
+    const existingSearch = document.getElementById('existing-person-search');
+    const newPersonForm = document.getElementById('new-person-form');
+    
+    if (mode === 'existing') {
+        btnExisting.style.background = 'linear-gradient(135deg, #059669, #047857)';
+        btnExisting.style.color = 'white';
+        btnNew.style.background = '#e5e7eb';
+        btnNew.style.color = '#6b7280';
+        existingSearch.style.display = 'block';
+        newPersonForm.style.display = 'none';
+    } else {
+        btnNew.style.background = 'linear-gradient(135deg, #059669, #047857)';
+        btnNew.style.color = 'white';
+        btnExisting.style.background = '#e5e7eb';
+        btnExisting.style.color = '#6b7280';
+        existingSearch.style.display = 'none';
+        newPersonForm.style.display = 'block';
+        // Initialize form fields
+        updateFormFields();
+    }
+}
+
+function updateFormFields() {
+    const personType = document.getElementById('person-type-selector').value;
+    const container = document.getElementById('dynamic-form-fields');
+    container.innerHTML = '';
+    
+    // Get the appropriate form config (criminal or missing)
+    const config = formConfig[personType] || {};
+    
+    // Generate fields based on form_config
+    for (const [fieldName, fieldData] of Object.entries(config)) {
+        if (!fieldData.enabled) continue;
+        
+        // Skip image field (already added separately)
+        if (fieldName === 'image') continue;
+        
+        // Skip priority field (we have a separate Priority Level field below)
+        if (fieldName === 'priority') continue;
+        
+        const fieldDiv = document.createElement('div');
+        fieldDiv.style.marginBottom = '15px';
+        
+        const label = document.createElement('label');
+        label.style.cssText = 'display: block; margin-bottom: 8px; font-weight: 600; color: #333;';
+        label.textContent = fieldData.label + (fieldData.required ? ' *' : '');
+        fieldDiv.appendChild(label);
+        
+        let inputElement;
+        
+        if (fieldData.type === 'select') {
+            inputElement = document.createElement('select');
+            inputElement.style.cssText = 'width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem;';
+            
+            if (fieldData.options) {
+                fieldData.options.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option;
+                    opt.textContent = option;
+                    inputElement.appendChild(opt);
+                });
+            }
+        } else if (fieldData.type === 'textarea') {
+            inputElement = document.createElement('textarea');
+            inputElement.rows = 3;
+            inputElement.style.cssText = 'width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; resize: vertical;';
+        } else {
+            inputElement = document.createElement('input');
+            inputElement.type = fieldData.type;
+            inputElement.style.cssText = 'width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem;';
+            
+            if (fieldData.type === 'number') {
+                inputElement.min = 1;
+                inputElement.max = 120;
+            }
+        }
+        
+        inputElement.name = fieldName;
+        if (fieldData.required) {
+            inputElement.required = true;
+        }
+        
+        fieldDiv.appendChild(inputElement);
+        container.appendChild(fieldDiv);
+    }
+}
+
+function submitNewPersonSurveillance(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    
+    fetch('/officer/request_new_person_surveillance', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('✓ New person surveillance request submitted successfully!\n\nAdmin will review and add this person to the database.');
+            event.target.reset();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(err => {
+        console.error('Request error:', err);
+        alert('Error submitting request. Please try again.');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Request';
+    });
 }
 </script>
 {% endblock %}

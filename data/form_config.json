@@ -1,0 +1,149 @@
+{
+  "criminal": {
+    "aadhaar": {
+      "enabled": true,
+      "label": "Aadhaar Number 12",
+      "required": false,
+      "type": "number"
+    },
+    "age": {
+      "enabled": true,
+      "label": "Age",
+      "required": false,
+      "type": "number"
+    },
+    "crime_details": {
+      "enabled": true,
+      "label": "Crime Details",
+      "required": false,
+      "type": "textarea"
+    },
+    "gender": {
+      "enabled": true,
+      "label": "Gender",
+      "options": [
+        "Male",
+        "Female",
+        "Other"
+      ],
+      "required": true,
+      "type": "select"
+    },
+    "name": {
+      "enabled": true,
+      "label": "Suspect Name",
+      "required": false,
+      "type": "text"
+    },
+    "phone": {
+      "enabled": true,
+      "label": "Phone Number",
+      "required": true,
+      "type": "tel"
+    },
+    "priority": {
+      "enabled": true,
+      "label": "Surveillance Priority ",
+      "required": true,
+      "type": "select"
+    }
+  },
+  "missing": {
+    "name": {
+      "enabled": true,
+      "label": "Missing Person Name",
+      "required": true,
+      "type": "text"
+    },
+    "age": {
+      "enabled": true,
+      "label": "Age",
+      "required": true,
+      "type": "number"
+    },
+    "gender": {
+      "enabled": true,
+      "label": "Gender",
+      "options": [
+        "Male",
+        "Female",
+        "Other"
+      ],
+      "required": true,
+      "type": "select"
+    },
+    "guardian_phone": {
+      "enabled": true,
+      "label": "Guardian Phone",
+      "required": true,
+      "type": "tel"
+    },
+    "last_seen": {
+      "enabled": true,
+      "label": "Last Seen Location",
+      "required": false,
+      "type": "text"
+    },
+    "missing_since": {
+      "enabled": true,
+      "label": "Missing Since",
+      "required": false,
+      "type": "date"
+    },
+    "description": {
+      "enabled": true,
+      "label": "Description",
+      "required": false,
+      "type": "textarea"
+    },
+    "missing_aadhaar": {
+      "enabled": true,
+      "label": "Aadhaar Number",
+      "required": false,
+      "type": "text"
+    }
+  },
+  "wanted": {
+    "aadhaar": {
+      "enabled": true,
+      "label": "Aadhaar Number",
+      "required": false,
+      "type": "text"
+    },
+    "age": {
+      "enabled": true,
+      "label": "Age",
+      "required": false,
+      "type": "number"
+    },
+    "crime_details": {
+      "enabled": true,
+      "label": "Crime Details",
+      "required": false,
+      "type": "textarea"
+    },
+    "gender": {
+      "enabled": true,
+      "label": "Gender",
+      "options": [
+        "Male",
+        "Female",
+        "Other"
+      ],
+      "required": true,
+      "type": "select"
+    },
+    "name": {
+      "enabled": true,
+      "label": "Suspect Name",
+      "required": true,
+      "type": "text"
+    },
+    "phone": {
+      "enabled": true,
+      "label": "Phone Number",
+      "required": false,
+      "type": "tel"
+    }
+  }
+}

@@ -21,7 +21,7 @@
         <div style="flex: 1; border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: white; opacity: 0.7;">
             <h3 style="margin-bottom: 15px; color: #666;">Input Data</h3>
             <p><strong>Name:</strong> {{ new_name }}</p>
-            <p><strong>Aadhaar:</strong> {{ new_aadhaar }}</p>
+            {% if aadhaar_enabled %}<p><strong>Aadhaar:</strong> {{ new_aadhaar }}</p>{% endif %}
             <p><strong>Phone:</strong> {{ new_phone }}</p>
         </div>
 
@@ -32,7 +32,7 @@
                 <img src="{{ url_for('serve_image', filename=existing_person.image_filename) }}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
             </div>
             <p><strong>Name:</strong> {{ existing_person.name }}</p>
-            <p><strong>Aadhaar:</strong> {{ existing_person.aadhaar }}</p>
+            {% if aadhaar_enabled %}<p><strong>Aadhaar:</strong> {{ existing_person.aadhaar }}</p>{% endif %}
             <p><strong>Phone:</strong> {{ existing_person.phone }}</p>
             <p><strong>Gender:</strong> {{ existing_person.submitted_gender }}</p>
         </div>

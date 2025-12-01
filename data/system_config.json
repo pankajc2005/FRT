@@ -1,0 +1,14 @@
+{
+  "features": {
+    "aadhaar_system": {
+      "description": "Enable/disable Aadhaar number fields across all forms and validation",
+      "enabled": false,
+      "label": "Aadhaar Number System"
+    },
+    "phone_validation": {
+      "description": "Enable/disable phone number validation and duplicate checks",
+      "enabled": true,
+      "label": "Phone Number Validation"
+    }
+  }
+}

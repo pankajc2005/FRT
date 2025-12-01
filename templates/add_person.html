@@ -33,52 +33,16 @@
                 </div>
             </div>
 
+            {% for field_name, field_config in form_config.items() if field_config.enabled %}
             <div class="form-section">
-                <label class="section-label">Suspect Name</label>
-                <input type="text" name="name" class="form-input" placeholder="Enter Suspect Name" required>
-            </div>
-
-            <div class="form-section">
-                <label class="section-label">Suspect Aadhaar No <span style="color: #9ca3af; font-weight: normal;">(Optional)</span></label>
+                <label class="section-label">
+                    {{ field_config.label }}
+                    {% if not field_config.required %}<span style="color: #9ca3af; font-weight: normal;">(Optional)</span>{% endif %}
+                </label>
+                
+                {% if field_name == 'priority' %}
                 <div class="select-wrapper">
-                    <input type="text" name="aadhaar" id="aadhaarInput" class="form-input" placeholder="Enter Aadhaar No (Optional)">
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div id="aadhaarError" class="validation-error" style="display:none; color: #D32F2F; margin-top: 5px; font-size: 0.9rem;">
-                    <i class="fas fa-exclamation-circle"></i> <span></span>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <label class="section-label">Suspect Phone No</label>
-                <input type="text" name="phone" id="phoneInput" class="form-input" placeholder="Enter Suspect Phone No">
-                <div id="phoneError" class="validation-error" style="display:none; color: #D32F2F; margin-top: 5px; font-size: 0.9rem;">
-                    <i class="fas fa-exclamation-circle"></i> <span></span>
-                </div>
-            </div>
-            
-            <div class="form-section">
-                <label class="section-label">Gender</label>
-                <div class="select-wrapper">
-                    <select name="gender" class="form-input" required>
-                        <option value="" disabled selected>Select Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <label class="section-label">Age</label>
-                <input type="number" name="age" class="form-input" placeholder="Enter Age" min="1" max="120">
-            </div>
-
-            <div class="form-section">
-                <label class="section-label">Surveillance Priority</label>
-                <div class="select-wrapper">
-                    <select name="priority" class="form-input">
+                    <select name="priority" class="form-input" {% if field_config.required %}required{% endif %}>
                         <option value="1">🔴 Priority 1 - Critical (Armed/Dangerous)</option>
                         <option value="2">🟠 Priority 2 - High (Serious Crime)</option>
                         <option value="3" selected>🟡 Priority 3 - Medium (Standard)</option>
@@ -90,7 +54,38 @@
                 <small style="color: #666; margin-top: 5px; display: block;">
                     Higher priority suspects are matched first during surveillance.
                 </small>
+                {% elif field_config.type == 'select' %}
+                <div class="select-wrapper">
+                    <select name="{{ field_name }}" class="form-input" {% if field_config.required %}required{% endif %}>
+                        <option value="" disabled selected>Select {{ field_config.label }}</option>
+                        {% for option in field_config.options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                {% elif field_config.type == 'textarea' %}
+                <textarea name="{{ field_name }}" class="form-input" 
+                          placeholder="Enter {{ field_config.label }}" 
+                          rows="3" style="resize: vertical; min-height: 80px;"
+                          {% if field_config.required %}required{% endif %}></textarea>
+                {% else %}
+                <input type="{{ field_config.type }}" 
+                       name="{{ field_name }}" 
+                       id="{{ field_name }}Input"
+                       class="form-input" 
+                       placeholder="Enter {{ field_config.label }}"
+                       {% if field_config.required %}required{% endif %}
+                       {% if field_config.type == 'number' %}min="1" max="120"{% endif %}>
+                {% endif %}
+                
+                {% if field_name in ['aadhaar', 'phone'] %}
+                <div id="{{ field_name }}Error" class="validation-error" style="display:none; color: #D32F2F; margin-top: 5px; font-size: 0.9rem;">
+                    <i class="fas fa-exclamation-circle"></i> <span></span>
+                </div>
+                {% endif %}
             </div>
+            {% endfor %}
 
             <div class="form-section">
                 <label class="section-label">Criminalface Embeddings</label>

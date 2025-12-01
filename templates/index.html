@@ -52,24 +52,6 @@
                     <p>Add priority 1 criminal</p>
                 </a>
 
-                <!-- Criminal Surveillance -->
-                <a href="{{ url_for('surveillance_view', db_type='criminal') }}" class="action-box">
-                    <div class="action-icon" style="color: #dc2626;">
-                        <i class="fas fa-user-secret"></i>
-                    </div>
-                    <h3>Criminal Surveillance</h3>
-                    <p>Monitor active criminals</p>
-                </a>
-
-                <!-- Missing Person Surveillance -->
-                <a href="{{ url_for('surveillance_view', db_type='missing') }}" class="action-box">
-                    <div class="action-icon" style="color: #0891b2;">
-                        <i class="fas fa-search-location"></i>
-                    </div>
-                    <h3>Missing Surveillance</h3>
-                    <p>Track missing persons</p>
-                </a>
-
                 <!-- Crowd Detection -->
                 <div class="action-box" onclick="requestCrowdDetectionPermission()" style="cursor:pointer;">
                     <div class="action-icon" style="color: #7c3aed;">
@@ -82,7 +64,7 @@
                 <!-- Weapon Detection -->
                 <div class="action-box" onclick="requestWeaponDetectionPermission()" style="cursor:pointer;">
                     <div class="action-icon" style="color: #b91c1c;">
-                        <i class="fas fa-crosshairs"></i>
+                        <i class="fas fa-gun"></i>
                     </div>
                     <h3>Weapon Detection</h3>
                     <p>AI-powered threat detection</p>

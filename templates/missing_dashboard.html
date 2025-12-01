@@ -5,7 +5,7 @@
 {% block header_actions %}
     <!-- Text Search -->
     <div class="search-container" style="position: relative; margin-right: 10px;">
-        <input type="text" id="text-search" placeholder="Search by name, Aadhaar..." 
+        <input type="text" id="text-search" placeholder="Search by name{% if aadhaar_enabled %}, Aadhaar{% endif %}..." 
                style="padding: 0.5rem 1rem; border-radius: 2rem; border: 1px solid #e5e7eb; width: 200px; font-size: 0.85rem;">
     </div>
     <!-- Photo Search -->
@@ -24,7 +24,7 @@
                     <tr>
                         <th>Photo</th>
                         <th>Missing Person Name</th>
-                        <th>Aadhaar No</th>
+                        {% if aadhaar_enabled %}<th>Aadhaar No</th>{% endif %}
                         <th>Guardian Phone</th>
                         <th>Gender</th>
                         <th>Age</th>
@@ -43,7 +43,7 @@
                             </div>
                         </td>
                         <td class="primary-text">{{ person.name }}</td>
-                        <td class="secondary-text">{{ person.missing_aadhaar or '-' }}</td>
+                        {% if aadhaar_enabled %}<td class="secondary-text">{{ person.missing_aadhaar or '-' }}</td>{% endif %}
                         <td class="secondary-text">{{ person.guardian_phone or '-' }}</td>
                         <td>{{ person.submitted_gender or person.predicted_gender or '-' }}</td>
                         <td>{{ person.age or '-' }}</td>

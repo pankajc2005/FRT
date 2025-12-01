@@ -62,12 +62,14 @@
                 <input type="text" name="name" class="form-input" value="{{ person.name }}">
             </div>
 
+            {% if aadhaar_enabled %}
             <div class="form-section">
                 <label class="section-label">{{ 'Missing Person Aadhaar' if person.db_type == 'missing' else 'Suspect Aadhaar No' }}</label>
                 <div class="select-wrapper">
                     <input type="text" name="aadhaar" class="form-input" value="{{ person.aadhaar or person.missing_aadhaar or '' }}">
                 </div>
             </div>
+            {% endif %}
 
             <div class="form-section">
                 <label class="section-label">{{ 'Guardian Phone No' if person.db_type == 'missing' else 'Suspect Phone No' }}</label>
